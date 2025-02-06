@@ -1,0 +1,74 @@
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+{% endblock %}
+
+<footer>
+
+    <article class="header-footer">
+
+        <section class="left-side">
+
+            <section class="logo-footer">
+
+                <h1><a href={{ path('app_home') }}>regards singuliers</a></h1>
+                <p>Priscilia Leote - Architecte d'intérieur</p>
+
+            </section>
+
+            <section class="social-footer">
+                
+                <ul>
+                    <li><a href="https://www.instagram.com/regards_singuliers/" target="_blank">Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/company/regards-singuliers" target="_blank">LinkedIn</a></li>
+                </ul>
+
+            </section>
+
+        </section>    
+
+        <section class="nav-menu-footer">
+        
+            <h5>Navigation</h5>
+            
+            <ul>
+                <li><a href={# {{ path('about') }} #}>À propos</a></li>
+                <li><a href={# {{ path('projects') }} #}>Réalisations</a></li>
+                <li><a href={# {{ path('services') }} #}>Prestations</a></li>
+                <li><a href={# {{ path('contact') }} #}>Contact</a></li>
+            </ul>
+
+        </section>
+
+        <section class="contacts">
+            
+            <h5>Coordonnées</h5>
+
+            <ul>
+                <li><a href="tel:+336 50 50 50 50">06 50 50 50 50</a></li>
+                <li><a href="mailto:info@regards-singuliers.fr">info@regards-singuliers.fr</a></li>
+            </ul>
+
+        </section>
+
+        <section class="legal-informations">
+            
+            <h5>Informations legales</h5>
+
+            <ul>
+                <li><a href="mentions-legales">Mentions légales</a></li>
+                <li><a href="politique-de-confidentialite">Politique de confidentialité</a></li>
+                <li><a href="cgv-cgu">CGV & CGU</a></li>
+            </ul>
+
+        </section>
+
+    </article>  
+
+    <section class="copyrights-footer">
+    
+        <p>&copy; 2019 - {{ "now"|date('Y') }} regards singuliers. - Architecte & décoratrice d'intérieur Bretagne.</p>
+        <p>Tous droits réservés.</p>
+    
+    </section>
+
+</footer>

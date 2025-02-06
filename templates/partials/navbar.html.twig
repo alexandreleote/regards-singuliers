@@ -1,11 +1,15 @@
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
+{% endblock %}
+
 <nav>
             
-    <section>
+    <section class="brand">
         <h1><a href={{ path('app_home') }}>regards singuliers</a></h1>
         <p>Priscilia Leote - Architecte d'intérieur</p>
     </section>
     
-    <section>
+    <section class="nav-menu">
         <ul>
             <li><a href={# {{ path('about') }} #}>À propos</a></li>
             <li><a href={# {{ path('projects') }} #}>Réalisations</a></li>
@@ -14,7 +18,7 @@
         </ul>
     </section>
     
-    <section>
+    <section class="nav-actions">
         
         {% if app.user %}
             <p>{{ app.user.userIdentifier }}</p>
