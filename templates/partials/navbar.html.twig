@@ -1,0 +1,28 @@
+<nav>
+            
+    <section>
+        <h1><a href={{ path('app_home') }}>regards singuliers</a></h1>
+        <p>Priscilia Leote - Architecte d'intérieur</p>
+    </section>
+    
+    <section>
+        <ul>
+            <li><a href={# {{ path('about') }} #}>À propos</a></li>
+            <li><a href={# {{ path('projects') }} #}>Réalisations</a></li>
+            <li><a href={# {{ path('services') }} #}>Prestations</a></li>
+            <li><a href={# {{ path('contact') }} #}>Contact</a></li>
+        </ul>
+    </section>
+    
+    <section>
+        
+        {% if app.user %}
+            <p>{{ app.user.userIdentifier }}</p>
+            <p><a href={{ path('app_logout') }}>Deconnexion</a></p>
+        {% else %}
+            <p><a href={{ path('app_login') }}>Connexion</a></p>
+        {% endif %}
+
+    </section>
+
+</nav>
