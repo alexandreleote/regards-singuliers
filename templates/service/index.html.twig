@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}regardes singuliers - Prestations{% endblock %}
+
+{% block body %}
+
+    <article>
+    
+        <h2>Prestations</h2>
+    
+        <p>Retrouvez ci-dessous les prestations que nous proposons :</p>
+
+        <section>
+            {% for service in services %}
+                <article>
+                    <h3>{{ service.title }}</h3>
+                    <p>{{ service.description }}</p>
+                    <p>{{ service.price }}€ HT</p>
+                    <hr>
+                </article>
+            {% endfor %}
+        </section>
+    
+    </article>
+
+{% endblock %}
