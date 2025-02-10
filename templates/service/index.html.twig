@@ -13,10 +13,21 @@
         <section>
             {% for service in services %}
                 <article>
-                    <h3>{{ service.title }}</h3>
-                    <p>{{ service.description }}</p>
-                    <p>{{ service.price }}€ HT</p>
-                    <hr>
+                    <div>
+                        <h3>{{ service.title }}</h3>
+                        <p>{{ service.description }}</p>
+                        <p>{{ service.price }}€ HT</p>
+                    </div>
+                    <div>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            <a href="{{ path('app_reservation_create', {'id': service.id}) }}" class="text-white no-underline">
+                                Réserver une date
+                            </a>
+                        </button>
+                        <a href="{{ path('service_detail', {'id': service.id}) }}" class="ml-4 text-blue-600 hover:text-blue-800">
+                            En savoir plus
+                        </a>
+                    </div>
                 </article>
             {% endfor %}
         </section>

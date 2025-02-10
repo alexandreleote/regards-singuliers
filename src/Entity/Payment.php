@@ -14,8 +14,8 @@ class Payment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $stripe_payment_id = null;
+    #[ORM\Column(length: 255)]
+    private ?string $stripe_payment_id = null;
 
     #[ORM\Column]
     private ?float $amount = null;
@@ -41,12 +41,12 @@ class Payment
         return $this->id;
     }
 
-    public function getStripePaymentId(): ?int
+    public function getStripePaymentId(): ?string
     {
         return $this->stripe_payment_id;
     }
 
-    public function setStripePaymentId(int $stripe_payment_id): static
+    public function setStripePaymentId(string $stripe_payment_id): static
     {
         $this->stripe_payment_id = $stripe_payment_id;
 

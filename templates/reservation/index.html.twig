@@ -1,11 +1,65 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}regardes singuliers - réservations{% endblock %}
+{% block title %}regards singuliers - Réservation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
 
 {% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-3xl font-bold mb-6">{{ service.title }}</h1>
+            
+            {% if not app.user %}
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+                    <p>Pour réserver une prestation, vous devez d'abord vous <a href="{{ path('app_login') }}" class="underline">connecter</a> ou vous <a href="{{ path('app_register') }}" class="underline">inscrire</a>.</p>
+                </div>
+            {% else %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Informations sur le service -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4">Détails de la prestation</h2>
+                        <div class="prose">
+                            <p class="mb-4">{{ service.description }}</p>
+                            <p class="text-lg font-semibold">Prix : {{ service.price }}€</p>
+                            <p class="text-sm text-gray-600">Acompte requis : {{ service.price * 0.3 }}€</p>
+                        </div>
+                    </div>
 
-    <article>
-        <h2>{{ reservation.service.title }}</h2>
-    </article>
+                    <!-- Formulaire de réservation -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4">Choisir une date</h2>
+                        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+                            {{ form_widget(form) }}
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                                Réserver
+                            </button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr(".js-datepicker", {
+                locale: "fr",
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: [
+                    function(date) {
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ]
+            });
+        });
+    </script>
 {% endblock %}

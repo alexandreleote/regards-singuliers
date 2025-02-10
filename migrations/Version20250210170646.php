@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250207121815 extends AbstractMigration
+final class Version20250210170646 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,14 +20,12 @@ final class Version20250207121815 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE reservation CHANGE status status VARCHAR(50) NOT NULL, CHANGE price price NUMERIC(6, 2) NOT NULL');
-        $this->addSql('ALTER TABLE service CHANGE price price NUMERIC(6, 2) NOT NULL');
+        $this->addSql('ALTER TABLE payment CHANGE stripe_payment_id stripe_payment_id VARCHAR(255) NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE reservation CHANGE status status VARCHAR(50) DEFAULT NULL, CHANGE price price DOUBLE PRECISION NOT NULL');
-        $this->addSql('ALTER TABLE service CHANGE price price NUMERIC(6, 2) DEFAULT \'0.00\' NOT NULL');
+        $this->addSql('ALTER TABLE payment CHANGE stripe_payment_id stripe_payment_id INT NOT NULL');
     }
 }

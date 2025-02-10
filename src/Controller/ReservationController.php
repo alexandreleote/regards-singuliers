@@ -11,53 +11,71 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 final class ReservationController extends AbstractController
 {
-    #[Route('/reservation/service/{id}', name: 'app_reservation_start')]
-    public function start(Service $service, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        if(!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
+    #[Route('/reservation/{id}/payment', name: 'app_reservation_payment')]
+    public function payment(
+        Reservation $reservation,
+        StripeService $stripeService
+    ): Response {
+        // Vérifier que l'utilisateur est bien le propriétaire de la réservation
+        if ($reservation->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
         }
 
-        $reservation = new Reservation();
-        $reservation->setService($service);
-        $reservation->setUser($this->getUser());
-        $reservation->setPrice($service->getPrice());
-        $reservation->setStatus('pending');
+        // Vérifier que la réservation est en statut 'pending'
+        if ($reservation->getStatus() !== 'pending') {
+            throw $this->createNotFoundException('Cette réservation ne peut plus être payée');
+        }
 
-        $form = $this->createForm(ReservationDateType::class, $reservation);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reservation);
-            $entityManager->flush();
-        
-            return $this->redirectToRoute('app_reservation_payment', [
-                'id' => $reservation->getId(),
+        try {
+            $paymentIntent = $stripeService->createPaymentIntent($reservation);
+            
+            return $this->render('reservation/payment.html.twig', [
+                'reservation' => $reservation,
+                'clientSecret' => $paymentIntent['clientSecret'], // Notez le changement ici
+                'publicKey' => $stripeService->getPublicKey()
             ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la préparation du paiement');
+            return $this->redirectToRoute('services_list');
         }
-
-        return $this->render('reservation/index.html.twig', [
-            'service' => $service,
-            'form' => $form->createView(),
-        ]);
     }
 
-    #[Route('/reservation/{id}/payment', name: 'app_reservation_payment')]
-    public function payment(Reservation $reservation, StripeService $stripeService): Response
+    // Ajouter une route pour le webhook Stripe
+    #[Route('/webhook/stripe', name: 'stripe_webhook', methods: ['POST'])]
+    public function stripeWebhook(
+        Request $request,
+        StripeService $stripeService,
+        ParameterBagInterface $params
+    ): Response {
+        $payload = $request->getContent();
+        $sigHeader = $request->headers->get('stripe-signature');
+        $webhookSecret = $params->get('stripe_webhook_secret');
+
+        try {
+            $stripeService->handleWebhook($payload, $sigHeader, $webhookSecret);
+            return new Response('Webhook handled', Response::HTTP_OK);
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            error_log('Stripe webhook error: ' . $e->getMessage());
+            return new Response('Webhook error: ' . $e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    // Ajouter une route pour la confirmation de paiement
+    #[Route('/reservation/{id}/confirmation', name: 'app_reservation_confirmation')]
+    public function confirmation(Reservation $reservation): Response
     {
         if ($reservation->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
 
-        $paymentIntent = $stripeService->createPaymentIntent($reservation);
-
-        return $this->render('reservation/payment.html.twig', [
-            'reservation' => $reservation,
-            'clientSecret' => $paymentIntent->client_secret,
-            'publicKey' => $this->getParameter('app.stripe_public_key'),
+        return $this->render('reservation/confirmation.html.twig', [
+            'reservation' => $reservation
         ]);
     }
+    
 }
