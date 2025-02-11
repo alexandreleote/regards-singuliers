@@ -30,76 +30,109 @@ class StripeService
 
     public function createPaymentIntent(Reservation $reservation): array
     {
-        // Chercher d'abord si le produit existe déjà
-        $productId = 'service_' . $reservation->getService()->getId();
         try {
-            $product = $this->stripe->products->retrieve($productId);
-        } catch (\Exception $e) {
-            // Créer le produit s'il n'existe pas
-            $product = $this->stripe->products->create([
-                'id' => $productId,
-                'name' => $reservation->getService()->getTitle(),
-                'description' => $reservation->getService()->getDescription(),
-                'metadata' => [
-                    'service_id' => $reservation->getService()->getId(),
-                ],
-            ]);
-        }
-
-        // Log de débogage
-        error_log('Création de l\'intention de paiement pour la réservation : ' . $reservation->getId());
-        error_log('Montant : ' . $reservation->getPrice());
-
-        try {
-            // Créer le prix
-            $price = $this->stripe->prices->create([
-                'product' => $product->id,
-                'unit_amount' => (int)($reservation->getPrice() * 100),
-                'currency' => 'eur',
-            ]);
-
-            // Créer l'intention de paiement
-            $paymentIntent = $this->stripe->paymentIntents->create([
-                'amount' => (int)($reservation->getPrice() * 100),
-                'currency' => 'eur',
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                ],
-                'metadata' => [
-                    'reservation_id' => $reservation->getId(),
-                    'service_id' => $reservation->getService()->getId(),
-                    'user_id' => $reservation->getUser()->getId(),
-                ],
-            ]);
-
-            error_log('PaymentIntent créé : ' . $paymentIntent->id);
-
-            // Créer l'entité Payment
-            $payment = new Payment();
-            $payment->setStripePaymentId($paymentIntent->id);
-            $payment->setAmount($reservation->getPrice());
-            $payment->setDepositAmount($reservation->getPrice() * 0.3);
-            $payment->setPaymentStatus('pending');
-            $payment->setPaymentDate(new \DateTimeImmutable());
-            $payment->setValidationStatus(false);
-            $payment->setReservation($reservation);
-
-            try {
-                $this->entityManager->persist($payment);
-                $this->entityManager->flush();
-            } catch (\Exception $e) {
-                throw new \Exception('Erreur lors de la création du paiement : ' . $e->getMessage());
-            }
-
-            return [
-                'clientSecret' => $paymentIntent->client_secret,
-                'paymentId' => $payment->getId(),
-            ];
-        } catch (\Exception $e) {
-            // Log détaillé de l'erreur
-            error_log('Erreur Stripe : ' . $e->getMessage());
-            error_log('Trace : ' . $e->getTraceAsString());
+            // Vérifier si un paiement existe déjà pour cette réservation
+            $existingPayment = $this->entityManager->getRepository(Payment::class)
+                ->findOneBy(['reservation' => $reservation]);
             
+            if ($existingPayment) {
+                error_log('Paiement existant trouvé pour la réservation : ' . $reservation->getId());
+                return [
+                    'clientSecret' => $existingPayment->getStripePaymentId(),
+                    'paymentId' => $existingPayment->getId(),
+                ];
+            }
+    
+            // Debug: Log reservation and service details
+            error_log('Reservation ID: ' . $reservation->getId());
+            error_log('Service ID: ' . $reservation->getService()->getId());
+            error_log('User ID: ' . $reservation->getUser()->getId());
+    
+            // Chercher d'abord si le produit existe déjà
+            $productId = 'service_' . $reservation->getService()->getId();
+            try {
+                $product = $this->stripe->products->retrieve($productId);
+            } catch (\Exception $e) {
+                error_log('Erreur lors de la récupération du produit : ' . $e->getMessage());
+                
+                // Créer le produit s'il n'existe pas
+                $product = $this->stripe->products->create([
+                    'id' => $productId,
+                    'name' => $reservation->getService()->getTitle(),
+                    'description' => $reservation->getService()->getDescription(),
+                    'metadata' => [
+                        'service_id' => $reservation->getService()->getId(),
+                    ],
+                ]);
+            }
+    
+            error_log('Création de l\'intention de paiement pour la réservation : ' . $reservation->getId());
+            error_log('Montant : ' . $reservation->getPrice());
+    
+            try {
+                // Créer le prix
+                $price = $this->stripe->prices->create([
+                    'product' => $product->id,
+                    'unit_amount' => (int)($reservation->getPrice() * 100),
+                    'currency' => 'eur',
+                ]);
+    
+                // Créer l'intention de paiement
+                $paymentIntent = $this->stripe->paymentIntents->create([
+                    'amount' => (int)($reservation->getPrice() * 100),
+                    'currency' => 'eur',
+                    'automatic_payment_methods' => [
+                        'enabled' => true,
+                    ],
+                    'metadata' => [
+                        'reservation_id' => $reservation->getId(),
+                        'service_id' => $reservation->getService()->getId(),
+                        'user_id' => $reservation->getUser()->getId(),
+                    ],
+                ]);
+    
+                error_log('PaymentIntent créé : ' . $paymentIntent->id);
+                error_log('PaymentIntent Client Secret: ' . $paymentIntent->client_secret);
+    
+                // Créer l'entité Payment
+                $payment = new Payment();
+                $payment->setStripePaymentId($paymentIntent->id);
+                $payment->setAmount($reservation->getPrice());
+                $payment->setDepositAmount($reservation->getPrice() * 0.3);
+                $payment->setPaymentStatus('pending');
+                $payment->setPaymentDate(new \DateTimeImmutable());
+                $payment->setValidationStatus(false);
+    
+                // Établir explicitement la relation bidirectionnelle
+                $payment->setReservation($reservation);
+                $reservation->setPayment($payment);
+    
+                try {
+                    // Persister la réservation qui va propager la persistence du paiement
+                    $this->entityManager->persist($reservation);
+                    $this->entityManager->flush();
+    
+                    error_log('Paiement créé avec succès - Reservation ID: ' . $reservation->getId());
+                    error_log('Paiement ID: ' . $payment->getId());
+    
+                    return [
+                        'clientSecret' => $paymentIntent->client_secret,
+                        'paymentId' => $payment->getId(),
+                    ];
+                } catch (\Exception $e) {
+                    error_log('Erreur de persistence : ' . $e->getMessage());
+                    error_log('Trace : ' . $e->getTraceAsString());
+                    throw $e;
+                }
+            } catch (\Exception $e) {
+                error_log('Erreur Stripe : ' . $e->getMessage());
+                error_log('Trace : ' . $e->getTraceAsString());
+                
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            error_log('Erreur globale : ' . $e->getMessage());
+            error_log('Trace : ' . $e->getTraceAsString());
             throw $e;
         }
     }

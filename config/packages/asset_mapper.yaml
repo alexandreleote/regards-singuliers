@@ -4,6 +4,7 @@ framework:
         paths:
             - assets/
             - public/
+            - public/img/
         missing_import_mode: strict
 
 when@prod:

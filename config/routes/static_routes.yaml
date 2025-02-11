@@ -1,0 +1,7 @@
+static_files:
+    path: /img/{filename}
+    controller: Symfony\Component\HttpFoundation\FilesystemLoader::load
+    requirements:
+        filename: '.+'
+    defaults:
+        directory: '%kernel.project_dir%/public/img'

@@ -8,6 +8,14 @@ parameters:
     stripe.secret_key: '%env(APP_STRIPE_SECRET_KEY)%'
     stripe.public_key: '%env(APP_STRIPE_PUBLIC_KEY)%'
     stripe.webhook_secret: '%env(APP_STRIPE_WEBHOOK_SECRET)%'
+    app.image_storage_type: 'local'  # Can be 'local' or 'cloud'
+    app.local_upload_directory: '%kernel.project_dir%/public/img'
+    app.cloud_storage_config:
+        base_url: 'https://your-cloud-storage-url.com/bucket'
+        region: 'eu-west-1'
+        key: ''
+        secret: ''
+        bucket: 'your-bucket-name'
 
 services:
     # default configuration for services in *this* file
@@ -29,5 +37,12 @@ services:
             $secretKey: '%stripe.secret_key%'
             $publicKey: '%stripe.public_key%'
             
+    App\Service\ImageService:
+        arguments:
+            $params: !service_locator
+                app.image_storage_type: !tagged_locator { tag: 'parameter_bag', index_by: 'key' }
+                app.local_upload_directory: !tagged_locator { tag: 'parameter_bag', index_by: 'key' }
+                app.cloud_storage_config: !tagged_locator { tag: 'parameter_bag', index_by: 'key' }
+    
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
