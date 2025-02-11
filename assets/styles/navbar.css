@@ -1,0 +1,31 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5rem;
+}
+
+nav .brand >h1 {
+    font-family: var(--font-family-title);
+    font-size: var(--fs-title);
+    font-weight: var(--fw-title);
+    line-height: 1.1;
+}
+
+nav .brand >p {
+    font-family: var(--font-family-text);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+}
+
+.nav-menu >ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    text-transform: uppercase;
+}
+
+.nav-menu >ul >li {
+    font-weight: var(--fw-medium);
+}

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Regards Singuliers - Paiement{% endblock %}
+{% block title %}regards singuliers - Paiement{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -63,91 +63,62 @@
     {{ parent() }}
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        const stripe = Stripe('{{ publicKey }}');
-        const elements = stripe.elements();
-        const clientSecret = '{{ clientSecret }}';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration Stripe
+            const stripe = Stripe('{{ publicKey }}');
+            const elements = stripe.elements();
+            const cardElement = elements.create('card');
+            cardElement.mount('#card-element');
 
-        // Style du formulaire de carte
-        const style = {
-            base: {
-                color: '#1f2937',
-                fontFamily: '"Segoe UI", system-ui, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#6b7280'
-                }
-            },
-            invalid: {
-                color: '#dc2626',
-                iconColor: '#dc2626'
-            }
-        };
-
-        // Création de l'élément carte
-        const card = elements.create('card', {style: style});
-        card.mount('#card-element');
-
-        // Gestion des erreurs en temps réel
-        card.addEventListener('change', function(event) {
-            const displayError = document.getElementById('card-errors');
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
-            }
-        });
-
-        // Soumission du formulaire
-        const form = document.getElementById('payment-form');
-        const submitButton = document.getElementById('submit-button');
-        const spinner = document.getElementById('spinner');
-        const buttonText = document.getElementById('button-text');
-
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            
-            // Désactiver le bouton pendant le traitement
-            submitButton.disabled = true;
-            spinner.classList.remove('hidden');
-            buttonText.textContent = 'Traitement en cours...';
-
-            try {
-                const result = await stripe.confirmCardPayment(clientSecret, {
-                    payment_method: {
-                        card: card,
-                        billing_details: {
-                            name: '{{ app.user.fullName }}'
-                        }
-                    }
-                });
-
-                if (result.error) {
-                    // Gestion des erreurs de paiement
-                    const errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                    
-                    // Réactiver le bouton
-                    submitButton.disabled = false;
-                    spinner.classList.add('hidden');
-                    buttonText.textContent = 'Payer l\'acompte';
+            // Gestion des erreurs
+            cardElement.addEventListener('change', function(event) {
+                const displayError = document.getElementById('card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                    console.error('Erreur de carte Stripe :', event.error);
                 } else {
-                    // Le paiement est réussi
-                    buttonText.textContent = 'Paiement réussi !';
-                    
-                    // Redirection vers la page de confirmation
-                    window.location.href = '{{ path('app_reservation_confirmation', {'id': reservation.id}) }}';
+                    displayError.textContent = '';
                 }
-            } catch (error) {
-                console.error('Erreur:', error);
-                const errorElement = document.getElementById('card-errors');
-                errorElement.textContent = 'Une erreur est survenue lors du traitement du paiement.';
-                
-                // Réactiver le bouton
-                submitButton.disabled = false;
-                spinner.classList.add('hidden');
-                buttonText.textContent = 'Payer l\'acompte';
-            }
+            });
+
+            // Formulaire de paiement
+            const form = document.getElementById('payment-form');
+            const submitButton = document.getElementById('submit-button');
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                submitButton.disabled = true;
+                submitButton.textContent = 'Traitement en cours...';
+
+                try {
+                    const { error, paymentIntent } = await stripe.confirmCardPayment('{{ clientSecret }}', {
+                        payment_method: {
+                            card: cardElement,
+                        }
+                    });
+
+                    if (error) {
+                        // Afficher l'erreur à l'utilisateur
+                        const errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = error.message;
+                        console.error('Erreur de paiement Stripe :', error);
+                        
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Payer';
+                    } else {
+                        // Paiement réussi, rediriger ou afficher un message
+                        console.log('Paiement réussi :', paymentIntent);
+                        window.location.href = '{{ path('app_reservation_confirmation', {'id': reservation.id}) }}';
+                    }
+                } catch (err) {
+                    console.error('Erreur inattendue :', err);
+                    const errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = 'Une erreur inattendue est survenue. Veuillez réessayer.';
+                    
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Payer';
+                }
+            });
         });
     </script>
 {% endblock %}

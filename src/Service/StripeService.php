@@ -46,48 +46,62 @@ class StripeService
             ]);
         }
 
-        // Créer le prix
-        $price = $this->stripe->prices->create([
-            'product' => $product->id,
-            'unit_amount' => (int)($reservation->getPrice() * 100),
-            'currency' => 'eur',
-        ]);
-
-        // Créer l'intention de paiement
-        $paymentIntent = $this->stripe->paymentIntents->create([
-            'amount' => (int)($reservation->getPrice() * 100),
-            'currency' => 'eur',
-            'automatic_payment_methods' => [
-                'enabled' => true,
-            ],
-            'metadata' => [
-                'reservation_id' => $reservation->getId(),
-                'service_id' => $reservation->getService()->getId(),
-                'user_id' => $reservation->getUser()->getId(),
-            ],
-        ]);
-
-        // Créer l'entité Payment
-        $payment = new Payment();
-        $payment->setStripePaymentId($paymentIntent->id);
-        $payment->setAmount($reservation->getPrice());
-        $payment->setDepositAmount($reservation->getPrice() * 0.3);
-        $payment->setPaymentStatus('pending');
-        $payment->setPaymentDate(new \DateTimeImmutable());
-        $payment->setValidationStatus(false);
-        $payment->setReservation($reservation);
+        // Log de débogage
+        error_log('Création de l\'intention de paiement pour la réservation : ' . $reservation->getId());
+        error_log('Montant : ' . $reservation->getPrice());
 
         try {
-            $this->entityManager->persist($payment);
-            $this->entityManager->flush();
-        } catch (\Exception $e) {
-            throw new \Exception('Erreur lors de la création du paiement : ' . $e->getMessage());
-        }
+            // Créer le prix
+            $price = $this->stripe->prices->create([
+                'product' => $product->id,
+                'unit_amount' => (int)($reservation->getPrice() * 100),
+                'currency' => 'eur',
+            ]);
 
-        return [
-            'clientSecret' => $paymentIntent->client_secret,
-            'paymentId' => $payment->getId(),
-        ];
+            // Créer l'intention de paiement
+            $paymentIntent = $this->stripe->paymentIntents->create([
+                'amount' => (int)($reservation->getPrice() * 100),
+                'currency' => 'eur',
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
+                'metadata' => [
+                    'reservation_id' => $reservation->getId(),
+                    'service_id' => $reservation->getService()->getId(),
+                    'user_id' => $reservation->getUser()->getId(),
+                ],
+            ]);
+
+            error_log('PaymentIntent créé : ' . $paymentIntent->id);
+
+            // Créer l'entité Payment
+            $payment = new Payment();
+            $payment->setStripePaymentId($paymentIntent->id);
+            $payment->setAmount($reservation->getPrice());
+            $payment->setDepositAmount($reservation->getPrice() * 0.3);
+            $payment->setPaymentStatus('pending');
+            $payment->setPaymentDate(new \DateTimeImmutable());
+            $payment->setValidationStatus(false);
+            $payment->setReservation($reservation);
+
+            try {
+                $this->entityManager->persist($payment);
+                $this->entityManager->flush();
+            } catch (\Exception $e) {
+                throw new \Exception('Erreur lors de la création du paiement : ' . $e->getMessage());
+            }
+
+            return [
+                'clientSecret' => $paymentIntent->client_secret,
+                'paymentId' => $payment->getId(),
+            ];
+        } catch (\Exception $e) {
+            // Log détaillé de l'erreur
+            error_log('Erreur Stripe : ' . $e->getMessage());
+            error_log('Trace : ' . $e->getTraceAsString());
+            
+            throw $e;
+        }
     }
 
     public function handleWebhook(string $payload, string $sigHeader, string $webhookSecret): void

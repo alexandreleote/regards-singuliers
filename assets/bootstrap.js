@@ -1,5 +1,13 @@
 import { startStimulusApp } from '@symfony/stimulus-bundle';
 
-const app = startStimulusApp();
-// register any custom, 3rd party controllers here
-// app.register('some_controller_name', SomeImportedController);
+const app = startStimulusApp({
+    debug: true,
+    onError(error, controller) {
+        console.error('Erreur Stimulus :', error, 'dans le contrôleur', controller);
+    }
+});
+
+// Gestion globale des erreurs
+window.addEventListener('error', (event) => {
+    console.error('Erreur globale :', event.error);
+});
