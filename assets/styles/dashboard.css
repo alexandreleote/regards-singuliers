@@ -130,7 +130,7 @@
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .action-buttons {
         flex-direction: column;
     }
