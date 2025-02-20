@@ -1,4 +1,3 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -35,3 +34,23 @@ yarn-error.log
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+# VSCode settings
+.vscode/
+
+# Symfony
+/var/cache/
+/var/log/
+
+# Composer
+composer.phar
+composer.lock
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
