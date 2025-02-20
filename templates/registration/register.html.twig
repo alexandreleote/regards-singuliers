@@ -1,0 +1,31 @@
+{% extends 'security/base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Inscription</h1>
+        </div>
+        
+        <div class="auth-body">
+            {{ form_start(registrationForm) }}
+                {{ form_row(registrationForm.email, {
+                    'attr': {'class': 'form-control'}
+                }) }}
+                {{ form_row(registrationForm.plainPassword, {
+                    'attr': {'class': 'form-control'}
+                }) }}
+                {{ form_row(registrationForm.agreeToTerms) }}
+
+                <button type="submit" class="btn btn-primary auth-submit">S'inscrire</button>
+                
+                <div class="auth-links">
+                    <a href="{{ path('app_login') }}">Déjà inscrit ? Se connecter</a>
+                </div>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

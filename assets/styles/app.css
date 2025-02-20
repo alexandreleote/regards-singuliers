@@ -1,3 +1,404 @@
 body {
-    background-color: skyblue;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.nav-items {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    gap: 2rem;
+}
+
+.logo {
+    margin-right: 2rem;
+}
+
+.logo a {
+    text-decoration: none;
+    color: #333;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text .brand {
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.logo-text .subtitle {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 0.5rem;
+}
+
+.nav-links a:hover {
+    color: #666;
+}
+
+.auth-buttons {
+    margin-left: auto;
+}
+
+.auth-buttons .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.auth-buttons .btn-login {
+    background-color: #333;
+    color: #fff !important;
+}
+
+.auth-buttons .btn-login:hover {
+    background-color: #444;
+    color: #fff !important;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+p {
+    color: #666;
+}
+
+/* Blog styles */
+.blog-posts {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.blog-post {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.blog-post:hover {
+    transform: translateY(-5px);
+}
+
+.blog-post .featured-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.blog-post .featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.blog-post .post-content {
+    padding: 1.5rem;
+}
+
+.blog-post h2 {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+}
+
+.blog-post h2 a {
+    color: #333;
+    text-decoration: none;
+}
+
+.blog-post .post-meta {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.blog-post .category {
+    margin-left: 1rem;
+    padding: 0.2rem 0.5rem;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.blog-post .excerpt {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.blog-post .read-more {
+    display: inline-block;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Blog post detail */
+.blog-post-detail {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-post-detail header {
+    margin-bottom: 2rem;
+}
+
+.blog-post-detail h1 {
+    margin: 0 0 1rem;
+}
+
+.blog-post-detail .featured-image {
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.blog-post-detail .featured-image img {
+    width: 100%;
+    height: auto;
+}
+
+.blog-post-detail .post-content {
+    line-height: 1.8;
+    color: #333;
+}
+
+.blog-post-detail footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.back-to-blog {
+    display: inline-block;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+@media (min-width: 768px) {
+    .blog-posts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .blog-posts {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Profile styles */
+.profile-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 2rem auto;
+}
+
+.profile-info {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-actions .btn,
+.form-actions .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-profile {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-profile:hover {
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
+
+.delete-account-form {
+    margin-left: auto;
+}
+
+.profile-edit-container,
+.change-password-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.profile-form,
+.password-form {
+    margin-top: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end;
+}
+
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.form-control:focus {
+    border-color: #666;
+    outline: none;
+}
+
+.info-group {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.info-group h3 {
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.info-group p {
+    margin-bottom: 0.5rem;
+}
+
+.info-group strong {
+    color: #555;
+}
+
+.badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+/* Admin Button */
+.admin-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #343a40;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.admin-button:hover {
+    background-color: #23272b;
+    color: white;
+    transform: scale(1.1);
+}
+
+.admin-button i {
+    font-size: 1.5rem;
 }

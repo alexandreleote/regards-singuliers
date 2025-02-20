@@ -1,0 +1,137 @@
+/* Dashboard Layout */
+.dashboard-welcome {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    margin-bottom: 2rem;
+}
+
+.dashboard-welcome h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.dashboard-content {
+    padding: 0 1.5rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.quick-actions h2 {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-button {
+    flex: 1;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.action-button i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+}
+
+/* Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.grid-item {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.grid-header {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.grid-header h2 {
+    margin: 0;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.grid-item .calendar,
+.grid-item .discussion-list,
+.grid-item .appointment-list,
+.grid-item .payments-list {
+    padding: 1rem;
+}
+
+.appointment-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.appointment-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+    color: #6c757d;
+}
+
+.appointment-list li:last-child {
+    border-bottom: none;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #6c757d;
+}
+
+.stat-item i {
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}

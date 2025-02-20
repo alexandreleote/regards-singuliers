@@ -1,0 +1,18 @@
+<h1>Vérification de votre adresse email</h1>
+
+<p>
+    Pour vérifier votre adresse email, veuillez cliquer sur le lien ci-dessous :
+</p>
+
+<p>
+    <a href="{{ verifyUrl|raw }}">Vérifier mon adresse email</a>
+</p>
+
+<p>
+    Ce lien expirera dans {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+</p>
+
+<p>
+    Cordialement,<br>
+    L'équipe Regards Singuliers
+</p>

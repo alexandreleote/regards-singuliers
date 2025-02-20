@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog - Regards Singuliers{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Blog</h1>
+    
+    <div class="blog-posts">
+        {% for post in posts %}
+            <article class="blog-post">
+                {% if post.featuredImage %}
+                    <div class="featured-image">
+                        <img src="{{ asset(post.featuredImage) }}" alt="{{ post.title }}">
+                    </div>
+                {% endif %}
+                
+                <div class="post-content">
+                    <h2>
+                        <a href="{{ path('app_blog_show', {slug: post.slug}) }}">{{ post.title }}</a>
+                    </h2>
+                    
+                    <div class="post-meta">
+                        <span class="date">{{ post.publishedAt ? post.publishedAt|date('d/m/Y') : post.createdAt|date('d/m/Y') }}</span>
+                    </div>
+                    
+                    <div class="excerpt">
+                        {{ post.excerpt }}
+                    </div>
+                    
+                    <a href="{{ path('app_blog_show', {slug: post.slug}) }}" class="read-more">
+                        Lire la suite
+                    </a>
+                </div>
+            </article>
+        {% else %}
+            <p>Aucun article disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
