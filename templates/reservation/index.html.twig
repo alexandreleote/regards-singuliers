@@ -5,36 +5,9 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-    <style>
-        .service-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-        .service-card:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        .selected-service {
-            border-color: #4CAF50;
-            background-color: #f8fff8;
-        }
-        #calendar-container {
-            margin-top: 30px;
-        }
-        #payment-form {
-            max-width: 600px;
-            margin: 20px auto;
-        }
-        #card-element {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-    </style>
+    {{ encore_entry_link_tags('reservation_styles') }}
+    <meta name="stripe-public-key" content="{{ stripe_public_key }}">
+    <meta name="user-email" content="{{ app.user.email }}">
 {% endblock %}
 
 {% block body %}
@@ -82,94 +55,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://assets.calendly.com/assets/external/widget.js"></script>
-    <script>
-        const stripe = Stripe('{{ stripe_public_key }}');
-        let selectedService = null;
-        let selectedDate = null;
-
-        // Gestion de la sélection du service
-        document.querySelectorAll('.select-service').forEach(button => {
-            button.addEventListener('click', function() {
-                const serviceCard = this.closest('.service-card');
-                selectedService = serviceCard.dataset.serviceId;
-                
-                document.querySelectorAll('.service-card').forEach(card => {
-                    card.classList.remove('selected-service');
-                });
-                serviceCard.classList.add('selected-service');
-                
-                // Afficher le calendrier
-                document.getElementById('calendar-section').style.display = 'block';
-                initCalendly();
-            });
-        });
-
-        // Initialisation de Calendly
-        function initCalendly() {
-            Calendly.initInlineWidget({
-                url: 'https://calendly.com/votre-compte/consultation',
-                parentElement: document.getElementById('calendar-container'),
-                prefill: {
-                    email: '{{ app.user.email }}'
-                },
-                minBookingNotice: 1440, // 24 heures minimum
-            });
-        }
-
-        // Écouteur d'événements Calendly
-        window.addEventListener('message', function(e) {
-            if (e.data.event === 'calendly.event_scheduled') {
-                selectedDate = e.data.payload.event.start_time;
-                document.getElementById('payment-section').style.display = 'block';
-                initializeStripe();
-            }
-        });
-
-        // Initialisation de Stripe
-        function initializeStripe() {
-            const elements = stripe.elements();
-            const card = elements.create('card');
-            card.mount('#card-element');
-
-            const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                
-                const response = await fetch('/reservation/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        service_id: selectedService,
-                        booking_date: selectedDate
-                    })
-                });
-
-                const data = await response.json();
-                
-                const result = await stripe.confirmCardPayment(data.client_secret, {
-                    payment_method: {
-                        card: card,
-                        billing_details: {
-                            email: '{{ app.user.email }}'
-                        }
-                    }
-                });
-
-                if (result.error) {
-                    document.getElementById('payment-message').textContent = result.error.message;
-                } else {
-                    // Confirmation du paiement côté serveur
-                    await fetch(`/reservation/confirm/${data.reservation_id}`, {
-                        method: 'POST'
-                    });
-                    
-                    window.location.href = '/profile'; // Redirection vers le profil
-                }
-            });
-        }
-    </script>
+    {{ encore_entry_script_tags('reservation') }}
 {% endblock %}

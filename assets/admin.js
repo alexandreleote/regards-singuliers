@@ -1,6 +1,3 @@
-// Import des styles
-import './styles/admin.css';
-
 // Gestion du menu responsive
 document.addEventListener('DOMContentLoaded', () => {
     // Toggle pour le menu latéral sur mobile
@@ -9,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (toggleSidebar && adminSidebar) {
         toggleSidebar.addEventListener('click', () => {
-            adminSidebar.classList.toggle('collapsed');
+            adminSidebar.classList.toggle('show');
         });
     }
 
@@ -25,13 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Fonction pour les confirmations de suppression
-export function confirmDelete(message = 'Êtes-vous sûr de vouloir supprimer cet élément ?') {
+function confirmDelete(message = 'Êtes-vous sûr de vouloir supprimer cet élément ?') {
     return confirm(message);
 }
 
 // Fonction pour les notifications
-export function notify(message, type = 'success') {
-    // Vous pouvez implémenter votre propre système de notification ici
-    // Par exemple, en utilisant toastr ou une autre bibliothèque
+function notify(message, type = 'success') {
+    // Implémentation des notifications
     console.log(`${type}: ${message}`);
 }
+
+export { confirmDelete, notify };

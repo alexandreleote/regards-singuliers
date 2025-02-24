@@ -91,4 +91,44 @@ class AdminController extends AbstractController
             'controller_name' => 'AdminController',
         ]);
     }
+
+    #[Route('/planning', name: 'app_admin_planning')]
+    public function planning(): Response
+    {
+        return $this->render('admin/planning.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
+
+    #[Route('/services', name: 'app_admin_services')]
+    public function services(): Response
+    {
+        return $this->render('admin/services.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
+
+    #[Route('/discussions', name: 'app_admin_discussions')]
+    public function discussions(): Response
+    {
+        return $this->render('admin/discussions.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
+
+    #[Route('/projects', name: 'app_admin_projects')]
+    public function projects(): Response
+    {
+        return $this->render('admin/projects.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
+
+    #[Route('/content', name: 'app_admin_content')]
+    public function content(): Response
+    {
+        return $this->render('admin/content.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
 }

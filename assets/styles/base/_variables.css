@@ -1,0 +1,18 @@
+:root {
+    --primary-color: #4A4A4A;
+    --text-color: #4A4A4A;
+    --background-color: #FDF9F3;
+    --accent-color: #666666;
+    --font-main: 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
+    
+    /* Breakpoints */
+    --mobile: 768px;
+    --tablet: 1024px;
+    --desktop: 1400px;
+}

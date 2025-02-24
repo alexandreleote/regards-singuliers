@@ -1,164 +1,82 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Tableau de bord - Administration{% endblock %}
+{% block title %}Tableau de bord{% endblock %}
 
 {% block body %}
-<div class="admin-container">
-    <nav class="admin-sidebar">
-        <div class="sidebar-header">
-            <h3>Administration</h3>
-        </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active" href="{{ path('app_admin_dashboard') }}">
-                    <i class="fas fa-tachometer-alt"></i> Tableau de bord
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_admin_pages') }}">
-                    <i class="fas fa-file"></i> Pages
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_admin_blog') }}">
-                    <i class="fas fa-blog"></i> Blog
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_admin_realisations') }}">
-                    <i class="fas fa-images"></i> Réalisations
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_admin_prestations') }}">
-                    <i class="fas fa-concierge-bell"></i> Prestations
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_admin_entreprise') }}">
-                    <i class="fas fa-building"></i> Entreprise
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_home') }}">
-                    <i class="fas fa-arrow-left"></i> Retour au site
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <div class="admin-header">
+        <h1>Tableau de bord</h1>
+    </div>
 
-    <main class="admin-main">
-        <div class="admin-header">
-            <h1>Tableau de bord</h1>
-            <div class="user-info">
-                <span>{{ app.user.email }}</span>
-                <a href="{{ path('app_logout') }}" class="btn btn-outline-danger btn-sm">
-                    <i class="fas fa-sign-out-alt"></i> Déconnexion
-                </a>
-            </div>
-        </div>
-
-        <div class="admin-content">
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ label }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Rendez-vous du jour</h5>
-                        </div>
-                        <div class="card-body">
-                            {% if appointments is defined and appointments is not empty %}
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nom</th>
-                                            <th>Email</th>
-                                            <th>Début</th>
-                                            <th>Fin</th>
-                                            <th>Statut</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for appointment in appointments %}
-                                            <tr>
-                                                <td>{{ appointment.name }}</td>
-                                                <td>{{ appointment.email }}</td>
-                                                <td>{{ appointment.startTime|date('d/m/Y H:i') }}</td>
-                                                <td>{{ appointment.endTime|date('d/m/Y H:i') }}</td>
-                                                <td>{{ appointment.status }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <p class="text-muted">Aucun rendez-vous aujourd'hui</p>
-                            {% endif %}
+    <div class="admin-content">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <div class="stat-value">{{ users_count }}</div>
+                                <div class="stat-label">Utilisateurs</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="stat-item">
-                                        <i class="fas fa-users"></i>
-                                        <span class="stat-value">{{ users_count }}</span>
-                                        <span class="stat-label">Utilisateurs</span>
-                                    </div>
-                                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="stat-item">
+                            <i class="fas fa-file-alt"></i>
+                            <div>
+                                <div class="stat-value">{{ posts_count }}</div>
+                                <div class="stat-label">Articles</div>
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="stat-item">
-                                        <i class="fas fa-newspaper"></i>
-                                        <span class="stat-value">{{ posts_count }}</span>
-                                        <span class="stat-label">Articles</span>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="stat-item">
+                            <i class="fas fa-concierge-bell"></i>
+                            <div>
+                                <div class="stat-value">{{ services_count }}</div>
+                                <div class="stat-label">Services</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-</div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .stat-item i {
+            font-size: 1.5em;
+            color: var(--primary-color);
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: #6c757d;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.admin-sidebar');
-            const main = document.querySelector('.admin-main');
-            
-            // Ajouter un bouton pour le menu mobile
-            if (window.innerWidth <= 768) {
-                const toggleButton = document.createElement('button');
-                toggleButton.className = 'btn btn-dark d-md-none';
-                toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
-                toggleButton.style.position = 'fixed';
-                toggleButton.style.top = '1rem';
-                toggleButton.style.left = '1rem';
-                toggleButton.style.zIndex = '1050';
-                
-                document.body.appendChild(toggleButton);
-                
-                toggleButton.addEventListener('click', function() {
-                    sidebar.classList.toggle('show');
-                    main.classList.toggle('sidebar-shown');
-                });
-            }
-        });
-    </script>
+    {{ encore_entry_script_tags('admin') }}
 {% endblock %}

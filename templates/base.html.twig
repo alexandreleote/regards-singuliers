@@ -1,139 +1,101 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>
-			{% block title %}Welcome!{% endblock %}
-		</title>
-		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-		{% block stylesheets %}
-			{{ encore_entry_link_tags('app') }}
-			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-		{% endblock %}
-	</head>
-	<body>
-		{% if is_granted('ROLE_ADMIN') %}
-			<a href="{{ path('app_admin_dashboard') }}" class="admin-button" title="Administration">
-				<i class="fas fa-cog"></i>
-			</a>
-		{% endif %}
-		
-		<div class="page-wrapper">
-			<header>
-				<nav class="main-nav">
-					<div class="nav-items container">
-						<div class="logo">
-							<a href="{{ path('app_home') }}">
-								<div class="logo-text">
-									<span class="brand">Regards Singuliers</span>
-									<span class="subtitle">Priscillia Leote - Architecte d'intérieur</span>
-								</div>
-							</a>
-						</div>
-						<div class="nav-links">
-							<a href="{{ path('app_about') }}">À propos</a>
-							<a href="{{ path('app_realisations') }}">Réalisations</a>
-							<a href="{{ path('app_prestations') }}">Prestations</a>
-							<a href="{{ path('app_blog') }}">Blog</a>
-							<a href="{{ path('app_contact') }}">Contact</a>
-						</div>
-						<div class="auth-buttons">
-							{% if app.user %}
-								<a href="{{ path('app_profile') }}" class="btn btn-profile">Mon Profil</a>
-								<a href="{{ path('app_logout') }}" class="btn">Déconnexion</a>
-							{% else %}
-								<a href="{{ path('app_login') }}" class="btn btn-login">Connexion</a>
-							{% endif %}
-						</div>
-					</div>
-				</nav>
-			</header>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Regards Singuliers{% endblock %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        {% endblock %}
+    </head>
+    <body>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_admin_dashboard') }}" class="admin-button" title="Administration">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="white">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+            </a>
+        {% endif %}
 
-			<main class="main-content">
-				{% block body %}{% endblock %}
-			</main>
+        <header class="site-header">
+            <nav class="site-nav">
+                <a href="{{ path('app_home') }}" class="site-logo">
+                    <h1>regards singuliers</h1>
+                    <span>Priscillia Leote - Architecte d'intérieur</span>
+                </a>
+                <div class="nav-links">
+                    <a href="{{ path('app_about') }}">A PROPOS</a>
+                    <a href="{{ path('app_realisations') }}">REALISATIONS</a>
+                    <a href="{{ path('app_prestations') }}">PRESTATIONS</a>
+                    <a href="{{ path('app_blog') }}">BLOG</a>
+                    <a href="{{ path('app_contact') }}">CONTACT</a>
+                    {% if app.user %}
+                        <a href="{{ path('app_profile') }}" class="connexion">MON PROFIL</a>
+                        <a href="{{ path('app_logout') }}" class="connexion">DÉCONNEXION</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="connexion">CONNEXION</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </header>
 
-			<footer class="footer">
-				<div class="container">
-					<div class="footer-content">
-						<div class="footer-section footer-brand">
-							<div class="footer-logo">
-								<h3>Regards Singuliers</h3>
-								<p>Priscillia Leote - Architecte d'intérieur</p>
-							</div>
-							<div class="social-links">
-								<a href="#" class="social-link">
-									<i class="fab fa-facebook"></i>
-								</a>
-								<a href="#" class="social-link">
-									<i class="fab fa-instagram"></i>
-								</a>
-								<a href="#" class="social-link">
-									<i class="fab fa-pinterest"></i>
-								</a>
-							</div>
-						</div>
-						<div class="footer-section footer-nav">
-							<h3>Navigation</h3>
-							<ul>
-								<li>
-									<a href="{{ path('app_about') }}">À propos</a>
-								</li>
-								<li>
-									<a href="{{ path('app_realisations') }}">Réalisations</a>
-								</li>
-								<li>
-									<a href="{{ path('app_prestations') }}">Prestations</a>
-								</li>
-								<li>
-									<a href="{{ path('app_contact') }}">Contact</a>
-								</li>
-							</ul>
-						</div>
-						<div class="footer-section footer-contact">
-							<h3>Contacts</h3>
-							<ul>
-								<li>
-									<i class="fas fa-map-marker-alt"></i>
-									Adresse, Bretagne
-								</li>
-								<li>
-									<i class="fas fa-envelope"></i>
-									contact@regards-singuliers.fr
-								</li>
-								<li>
-									<i class="fas fa-phone"></i>
-									06 06 06 06 06
-								</li>
-							</ul>
-						</div>
-						<div class="footer-section footer-legal">
-							<h3>Informations légales</h3>
-							<ul>
-								<li>
-									<a href="{{ path('app_legal_page', {slug: 'cgu-cgv'}) }}">C.G.U / C.G.V</a>
-								</li>
-								<li>
-									<a href="{{ path('app_legal_page', {slug: 'politique-de-confidentialite'}) }}">Confidentialité</a>
-								</li>
-								<li>
-									<a href="{{ path('app_legal_page', {slug: 'mentions-legales'}) }}">Mentions légales</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<div class="footer-bottom">
-						<p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecte & décoratrice d'intérieur Bretagne</p>
-						<p>Tous droits réservés</p>
-					</div>
-				</div>
-			</footer>
-		</div>
+        <main class="main-content"> {% block body %}{% endblock %}
+        </main>
 
-		{% block javascripts %}
-			{{ encore_entry_script_tags('app') }}
-			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-		{% endblock %}
-	</body>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="{{ path('app_home') }}" class="footer-logo">
+                        <h2>regards singuliers</h2>
+                        <span>Priscillia Leote - Architecte d'intérieur</span>
+                    </a>
+                    <div class="social-links">
+                        <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" target="_blank" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-nav">
+                    <h3>NAVIGATION</h3>
+                    <ul>
+                        <li><a href="{{ path('app_about') }}">À PROPOS</a></li>
+                        <li><a href="{{ path('app_realisations') }}">RÉALISATIONS</a></li>
+                        <li><a href="{{ path('app_prestations') }}">PRESTATIONS</a></li>
+                        <li><a href="{{ path('app_contact') }}">CONTACT</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h3>CONTACTS</h3>
+                    <ul>
+                        <li>regards singuliers</li>
+                        <li>Adresse, Bretagne</li>
+                        <li><a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a></li>
+                        <li>Tél: 06 06 06 06 06</li>
+                    </ul>
+                </div>
+
+                <div class="footer-legal">
+                    <h3>INFORMATIONS LÉGALES</h3>
+                    <ul>
+                        <li><a href="{{ path('app_legal_page', { slug: 'cgu-cgv' }) }}">C.G.U / C.G.V</a></li>
+                        <li><a href="{{ path('app_legal_page', { slug: 'confidentialite' }) }}">Confidentialité</a></li>
+                        <li><a href="{{ path('app_legal_page', { slug: 'mentions-legales' }) }}">Mentions légales</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p> 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecte & décoratrice d'intérieur Bretagne</p>
+                <p>Tous droits réservés</p>
+            </div>
+        </footer>
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {% endblock %}
+    </body>
 </html>

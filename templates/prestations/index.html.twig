@@ -3,8 +3,29 @@
 {% block title %}Prestations - Regards Singuliers{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>Nos Prestations</h1>
-    <p>Découvrez l'ensemble de nos services en design d'intérieur.</p>
-</div>
+    <div class="container my-5">
+        <h1 class="text-center mb-5">Nos Prestations</h1>
+        <p class="text-center mb-5">Découvrez l'ensemble de nos services en design d'intérieur.</p>
+        
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for service in services %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ service.title }}</h5>
+                            <p class="card-text">
+                                <strong class="d-block mb-2">{{ service.price }}€</strong>
+                                <span class="text-muted">Durée : {{ service.duration }} minutes</span>
+                            </p>
+                            <a href="{{ path('app_prestations') }}" class="btn btn-primary w-100 mt-3">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">Aucune prestation n'est disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

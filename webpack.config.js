@@ -21,9 +21,9 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('admin', './assets/js/admin.js')
-    .addStyleEntry('admin_styles', './assets/styles/admin.css')
-    .addStyleEntry('dashboard_styles', './assets/styles/dashboard.css')
+    .addEntry('admin', './assets/admin.js')
+    .addEntry('dashboard', './assets/dashboard.js')
+    .addEntry('reservation', './assets/reservation.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -47,13 +47,13 @@ Encore
 
     // configure Babel
     // .configureBabel((config) => {
-    //     config.plugins.push('@babel/a-babel-plugin');
+    //     config.plugins.push('@babel/plugin-proposal-class-properties');
     // })
 
-    // enables and configure @babel/preset-env polyfills
+    // enables @babel/preset-env polyfills
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';
-        config.corejs = '3.38';
+        config.corejs = 3;
     })
 
     // enables Sass/SCSS support

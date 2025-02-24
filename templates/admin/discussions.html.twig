@@ -1,0 +1,17 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Discussions - Administration{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    {% include 'admin/dashboard.html.twig' with {'active_page': 'discussions'} %}
+    <main class="admin-main">
+        <div class="admin-header">
+            <h1>Discussions</h1>
+        </div>
+        <div class="admin-content">
+            <p>Contenu de la page Discussions</p>
+        </div>
+    </main>
+</div>
+{% endblock %}

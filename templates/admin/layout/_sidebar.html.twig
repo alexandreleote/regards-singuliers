@@ -1,10 +1,46 @@
-{% extends '@EasyAdmin/menu.html.twig' %}
+<nav class="admin-sidebar">
+	<div class="sidebar-header">
+		<h3>Administration</h3>
+	</div>
 
-{% block main_menu_before %}
-    <div class="sidebar-header">
-        <div class="logo">Regards Singuliers</div>
-        <button class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-{% endblock %}
+	<div class="nav flex-column">
+		<a href="{{ path('admin_dashboard') }}" class="nav-link {% if app.request.get('_route') == 'admin_dashboard' %}active{% endif %}">
+			<i class="fas fa-tachometer-alt"></i>
+			<span>Tableau de bord</span>
+		</a>
+
+		<a href="{{ path('admin_services_index') }}" class="nav-link {% if app.request.get('_route') starts with 'admin_services_' %}active{% endif %}">
+			<i class="fas fa-concierge-bell"></i>
+			<span>Prestations</span>
+		</a>
+
+		<a href="#" class="nav-link">
+			<i class="fas fa-comments"></i>
+			<span>Discussions</span>
+		</a>
+
+		<a href="#" class="nav-link">
+			<i class="fas fa-project-diagram"></i>
+			<span>Projets</span>
+		</a>
+
+		<a href="#" class="nav-link">
+			<i class="fas fa-file-alt"></i>
+			<span>Contenu</span>
+		</a>
+	</div>
+
+	<div class="mt-auto">
+		<a href="{{ path('app_home') }}" class="nav-link">
+			<i class="fas fa-home"></i>
+			<span>Retour au site</span>
+		</a>
+
+		<div class="logout">
+			<a href="{{ path('app_logout') }}" class="btn btn-outline-light w-100">
+				<i class="fas fa-sign-out-alt"></i>
+				<span>Déconnexion</span>
+			</a>
+		</div>
+	</div>
+</nav>
