@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réalisations{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Mes Réalisations</h1>
+    
+    {% if realisations is not empty %}
+        <div class="row">
+            {% for realisation in realisations %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if realisation.featuredImage %}
+                            <img src="{{ asset('uploads/realisations/' ~ realisation.featuredImage) }}" class="card-img-top" alt="{{ realisation.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ realisation.title }}</h5>
+                            <p class="card-text">{{ realisation.description|raw }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Réalisé le {{ realisation.createdAt|date('d/m/Y') }}
+                                </small>
+                            </p>
+                            {% if realisation.link %}
+                                <a href="{{ realisation.link }}" class="btn btn-primary" target="_blank">Voir le projet</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">Aucune réalisation pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}
