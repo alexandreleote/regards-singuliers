@@ -2,44 +2,36 @@
 
 namespace App\Entity;
 
-use App\Repository\ServiceRepository;
+use App\Repository\BlogRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ServiceRepository::class)]
+#[ORM\Entity(repositoryClass: BlogRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Service
+class Blog
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: "Le titre du service est requis")]
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre ne peut pas être vide")]
     #[Assert\Length(
-        min: 3,
-        max: 50,
+        min: 5,
+        max: 255,
         minMessage: "Le titre doit faire au moins {{ limit }} caractères",
         maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères"
     )]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
-    #[Assert\NotBlank(message: "Le prix du service est requis")]
-    #[Assert\Positive(message: "Le prix doit être un nombre positif")]
-    private ?string $price = null;
-
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: "La description du service est requise")]
-    #[Assert\Length(
-        min: 10,
-        max: 1000,
-        minMessage: "La description doit faire au moins {{ limit }} caractères",
-        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères"
-    )]
-    private ?string $description = null;
+    #[Assert\NotBlank(message: "Le contenu ne peut pas être vide")]
+    private ?string $content = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -51,7 +43,14 @@ class Service
     private ?string $featuredImage = null;
 
     #[ORM\Column]
-    private bool $isActive = true;
+    private bool $isPublished = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 160,
+        maxMessage: "La meta description ne peut pas dépasser {{ limit }} caractères"
+    )]
+    private ?string $metaDescription = null;
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
@@ -65,6 +64,7 @@ class Service
         $this->updatedAt = new \DateTime();
     }
 
+    // Getters and Setters
     public function getId(): ?int
     {
         return $this->id;
@@ -78,29 +78,24 @@ class Service
     public function setTitle(string $title): static
     {
         $this->title = $title;
+        $this->slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getContent(): ?string
     {
-        return $this->price;
+        return $this->content;
     }
 
-    public function setPrice(string $price): static
+    public function setContent(string $content): static
     {
-        $this->price = $price;
+        $this->content = $content;
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getSlug(): ?string
     {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): static
-    {
-        $this->description = $description;
-        return $this;
+        return $this->slug;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface
@@ -124,14 +119,25 @@ class Service
         return $this;
     }
 
-    public function isActive(): bool
+    public function isIsPublished(): bool
     {
-        return $this->isActive;
+        return $this->isPublished;
     }
 
-    public function setIsActive(bool $isActive): static
+    public function setIsPublished(bool $isPublished): static
     {
-        $this->isActive = $isActive;
+        $this->isPublished = $isPublished;
+        return $this;
+    }
+
+    public function getMetaDescription(): ?string
+    {
+        return $this->metaDescription;
+    }
+
+    public function setMetaDescription(?string $metaDescription): static
+    {
+        $this->metaDescription = $metaDescription;
         return $this;
     }
 }

@@ -25,5 +25,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 255 }
 
+    # Register TimeExtension as a Twig extension
+    App\Twig\TimeExtension:
+        tags:
+            - { name: twig.extension }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

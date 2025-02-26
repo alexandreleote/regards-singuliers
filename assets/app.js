@@ -1,10 +1,16 @@
 import './bootstrap.js';
-/*
- * Welcome to your app's main JavaScript file!
- *
- * This file will be included onto the page via the importmap() Twig function,
- * which should already be in your base.html.twig.
- */
 import './styles/app.css';
+
+// Import FlashMessageManager
+import FlashMessageManager from './js/modules/flashMessageManager.js';
+
+// Initialize FlashMessageManager when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    FlashMessageManager.init({
+        duration: 10000, // 10 secondes
+        containerSelector: '.flash-messages',
+        messageSelector: '.alert'
+    });
+});
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

@@ -8,13 +8,15 @@
         </title>
         {% block stylesheets %}
             <link rel="stylesheet" href="/assets/styles/app.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 		{% endblock %}
 	</head>
 	<body>
 		{% if is_granted('ROLE_ADMIN') %}
 			<a href="{{ path('admin') }}" class="admin-button" title="Administration">
-				<i class="fas fa-dashboard"></i>
+				<span class="material-symbols-outlined">
+					dashboard
+				</span>
 			</a>
 		{% endif %}
 
@@ -44,15 +46,20 @@
 
 		<main class="main-content"> 
 
-            {% for type, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ type }}">
-                        {{ message }}
+            {% block body %}
+                {% if app.flashes|length > 0 %}
+                    <div class="flash-messages">
+                        {% for type, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ type }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            {% endfor %}
+                {% endif %}
+            {% endblock %}
 
-            {% block body %}{% endblock %}
 		</main>
 
         <footer class="site-footer">
@@ -114,6 +121,8 @@
             </div>
         </footer>
 
-        
+        {% block javascripts %}
+            {{ importmap('app') }}
+        {% endblock %}
     </body>
 </html>

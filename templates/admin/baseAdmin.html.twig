@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}{% endblock %}
+        </title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="/assets/styles/app.css">
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+		{% endblock %}
+	</head>
+	<body class="admin-layout">
+		<aside class="admin-sidebar">
+			<nav class="admin-nav">
+				<a href="{{ path('home') }}" class="admin-backToSite">
+					<span class="material-symbols-outlined">
+                        arrow_back
+                    </span>
+                    <span>
+                        Retourner sur le site
+                    </span>
+				</a>
+				<div class="admin-nav-links">
+					<ul>
+						<li><a href="#">Dashboard</a></li>
+						<li><a href="#">Discussions</a></li>
+						<li><a href="#">Prestations</a></li>
+						<li><a href="#">Blog</a></li>
+						<li><a href="#">Contact</a></li>
+					</ul>
+				</div>
+            </nav>
+            <div class="admin-sidebar-bottom">
+                <div class="admin-nav-auth">
+                    <a href="{{ path('logout') }}" class="deconnexion">Déconnexion</a>
+                </div>
+                <footer class="admin-footer">
+                    <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - version 1.0</p>
+                </footer>
+            </div>
+		</aside>
+
+		<main class="admin-content"> 
+            {% block body %}
+                {% if app.flashes|length > 0 %}
+                    <div class="flash-messages">
+                        {% for type, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ type }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endblock %}
+		</main>
+
+        {% block javascripts %}
+            {{ importmap('app') }}
+        {% endblock %}
+	</body>
+</html>
