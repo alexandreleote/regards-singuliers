@@ -13,8 +13,8 @@
 	</head>
 	<body>
 		{% if is_granted('ROLE_ADMIN') %}
-			<a href= class="admin-button" title="Administration">
-				
+			<a href="{{ path('admin') }}" class="admin-button" title="Administration">
+				<i class="fas fa-dashboard"></i>
 			</a>
 		{% endif %}
 
@@ -43,6 +43,15 @@
 		</header>
 
 		<main class="main-content"> 
+
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
             {% block body %}{% endblock %}
 		</main>
 

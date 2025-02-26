@@ -8,6 +8,8 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+    # Prevent default 403 error page
+    access_denied_url: /
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -32,9 +34,8 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/profile, roles: ROLE_USER, requires_channel: ROLE_VERIFIED }
+        - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/, roles: PUBLIC_ACCESS }
-        # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:
