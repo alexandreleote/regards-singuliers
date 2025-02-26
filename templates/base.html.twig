@@ -1,101 +1,110 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Regards Singuliers{% endblock %}</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}{% endblock %}
+        </title>
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        {% endblock %}
-    </head>
-    <body>
-        {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('app_admin_dashboard') }}" class="admin-button" title="Administration">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="white">
-                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                </svg>
-            </a>
-        {% endif %}
+            <link rel="stylesheet" href="/assets/styles/app.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+		{% endblock %}
+	</head>
+	<body>
+		{% if is_granted('ROLE_ADMIN') %}
+			<a href= class="admin-button" title="Administration">
+				
+			</a>
+		{% endif %}
 
-        <header class="site-header">
-            <nav class="site-nav">
-                <a href="{{ path('app_home') }}" class="site-logo">
-                    <h1>regards singuliers</h1>
-                    <span>Priscillia Leote - Architecte d'intérieur</span>
-                </a>
-                <div class="nav-links">
-                    <a href="{{ path('app_about') }}">A PROPOS</a>
-                    <a href="{{ path('app_realisations') }}">REALISATIONS</a>
-                    <a href="{{ path('app_prestations') }}">PRESTATIONS</a>
-                    <a href="{{ path('app_blog') }}">BLOG</a>
-                    <a href="{{ path('app_contact') }}">CONTACT</a>
-                    {% if app.user %}
-                        <a href="{{ path('app_profile') }}" class="connexion">MON PROFIL</a>
-                        <a href="{{ path('app_logout') }}" class="connexion">DÉCONNEXION</a>
-                    {% else %}
-                        <a href="{{ path('app_login') }}" class="connexion">CONNEXION</a>
-                    {% endif %}
-                </div>
-            </nav>
-        </header>
+		<header class="site-header">
+			<nav class="site-nav">
+				<a href="{{ path('home') }}" class="site-logo">
+					<h1>regards singuliers</h1>
+					<span>Priscilia Leote - Architecte d'intérieur</span>
+				</a>
+				<div class="nav-links">
+					<li><a href=>Le Studio</a></li>
+                    <li><a href=>Réalisations</a></li>
+                    <li><a href=>Prestations</a></li>
+                    <li><a href=>Blog</a></li>
+                    <li><a href=>Contact</a></li>
+				</div>
+                <div class="nav-auth">
+					{% if app.user %}
+						<a href="{{ path('app_profile') }}" class="connexion">Mon Profil</a>
+						<a href="{{ path('app_logout') }}" class="connexion">Déconnexion</a>
+					{% else %}
+						<a href="{{ path('app_login') }}" class="connexion">Connexion</a>
+					{% endif %}
+				</div>
+			</nav>
+		</header>
 
-        <main class="main-content"> {% block body %}{% endblock %}
-        </main>
+		<main class="main-content"> 
+            {% block body %}{% endblock %}
+		</main>
 
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <a href="{{ path('app_home') }}" class="footer-logo">
+                    <a href="{{ path('home') }}" class="footer-logo">
                         <h2>regards singuliers</h2>
-                        <span>Priscillia Leote - Architecte d'intérieur</span>
+                        <span>Priscilia Leote - Architecte d'intérieur</span>
                     </a>
                     <div class="social-links">
-                        <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" target="_blank" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" target="_blank" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" target="_blank" aria-label="Pinterest">
+                            <i class="fab fa-pinterest"></i>
+                        </a>
                     </div>
                 </div>
 
                 <div class="footer-nav">
-                    <h3>NAVIGATION</h3>
+                    <h3>Navigation</h3>
                     <ul>
-                        <li><a href="{{ path('app_about') }}">À PROPOS</a></li>
-                        <li><a href="{{ path('app_realisations') }}">RÉALISATIONS</a></li>
-                        <li><a href="{{ path('app_prestations') }}">PRESTATIONS</a></li>
-                        <li><a href="{{ path('app_contact') }}">CONTACT</a></li>
+                        <li><a href=>Le Studio</a></li>
+                        <li><a href=>Réalisations</a></li>
+                        <li><a href=>Prestations</a></li>
+                        <li><a href=>Blog</a></li>
+                        <li><a href=>Contact</a></li>
+                        <li><a href=>F.A.Q</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-contact">
-                    <h3>CONTACTS</h3>
+                    <h3>Coordonnées</h3>
                     <ul>
                         <li>regards singuliers</li>
                         <li>Adresse, Bretagne</li>
-                        <li><a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a></li>
+                        <li>
+                            <a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a>
+                        </li>
                         <li>Tél: 06 06 06 06 06</li>
                     </ul>
                 </div>
 
                 <div class="footer-legal">
-                    <h3>INFORMATIONS LÉGALES</h3>
+                    <h3>Informations Légales</h3>
                     <ul>
-                        <li><a href="{{ path('app_legal_page', { slug: 'cgu-cgv' }) }}">C.G.U / C.G.V</a></li>
-                        <li><a href="{{ path('app_legal_page', { slug: 'confidentialite' }) }}">Confidentialité</a></li>
-                        <li><a href="{{ path('app_legal_page', { slug: 'mentions-legales' }) }}">Mentions légales</a></li>
+                        <li><a href=>C.G.U / C.G.V</a></li>
+                        <li><a href=>Confidentialité</a></li>
+                        <li><a href=>Mentions légales</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-copyright">
-                <p> 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecte & décoratrice d'intérieur Bretagne</p>
+                <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecte d'intérieur, Bretagne</p>
                 <p>Tous droits réservés</p>
             </div>
         </footer>
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        {% endblock %}
+        
     </body>
 </html>

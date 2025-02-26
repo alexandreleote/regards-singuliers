@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Payment;
+use App\Entity\Project;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Payment>
+ * @extends ServiceEntityRepository<Project>
  */
-class PaymentRepository extends ServiceEntityRepository
+class ProjectRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Payment::class);
+        parent::__construct($registry, Project::class);
     }
 
     //    /**
-    //     * @return Payment[] Returns an array of Payment objects
+    //     * @return Project[] Returns an array of Project objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class PaymentRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Payment
+    //    public function findOneBySomeField($value): ?Project
     //    {
     //        return $this->createQueryBuilder('p')
     //            ->andWhere('p.exampleField = :val')
