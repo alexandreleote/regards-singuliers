@@ -33,11 +33,11 @@
 				</div>
                 <div class="nav-auth">
 					{% if app.user %}
-						<a href="{{ path('app_profile') }}" class="connexion">Mon Profil</a>
-						<a href="{{ path('app_logout') }}" class="connexion">Déconnexion</a>
+						<a href="{{ path('profile') }}" class="connexion">Mon Profil</a>
+						<a href="{{ path('logout') }}" class="connexion">Déconnexion</a>
 					{% else %}
-						<a href="{{ path('app_login') }}" class="connexion">Connexion</a>
-					{% endif %}
+						<a href="{{ path('login') }}" class="connexion">Connexion</a>
+                    {% endif %}
 				</div>
 			</nav>
 		</header>
