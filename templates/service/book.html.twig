@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver {{ service.title }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Réserver {{ service.title }}</h1>
+            
+            <div class="card mb-4">
+                {% if service.featuredImage %}
+                    <img src="{{ asset('uploads/services/' ~ service.featuredImage) }}" class="card-img-top" alt="{{ service.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.title }}</h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <p class="card-text font-weight-bold">Prix: {{ service.price }} €</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <h2>Détails de la réservation</h2>
+            
+            {{ form_start(form, {'attr': {'class': 'booking-form'}}) }}
+                <div class="form-group">
+                    {{ form_label(form.bookingDate) }}
+                    {{ form_widget(form.bookingDate, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.bookingDate) }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(form.notes) }}
+                    {{ form_widget(form.notes, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.notes) }}
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Confirmer la réservation</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

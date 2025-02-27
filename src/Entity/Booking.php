@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\BookingRepository;
+use App\Entity\Discussion;
+use App\Entity\Service;
+use App\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BookingRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
@@ -48,6 +51,14 @@ class Booking
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\ManyToOne(targetEntity: Service::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Service $service = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
 
     #[ORM\OneToOne(mappedBy: 'booking', targetEntity: Discussion::class, cascade: ['persist', 'remove'])]
     private ?Discussion $discussion = null;
@@ -133,6 +144,28 @@ class Booking
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): static
+    {
+        $this->service = $service;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+        return $this;
     }
 
     public function getDiscussion(): ?Discussion

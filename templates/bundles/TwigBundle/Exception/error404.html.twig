@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page non trouvée - regards singuliers{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-4 text-danger">404</h1>
+            <h2>Page non trouvée</h2>
+            <p class="lead">Désolé, la page que vous recherchez n'existe pas ou a été déplacée.</p>
+            <a href="{{ path('home') }}" class="btn btn-primary mt-3">Retour à l'accueil</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

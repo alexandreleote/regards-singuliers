@@ -30,7 +30,7 @@ class Blog
     #[Assert\NotBlank(message: "Le contenu ne peut pas être vide")]
     private ?string $content = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 100, unique: true)]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -96,6 +96,12 @@ class Blog
     public function getSlug(): ?string
     {
         return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface

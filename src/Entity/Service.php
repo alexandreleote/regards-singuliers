@@ -6,6 +6,7 @@ use App\Repository\ServiceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -50,6 +51,9 @@ class Service
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $featuredImage = null;
 
+    #[ORM\Column(length: 100, unique: true)]
+    private ?string $slug = null;
+
     #[ORM\Column]
     private bool $isActive = true;
 
@@ -63,6 +67,15 @@ class Service
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTime();
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function setSlugValue(): void
+    {
+        if ($this->title && !$this->slug) {
+            $this->slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $this->title));
+        }
     }
 
     public function getId(): ?int
@@ -121,6 +134,17 @@ class Service
     public function setFeaturedImage(?string $featuredImage): static
     {
         $this->featuredImage = $featuredImage;
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
         return $this;
     }
 

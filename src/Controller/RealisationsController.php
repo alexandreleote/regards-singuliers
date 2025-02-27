@@ -31,7 +31,7 @@ class RealisationsController extends AbstractController
         $realisations = $entityManager->getRepository(Realisation::class)
             ->findBy([], ['createdAt' => 'DESC']);
 
-        return $this->render('realisations/index.html.twig', [
+        return $this->render('realisations/adminIndex.html.twig', [
             'realisations' => $realisations,
         ]);
     }

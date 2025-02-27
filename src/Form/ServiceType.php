@@ -25,18 +25,10 @@ class ServiceType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('shortDescription', TextType::class, [
-                'label' => 'Description courte',
+            ->add('description', TextareaType::class, [
+                'label' => 'Description du service',
                 'attr' => [
-                    'placeholder' => 'Résumé rapide du service',
-                    'class' => 'form-control',
-                    'maxlength' => 150
-                ]
-            ])
-            ->add('fullDescription', TextareaType::class, [
-                'label' => 'Description détaillée',
-                'attr' => [
-                    'placeholder' => 'Décrivez en détail votre service',
+                    'placeholder' => 'Décrivez votre service',
                     'class' => 'form-control',
                     'rows' => 8
                 ]
@@ -68,20 +60,6 @@ class ServiceType extends AbstractType
                 ],
                 'attr' => [
                     'class' => 'form-control-file'
-                ]
-            ])
-            ->add('isHighlighted', CheckboxType::class, [
-                'label' => 'Service mis en avant',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-check-input'
-                ]
-            ])
-            ->add('isAvailable', CheckboxType::class, [
-                'label' => 'Service actuellement disponible',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-check-input'
                 ]
             ]);
     }

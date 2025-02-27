@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\MessageRepository;
+use App\Entity\Discussion;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\MessageRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]

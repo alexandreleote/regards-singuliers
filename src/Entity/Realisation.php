@@ -54,6 +54,9 @@ class Realisation
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
     private ?array $technologiesUsed = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $link = null;
+
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
@@ -162,6 +165,17 @@ class Realisation
     public function setTechnologiesUsed(?array $technologiesUsed): static
     {
         $this->technologiesUsed = $technologiesUsed;
+        return $this;
+    }
+
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
+    public function setLink(?string $link): static
+    {
+        $this->link = $link;
         return $this;
     }
 }
