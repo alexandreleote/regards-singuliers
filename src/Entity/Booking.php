@@ -35,29 +35,15 @@ class Booking
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le nom est requis")]
-    #[Assert\Length(min: 2, max: 255)]
-    private ?string $clientName = null;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "L'email est requis")]
-    #[Assert\Email(message: "L'email n'est pas valide")]
-    private ?string $clientEmail = null;
-
-    #[ORM\Column(length: 20, nullable: true)]
-    #[Assert\Regex(pattern: "/^[0-9\-\+\s()]+$/", message: "Numéro de téléphone invalide")]
-    private ?string $clientPhone = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: Service::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Service $service = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\OneToOne(mappedBy: 'booking', targetEntity: Discussion::class, cascade: ['persist', 'remove'])]
@@ -105,39 +91,6 @@ class Booking
     public function setNotes(?string $notes): static
     {
         $this->notes = $notes;
-        return $this;
-    }
-
-    public function getClientName(): ?string
-    {
-        return $this->clientName;
-    }
-
-    public function setClientName(string $clientName): static
-    {
-        $this->clientName = $clientName;
-        return $this;
-    }
-
-    public function getClientEmail(): ?string
-    {
-        return $this->clientEmail;
-    }
-
-    public function setClientEmail(string $clientEmail): static
-    {
-        $this->clientEmail = $clientEmail;
-        return $this;
-    }
-
-    public function getClientPhone(): ?string
-    {
-        return $this->clientPhone;
-    }
-
-    public function setClientPhone(?string $clientPhone): static
-    {
-        $this->clientPhone = $clientPhone;
         return $this;
     }
 

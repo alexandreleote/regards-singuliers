@@ -20,6 +20,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Explicitly configure Service entity
+    App\Entity\Service:
+        autowire: true
+        autoconfigure: true
+
     # Add the event listener
     App\EventListener\AccessDeniedListener:
         tags:

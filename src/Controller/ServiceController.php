@@ -8,8 +8,11 @@ use App\Form\BookingType;
 use App\Form\ServiceType;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -60,8 +63,26 @@ class ServiceController extends AbstractController
     }
 
     #[Route('/prestation/{slug}/reserver', name: 'prestation_reservation', methods: ['GET', 'POST'])]
-    public function book(Request $request, Service $service, EntityManagerInterface $entityManager): Response
-    {
+    public function book(
+        Request $request, 
+        Service $service, 
+        EntityManagerInterface $entityManager, 
+        ServiceRepository $serviceRepository,
+        LoggerInterface $logger
+    ): Response {
+        $requestSlug = $request->attributes->get('slug');
+        
+        $logger->info('Service Booking Request', [
+            'requested_slug' => $requestSlug
+        ]);
+
+        // Find the service explicitly to ensure it exists
+        $foundService = $serviceRepository->findOneBySlug($requestSlug);
+        
+        if (!$foundService) {
+            throw new NotFoundHttpException("Service with slug '{$requestSlug}' not found");
+        }
+
         // Ensure only authenticated users can book
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -70,7 +91,7 @@ class ServiceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $booking->setService($service);
+            $booking->setService($foundService);
             $booking->setUser($this->getUser());
             $booking->setStatus('pending');
 
@@ -82,7 +103,7 @@ class ServiceController extends AbstractController
         }
 
         return $this->render('service/book.html.twig', [
-            'service' => $service,
+            'service' => $foundService,
             'form' => $form,
         ]);
     }

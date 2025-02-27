@@ -3,5 +3,44 @@
 {% block title %}Nouvelle Prestation - regards singuliers{% endblock %}
 
 {% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Ajouter une nouvelle prestation</h1>
+    
+    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.title, 'Nom de la prestation', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Rendez-vous conseil'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.price, 'Prix (€)', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Prix de la prestation'}}) }}
+                {{ form_errors(form.price) }}
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Décrivez en détail la prestation'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+        
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Enregistrer la prestation</button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-label { font-weight: bold; }
+        .form-control:focus { 
+            border-color: #007bff; 
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
+        }
+    </style>
 {% endblock %}
