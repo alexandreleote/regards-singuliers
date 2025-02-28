@@ -13,4 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+import { initFormValidation } from './js/modules/form-validation.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    initFormValidation(); // This will validate all forms with .needs-validation class
+    
+    // If you want to validate a specific form with a different selector:
+    // initFormValidation('#specific-form-id');
+});
+
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

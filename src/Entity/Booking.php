@@ -38,6 +38,12 @@ class Booking
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $calendlyEventLink = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeSessionId = null;
+
     #[ORM\ManyToOne(targetEntity: Service::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Service $service = null;
@@ -97,6 +103,34 @@ class Booking
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getCalendlyEventLink(): ?string
+    {
+        return $this->calendlyEventLink;
+    }
+
+    public function setCalendlyEventLink(?string $calendlyEventLink): self
+    {
+        $this->calendlyEventLink = $calendlyEventLink;
+        return $this;
+    }
+
+    public function getStripeSessionId(): ?string
+    {
+        return $this->stripeSessionId;
+    }
+
+    public function setStripeSessionId(?string $stripeSessionId): self
+    {
+        $this->stripeSessionId = $stripeSessionId;
+        return $this;
     }
 
     public function getService(): ?Service

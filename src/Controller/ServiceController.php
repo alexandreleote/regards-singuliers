@@ -7,8 +7,11 @@ use App\Entity\Service;
 use App\Form\BookingType;
 use App\Form\ServiceType;
 use App\Repository\ServiceRepository;
+use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Stripe\Checkout\Session;
+use Stripe\Stripe;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +19,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ServiceController extends AbstractController
 {
-    #[Route('/admin/prestations', name: 'admin_services', methods: ['GET'])]
+    #[Route('/admin/prestations', name: 'admin_services')]
     #[IsGranted('ROLE_ADMIN')]
     public function adminIndex(ServiceRepository $serviceRepository): Response
     {
@@ -30,7 +34,7 @@ class ServiceController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/prestation/ajouter', name: 'admin_service_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/prestation/ajouter', name: 'admin_service_new')]
     #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -43,12 +47,44 @@ class ServiceController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Service créé avec succès');
-            return $this->redirectToRoute('admin');
+            return $this->redirectToRoute('admin_services');
         }
 
-        return $this->render('service/new.html.twig', [
+        return $this->render('service/new_edit.html.twig', [
             'service' => $service,
             'form' => $form,
+            'editing' => false
+        ]);
+    }
+
+    #[Route('/admin/prestation/{slug}/editer', name: 'admin_service_edit')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function edit(
+        Request $request, 
+        string $slug, 
+        ServiceRepository $serviceRepository, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        $service = $serviceRepository->findOneBySlug($slug);
+        
+        if (!$service) {
+            throw $this->createNotFoundException('Service non trouvé');
+        }
+
+        $form = $this->createForm(ServiceType::class, $service);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Service modifié avec succès');
+            return $this->redirectToRoute('admin_services');
+        }
+
+        return $this->render('service/new_edit.html.twig', [
+            'service' => $service,
+            'form' => $form,
+            'editing' => true
         ]);
     }
 
@@ -62,55 +98,62 @@ class ServiceController extends AbstractController
         ]);
     }
 
-    #[Route('/prestation/{slug}/reserver', name: 'prestation_reservation', methods: ['GET', 'POST'])]
+    #[Route('/prestation/{slug}/reserver', name: 'prestation_reservation')]
     public function book(
-        Request $request, 
-        Service $service, 
-        EntityManagerInterface $entityManager, 
+        Request $request,
+        string $slug,
         ServiceRepository $serviceRepository,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger
     ): Response {
-        $requestSlug = $request->attributes->get('slug');
-        
-        $logger->info('Service Booking Request', [
-            'requested_slug' => $requestSlug
-        ]);
-
-        // Find the service explicitly to ensure it exists
-        $foundService = $serviceRepository->findOneBySlug($requestSlug);
-        
-        if (!$foundService) {
-            throw new NotFoundHttpException("Service with slug '{$requestSlug}' not found");
-        }
-
         // Ensure only authenticated users can book
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        $service = $serviceRepository->findOneBySlug($slug);
+        
+        if (!$service) {
+            throw $this->createNotFoundException('Service non trouvé');
+        }
+
         $booking = new Booking();
-        $form = $this->createForm(BookingType::class, $booking);
+        $booking->setService($service);
+        $booking->setUser($this->getUser());
+        $booking->setStatus(Booking::STATUS_PENDING);
+        $booking->setCreatedAt(new \DateTimeImmutable());
+
+        $form = $this->createForm(BookingType::class, $booking, [
+            'service' => $service
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $booking->setService($foundService);
-            $booking->setUser($this->getUser());
-            $booking->setStatus('pending');
+            try {
+                $entityManager->persist($booking);
+                $entityManager->flush();
 
-            $entityManager->persist($booking);
-            $entityManager->flush();
+                $logger->info('Réservation créée', [
+                    'reservationId' => $booking->getId(),
+                    'service' => $service->getTitle(),
+                    'user' => $this->getUser()->getEmail()
+                ]);
 
-            $this->addFlash('success', 'Votre réservation a été enregistrée');
-            return $this->redirectToRoute('prestations');
+                return $this->redirectToRoute('prestation_paiement', [
+                    'reservationId' => $booking->getId()
+                ]);
+            } catch (\Exception $e) {
+                $logger->error('Erreur lors de la création de la réservation', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
+                $this->addFlash('error', 'Une erreur est survenue lors de la création de la réservation');
+                return $this->redirectToRoute('prestations');
+            }
         }
 
         return $this->render('service/book.html.twig', [
-            'service' => $foundService,
-            'form' => $form,
+            'service' => $service,
+            'form' => $form->createView()
         ]);
-    }
-
-    #[Route('/{path}', name: 'app_404', requirements: ['path' => '.+'], methods: ['GET'])]
-    public function notFound(): Response
-    {
-        return $this->render('bundles/TwigBundle/Exception/error404.html.twig', [], new Response('', Response::HTTP_NOT_FOUND));
     }
 }

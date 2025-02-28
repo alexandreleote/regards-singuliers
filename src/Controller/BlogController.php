@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/admin/blog')]
+
 class BlogController extends AbstractController
 {
-    #[Route('/new', name: 'blog_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/blog/ajouter', name: 'admin_blog_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $blog = new Blog();
@@ -32,6 +32,23 @@ class BlogController extends AbstractController
         return $this->render('blog/new.html.twig', [
             'blog' => $blog,
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/blog', name: 'blog_index')]
+    public function index(BlogRepository $blogRepository): Response
+    {
+        $blogs = $blogRepository->findAll();
+        return $this->render('blog/index.html.twig', [
+            'blogs' => $blogs,
+        ]);
+    }
+
+    #[Route('/blog/{slug}', name: 'blog_show')]
+    public function show(Blog $blog): Response
+    {
+        return $this->render('blog/show.html.twig', [
+            'blog' => $blog,
         ]);
     }
 }

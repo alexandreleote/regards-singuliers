@@ -1,10 +1,10 @@
 {% extends 'admin/baseAdmin.html.twig' %}
 
-{% block title %}Nouvelle Prestation - regards singuliers{% endblock %}
+{% block title %}{% if editing %}Modifier la prestation{% else %}Nouvelle Prestation{% endif %} - regards singuliers{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
-    <h1 class="mb-4">Ajouter une nouvelle prestation</h1>
+    <h1 class="mb-4">{% if editing %}Modifier la prestation{% else %}Ajouter une nouvelle prestation{% endif %}</h1>
     
     {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
         <div class="row">
@@ -28,19 +28,8 @@
         </div>
         
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Enregistrer la prestation</button>
+            <button type="submit" class="btn btn-primary">{% if editing %}Mettre à jour{% else %}Enregistrer la prestation{% endif %}</button>
         </div>
     {{ form_end(form) }}
 </div>
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .form-label { font-weight: bold; }
-        .form-control:focus { 
-            border-color: #007bff; 
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
-        }
-    </style>
 {% endblock %}

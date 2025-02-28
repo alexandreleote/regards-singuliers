@@ -47,7 +47,7 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('profile');
     }
 
-    #[Route('/profile/delete', name: 'profile_delete', methods: ['POST'])]
+    #[Route('/profile/delete', name: 'profile_delete')]
     public function deleteProfile(
         EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage

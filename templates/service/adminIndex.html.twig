@@ -18,12 +18,8 @@
                         <p class="card-text">{{ service.description|slice(0, 100) }}...</p>
                         <p class="card-text font-weight-bold">Prix: {{ service.price }} €</p>
                         
-                        {% if is_granted('ROLE_USER') %}
-                            <a href="{{ path('service_book', {'id': service.id}) }}" class="btn btn-primary">
-                                Réserver ce service
-                            </a>
-                        {% else %}
-                            <p class="text-warning">Connectez-vous pour réserver</p>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_service_edit', {'slug': service.slug}) }}" class="btn btn-warning mr-2">Éditer</a>
                         {% endif %}
                     </div>
                 </div>

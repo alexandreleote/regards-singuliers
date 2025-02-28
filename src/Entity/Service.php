@@ -94,14 +94,15 @@ class Service
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
-        return $this->price;
+        return $this->price !== null ? (float)$this->price : null;
     }
 
     public function setPrice(string $price): static
     {
         $this->price = $price;
+
         return $this;
     }
 

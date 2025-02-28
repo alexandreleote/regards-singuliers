@@ -24,7 +24,7 @@ class RealisationsController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/realisations', name: 'admin_realisations', methods: ['GET', 'POST'])]
+    #[Route('/admin/realisations', name: 'admin_realisations')]
     #[IsGranted('ROLE_ADMIN')]
     public function adminIndex(EntityManagerInterface $entityManager): Response
     {
@@ -36,7 +36,7 @@ class RealisationsController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/realisations/ajouter', name: 'admin_realisation_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/realisations/ajouter', name: 'admin_realisation_new')]
     #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {

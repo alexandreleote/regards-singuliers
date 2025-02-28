@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe_webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
+    calendly_access_token: '%env(CALENDLY_ACCESS_TOKEN)%'
+    calendly_organization_uri: '%env(CALENDLY_ORGANIZATION_URI)%'
 
 services:
     # default configuration for services in *this* file
@@ -34,6 +39,25 @@ services:
     App\Twig\TimeExtension:
         tags:
             - { name: twig.extension }
+
+    App\Controller\StripePaymentController:
+        arguments:
+            $stripeSecretKey: '%stripe_secret_key%'
+            $stripeWebhookSecret: '%stripe_webhook_secret%'
+
+    App\Controller\StripeWebhookController:
+        # Suppression des arguments explicites
+        autowire: true
+        autoconfigure: true
+
+    App\Service\BookingConfirmationService:
+        arguments:
+            $calendlyAccessToken: '%calendly_access_token%'
+            $calendlyOrganizationUri: '%calendly_organization_uri%'
+
+    App\Service\CalendlyService:
+        arguments:
+            $calendlyAccessToken: '%env(CALENDLY_ACCESS_TOKEN)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
