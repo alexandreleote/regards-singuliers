@@ -4,11 +4,14 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_publishable_key: '%env(STRIPE_PUBLISHABLE_KEY)%'
     stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe_webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
     calendly_access_token: '%env(CALENDLY_ACCESS_TOKEN)%'
     calendly_organization_uri: '%env(CALENDLY_ORGANIZATION_URI)%'
+    calendly_webhook_secret: '%env(CALENDLY_WEBHOOK_SECRET)%'
+    app.stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    app.stripe.public_key: '%env(STRIPE_PUBLIC_KEY)%'
 
 services:
     # default configuration for services in *this* file
@@ -49,6 +52,13 @@ services:
         # Suppression des arguments explicites
         autowire: true
         autoconfigure: true
+
+    App\Controller\PaymentController:
+        arguments:
+            $stripeSecretKey: '%app.stripe.secret_key%'
+            $stripePublicKey: '%app.stripe.public_key%'
+            $serviceRepository: '@App\Repository\ServiceRepository'
+        tags: ['controller.service_arguments']
 
     App\Service\BookingConfirmationService:
         arguments:

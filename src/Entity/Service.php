@@ -3,13 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\ServiceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class Service
 {
     #[ORM\Id]
@@ -17,65 +16,43 @@ class Service
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: "Le titre du service est requis")]
-    #[Assert\Length(
-        min: 3,
-        max: 50,
-        minMessage: "Le titre doit faire au moins {{ limit }} caractères",
-        maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères"
-    )]
-    private ?string $title = null;
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
-    #[Assert\NotBlank(message: "Le prix du service est requis")]
-    #[Assert\Positive(message: "Le prix doit être un nombre positif")]
-    private ?string $price = null;
-
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: "La description du service est requise")]
-    #[Assert\Length(
-        min: 10,
-        max: 1000,
-        minMessage: "La description doit faire au moins {{ limit }} caractères",
-        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères"
-    )]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $featuredImage = null;
-
-    #[ORM\Column(length: 100, unique: true)]
-    private ?string $slug = null;
+    #[ORM\Column]
+    private ?float $price = null;
 
     #[ORM\Column]
-    private bool $isActive = true;
+    private ?bool $isVariablePrice = false;
 
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTime();
-    }
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $calendlyEventType = null;
 
-    #[ORM\PreUpdate]
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTime();
-    }
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeProductId = null;
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function setSlugValue(): void
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripePriceId = null;
+
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]
+    private Collection $bookings;
+
+    #[ORM\Column]
+    private ?bool $isActive = true;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
     {
-        if ($this->title && !$this->slug) {
-            $this->slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $this->title));
-        }
+        $this->bookings = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -83,25 +60,14 @@ class Service
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getName(): ?string
     {
-        return $this->title;
+        return $this->name;
     }
 
-    public function setTitle(string $title): static
+    public function setName(string $name): static
     {
-        $this->title = $title;
-        return $this;
-    }
-
-    public function getPrice(): ?float
-    {
-        return $this->price !== null ? (float)$this->price : null;
-    }
-
-    public function setPrice(string $price): static
-    {
-        $this->price = $price;
+        $this->name = $name;
 
         return $this;
     }
@@ -111,45 +77,104 @@ class Service
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
+
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getPrice(): ?float
     {
-        return $this->createdAt;
+        return $this->price;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function setPrice(float $price): static
     {
-        return $this->updatedAt;
-    }
+        $this->price = $price;
 
-    public function getFeaturedImage(): ?string
-    {
-        return $this->featuredImage;
-    }
-
-    public function setFeaturedImage(?string $featuredImage): static
-    {
-        $this->featuredImage = $featuredImage;
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function isIsVariablePrice(): ?bool
     {
-        return $this->slug;
+        return $this->isVariablePrice;
     }
 
-    public function setSlug(?string $slug): static
+    public function setIsVariablePrice(bool $isVariablePrice): static
     {
-        $this->slug = $slug;
+        $this->isVariablePrice = $isVariablePrice;
+
         return $this;
     }
 
-    public function isActive(): bool
+    public function getCalendlyEventType(): ?string
+    {
+        return $this->calendlyEventType;
+    }
+
+    public function setCalendlyEventType(?string $calendlyEventType): static
+    {
+        $this->calendlyEventType = $calendlyEventType;
+
+        return $this;
+    }
+
+    public function getStripeProductId(): ?string
+    {
+        return $this->stripeProductId;
+    }
+
+    public function setStripeProductId(?string $stripeProductId): static
+    {
+        $this->stripeProductId = $stripeProductId;
+
+        return $this;
+    }
+
+    public function getStripePriceId(): ?string
+    {
+        return $this->stripePriceId;
+    }
+
+    public function setStripePriceId(?string $stripePriceId): static
+    {
+        $this->stripePriceId = $stripePriceId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getService() === $this) {
+                $booking->setService(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
     {
         return $this->isActive;
     }
@@ -157,6 +182,46 @@ class Service
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getPriceDisplay(): string
+    {
+        if ($this->isVariablePrice) {
+            return 'À partir de ' . $this->price . '€';
+        }
+        
+        return $this->price . '€';
+    }
+
+    public function getDepositAmount(): float
+    {
+        // 50% du prix pour l'acompte
+        return $this->price * 0.5;
     }
 }

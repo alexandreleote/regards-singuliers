@@ -2,27 +2,28 @@
 
 namespace App\Controller;
 
+use Stripe\Stripe;
 use App\Entity\Booking;
 use App\Entity\Service;
 use App\Form\BookingType;
 use App\Form\ServiceType;
-use App\Repository\ServiceRepository;
-use App\Repository\BookingRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use LoggerInterface;
 use Stripe\Checkout\Session;
-use Stripe\Stripe;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\BookingRepository;
+use App\Repository\ServiceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ServiceController extends AbstractController
 {
+    /* Admin routes */
     #[Route('/admin/prestations', name: 'admin_services')]
     #[IsGranted('ROLE_ADMIN')]
     public function adminIndex(ServiceRepository $serviceRepository): Response
@@ -88,7 +89,8 @@ class ServiceController extends AbstractController
         ]);
     }
 
-    #[Route('/prestations', name: 'prestations', methods: ['GET'])]
+    /* User routes */
+    #[Route('/prestations', name: 'prestations')]
     public function index(ServiceRepository $serviceRepository): Response
     {
         $services = $serviceRepository->findAll();
@@ -100,60 +102,155 @@ class ServiceController extends AbstractController
 
     #[Route('/prestation/{slug}/reserver', name: 'prestation_reservation')]
     public function book(
-        Request $request,
-        string $slug,
-        ServiceRepository $serviceRepository,
+        $slug, 
+        Request $request, 
+        ServiceRepository $serviceRepository, 
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger
     ): Response {
         // Ensure only authenticated users can book
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $service = $serviceRepository->findOneBySlug($slug);
+        // Find the service by slug
+        $service = $serviceRepository->findOneBy(['slug' => $slug]);
         
         if (!$service) {
             throw $this->createNotFoundException('Service non trouvé');
         }
 
+        // Create a new booking form
         $booking = new Booking();
         $booking->setService($service);
         $booking->setUser($this->getUser());
-        $booking->setStatus(Booking::STATUS_PENDING);
-        $booking->setCreatedAt(new \DateTimeImmutable());
 
         $form = $this->createForm(BookingType::class, $booking, [
             'service' => $service
         ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $entityManager->persist($booking);
-                $entityManager->flush();
+            // Set initial status
+            $booking->setStatus('pending');
+            $booking->setCreatedAt(new \DateTime());
 
-                $logger->info('Réservation créée', [
-                    'reservationId' => $booking->getId(),
-                    'service' => $service->getTitle(),
-                    'user' => $this->getUser()->getEmail()
-                ]);
+            // Persist booking
+            $entityManager->persist($booking);
+            $entityManager->flush();
 
-                return $this->redirectToRoute('prestation_paiement', [
-                    'reservationId' => $booking->getId()
-                ]);
-            } catch (\Exception $e) {
-                $logger->error('Erreur lors de la création de la réservation', [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-
-                $this->addFlash('error', 'Une erreur est survenue lors de la création de la réservation');
-                return $this->redirectToRoute('prestations');
-            }
+            // Redirect to booking confirmation
+            return $this->redirectToRoute('prestation_booking_confirm', [
+                'slug' => $slug, 
+                'bookingId' => $booking->getId()
+            ]);
         }
 
+        // Render booking form
         return $this->render('service/book.html.twig', [
             'service' => $service,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'stripe_public_key' => $this->getParameter('app.stripe.public_key')
+        ]);
+    }
+
+    #[Route('/service/{id}/set-calendly-link', name: 'service_set_calendly_link', methods: ['POST'])]
+    public function setCalendlyLink(
+        int $id, 
+        Request $request, 
+        ServiceRepository $serviceRepository, 
+        EntityManagerInterface $entityManager,
+        \Psr\Log\LoggerInterface $logger
+    ): Response {
+        // Log the entire request for debugging
+        $logger->info('Calendly Link Request', [
+            'method' => $request->getMethod(),
+            'content' => $request->getContent(),
+            'request_params' => $request->request->all(),
+            'query_params' => $request->query->all(),
+            'headers' => $request->headers->all()
+        ]);
+
+        // Check if the user is authenticated
+        if (!$this->getUser()) {
+            $logger->warning('Unauthenticated access to set Calendly link');
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Vous devez être connecté'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Check if the user has admin role
+        if (!in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            $logger->warning('Non-admin user attempting to set Calendly link', [
+                'user_email' => $this->getUser()->getEmail(),
+                'user_roles' => $this->getUser()->getRoles()
+            ]);
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Vous n\'avez pas les droits nécessaires'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $service = $serviceRepository->find($id);
+        
+        if (!$service) {
+            $logger->error('Service not found', ['service_id' => $id]);
+            throw $this->createNotFoundException('Service non trouvé');
+        }
+
+        // Try multiple ways to get the Calendly link
+        $calendlyLink = 
+            $request->request->get('calendly_link') ?? 
+            $request->query->get('calendly_link') ??
+            json_decode($request->getContent(), true)['calendly_link'] ?? 
+            null;
+        
+        $logger->info('Extracted Calendly Link', [
+            'calendly_link' => $calendlyLink
+        ]);
+        
+        if (empty($calendlyLink)) {
+            $logger->warning('Empty Calendly link provided');
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Le lien Calendly ne peut pas être vide'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $service->setCalendlyLink($calendlyLink);
+        $entityManager->flush();
+
+        $logger->info('Calendly link updated successfully', [
+            'service_id' => $service->getId(),
+            'calendly_link' => $calendlyLink
+        ]);
+
+        return $this->json([
+            'status' => 'success',
+            'message' => 'Lien Calendly mis à jour avec succès',
+            'calendly_link' => $calendlyLink
+        ]);
+    }
+
+    #[Route('/service/calendly-links', name: 'service_calendly_links')]
+    public function listCalendlyLinks(ServiceRepository $serviceRepository): Response
+    {
+        // Ensure only admin can view Calendly links
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $services = $serviceRepository->findAll();
+        
+        $serviceLinks = array_map(function($service) {
+            return [
+                'id' => $service->getId(),
+                'title' => $service->getTitle(),
+                'slug' => $service->getSlug(),
+                'calendly_link' => $service->getCalendlyLink()
+            ];
+        }, $services);
+
+        return $this->render('admin/service_calendly_links.html.twig', [
+            'services' => $serviceLinks
         ]);
     }
 }

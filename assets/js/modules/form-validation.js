@@ -1,6 +1,6 @@
 export function initFormValidation(formSelector = '.needs-validation') {
-    'use strict';
     window.addEventListener('load', function() {
+        'use strict';
         const forms = document.querySelectorAll(formSelector);
         
         forms.forEach(form => {

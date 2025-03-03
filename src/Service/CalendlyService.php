@@ -55,4 +55,22 @@ class CalendlyService
             return false;
         }
     }
+
+    public function getOrganizationDetails(): ?array
+    {
+        try {
+            $response = $this->httpClient->request('GET', 'https://api.calendly.com/organizations', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->calendlyAccessToken,
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            $data = $response->toArray();
+            return $data['collection'] ?? null;
+        } catch (\Exception $e) {
+            // Log error or handle appropriately
+            return null;
+        }
+    }
 }

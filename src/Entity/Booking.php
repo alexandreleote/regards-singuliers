@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\UniqueConstraint(name: 'unique_booking', columns: ['start_time', 'service_id'])]
 class Booking
 {
     public const STATUS_PENDING = 'pending';
@@ -28,8 +29,18 @@ class Booking
     #[Assert\GreaterThan('now', message: "La date de réservation doit être dans le futur")]
     private ?\DateTimeInterface $bookingDate = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $startTime = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $endTime = null;
+
     #[ORM\Column(length: 100)]
-    #[Assert\Choice(choices: [self::STATUS_PENDING, self::STATUS_CONFIRMED, self::STATUS_CANCELLED])]
+    #[Assert\Choice(choices: [
+        self::STATUS_PENDING, 
+        self::STATUS_CONFIRMED, 
+        self::STATUS_CANCELLED
+    ])]
     private string $status = self::STATUS_PENDING;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -40,6 +51,9 @@ class Booking
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $calendlyEventLink = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $calendlyEventId = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stripeSessionId = null;
@@ -61,7 +75,41 @@ class Booking
         $this->createdAt = new \DateTime();
     }
 
-    // Getters and Setters
+    // Getters and Setters for new fields
+    public function getStartTime(): ?\DateTimeInterface
+    {
+        return $this->startTime;
+    }
+
+    public function setStartTime(?\DateTimeInterface $startTime): self
+    {
+        $this->startTime = $startTime;
+        return $this;
+    }
+
+    public function getEndTime(): ?\DateTimeInterface
+    {
+        return $this->endTime;
+    }
+
+    public function setEndTime(?\DateTimeInterface $endTime): self
+    {
+        $this->endTime = $endTime;
+        return $this;
+    }
+
+    public function getCalendlyEventId(): ?string
+    {
+        return $this->calendlyEventId;
+    }
+
+    public function setCalendlyEventId(?string $calendlyEventId): self
+    {
+        $this->calendlyEventId = $calendlyEventId;
+        return $this;
+    }
+
+    // Existing getters and setters remain the same
     public function getId(): ?int
     {
         return $this->id;
@@ -103,12 +151,6 @@ class Booking
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
     }
 
     public function getCalendlyEventLink(): ?string

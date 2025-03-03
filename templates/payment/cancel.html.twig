@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container payment-cancel">
+    <div class="card">
+        <div class="card-header bg-warning text-white">
+            <h2>Paiement Annulé</h2>
+        </div>
+        <div class="card-body">
+            <h3>{{ service.title }}</h3>
+            <p>Votre paiement a été annulé. Vous pouvez réessayer à tout moment.</p>
+            
+            <div class="actions mt-4">
+                <a href="{{ path('service_book', {'slug': service.slug}) }}" class="btn btn-primary">
+                    Réessayer le paiement
+                </a>
+                <a href="{{ path('service_index') }}" class="btn btn-secondary ml-2">
+                    Retour aux services
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

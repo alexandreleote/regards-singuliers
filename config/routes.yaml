@@ -4,8 +4,4 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-fallback:
-    path: /{path}
-    controller: App\Controller\ServiceController::notFound
-    requirements:
-        path: .+
+# Removed fallback route

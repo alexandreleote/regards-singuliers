@@ -53,6 +53,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $calendlyUsername = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $calendlyAppointments = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -169,7 +175,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
+        
+        // If you want to ensure admin users always have both ROLE_USER and ROLE_ADMIN
+        if (in_array('ROLE_ADMIN', $roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+        
         return array_unique($roles);
     }
 
@@ -213,6 +226,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+        return $this;
+    }
+
+    public function getCalendlyUsername(): ?string
+    {
+        return $this->calendlyUsername;
+    }
+
+    public function setCalendlyUsername(?string $calendlyUsername): self
+    {
+        $this->calendlyUsername = $calendlyUsername;
+        return $this;
+    }
+
+    public function getCalendlyAppointments(): ?array
+    {
+        return $this->calendlyAppointments;
+    }
+
+    public function setCalendlyAppointments(?array $calendlyAppointments): self
+    {
+        $this->calendlyAppointments = $calendlyAppointments;
+        return $this;
+    }
+
+    public function addCalendlyAppointment(array $appointment): self
+    {
+        if ($this->calendlyAppointments === null) {
+            $this->calendlyAppointments = [];
+        }
+        $this->calendlyAppointments[] = $appointment;
+        return $this;
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
+
+    public function addAdminRole(): self
+    {
+        $roles = $this->roles;
+        if (!in_array('ROLE_ADMIN', $roles)) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+        $this->roles = array_unique($roles);
         return $this;
     }
 }
