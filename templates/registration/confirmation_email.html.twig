@@ -1,13 +1,11 @@
-<h1>Confirmez votre adresse email</h1>
+<h1>Hi! Please confirm your email!</h1>
 
-<p>Bonjour,</p>
+<p>
+    Please confirm your email address by clicking the following link: <br><br>
+    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
+    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+</p>
 
-<p>Pour finaliser votre inscription sur Regards Singuliers, veuillez cliquer sur le lien ci-dessous pour confirmer votre adresse email :</p>
-
-<p><a href="{{ signedUrl }}">Confirmer mon adresse email</a></p>
-
-<p>Ce lien expirera le {{ expiresAt|date('d/m/Y H:i:s') }}.</p>
-
-<p>Si vous n'avez pas créé de compte, veuillez ignorer cet email.</p>
-
-<p>Cordialement,<br>L'équipe Regards Singuliers</p>
+<p>
+    Cheers!
+</p>

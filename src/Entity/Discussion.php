@@ -5,107 +5,93 @@ namespace App\Entity;
 use App\Repository\DiscussionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DiscussionRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class Discussion
 {
-    public const STATUS_OPEN = 'open';
-    public const STATUS_CLOSED = 'closed';
-    public const STATUS_IN_PROGRESS = 'in_progress';
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $notes = null;
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 100)]
-    #[Assert\Choice(choices: [self::STATUS_OPEN, self::STATUS_CLOSED, self::STATUS_IN_PROGRESS])]
-    private string $status = self::STATUS_OPEN;
+    #[ORM\Column]
+    private ?bool $isLocked = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
+    #[ORM\Column]
+    private ?bool $filesEnabled = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
+    #[ORM\Column]
+    private ?bool $isArchived = null;
 
-    #[ORM\OneToOne(inversedBy: 'discussion', targetEntity: Booking::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Booking $booking = null;
-
-    #[ORM\OneToMany(mappedBy: 'discussion', targetEntity: Message::class, orphanRemoval: true)]
-    #[ORM\OrderBy(["createdAt" => "DESC"])]
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'discussion')]
     private Collection $messages;
+
+    #[ORM\ManyToOne(inversedBy: 'discussions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Reservation $reservation = null;
 
     public function __construct()
     {
         $this->messages = new ArrayCollection();
     }
 
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTime();
-    }
-
-    #[ORM\PreUpdate]
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTime();
-    }
-
-    // Getters and Setters
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNotes(): ?string
-    {
-        return $this->notes;
-    }
-
-    public function setNotes(?string $notes): static
-    {
-        $this->notes = $notes;
-        return $this;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        return $this->updatedAt;
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 
-    public function getBooking(): ?Booking
+    public function isLocked(): ?bool
     {
-        return $this->booking;
+        return $this->isLocked;
     }
 
-    public function setBooking(?Booking $booking): static
+    public function setIsLocked(bool $isLocked): static
     {
-        $this->booking = $booking;
+        $this->isLocked = $isLocked;
+
+        return $this;
+    }
+
+    public function isFilesEnabled(): ?bool
+    {
+        return $this->filesEnabled;
+    }
+
+    public function setFilesEnabled(bool $filesEnabled): static
+    {
+        $this->filesEnabled = $filesEnabled;
+
+        return $this;
+    }
+
+    public function isArchived(): ?bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setIsArchived(bool $isArchived): static
+    {
+        $this->isArchived = $isArchived;
+
         return $this;
     }
 
@@ -139,8 +125,15 @@ class Discussion
         return $this;
     }
 
-    public function getLatestMessage(): ?Message
+    public function getReservation(): ?Reservation
     {
-        return $this->messages->first() ?: null;
+        return $this->reservation;
+    }
+
+    public function setReservation(?Reservation $reservation): static
+    {
+        $this->reservation = $reservation;
+
+        return $this;
     }
 }

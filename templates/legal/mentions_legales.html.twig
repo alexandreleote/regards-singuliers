@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+<div class="legal-container">
+    <div class="legal-content">
+        <h1 class="legal-title">Mentions Légales</h1>
+        
+        <section class="legal-section">
+            <h2>1. Informations légales</h2>
+            <p>Le site web "regards singuliers" est édité par :</p>
+            <p>Priscilia Leote<br>
+            Architecte d'intérieur<br>
+            [Adresse complète]<br>
+            [Code postal] [Ville]<br>
+            France</p>
+            <p>SIRET : [Numéro SIRET]<br>
+            TVA intracommunautaire : [Numéro TVA]</p>
+            <p>Téléphone : 06 06 06 06 06<br>
+            Email : <a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a></p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>2. Directeur de la publication</h2>
+            <p>Le directeur de la publication du site est Priscilia Leote, en sa qualité de propriétaire.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>3. Hébergement</h2>
+            <p>Le site est hébergé par :</p>
+            <p>[Nom de l'hébergeur]<br>
+            [Adresse de l'hébergeur]<br>
+            [Code postal] [Ville]<br>
+            [Pays]</p>
+            <p>Téléphone : [Numéro de téléphone de l'hébergeur]</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>4. Propriété intellectuelle</h2>
+            <p>L'ensemble du contenu de ce site (structure, textes, images, graphismes, logo, icônes, sons, logiciels, etc.) est la propriété exclusive de Priscilia Leote, à l'exception des éléments émanant de partenaires ou fournisseurs.</p>
+            <p>Toute reproduction, représentation, modification, publication, adaptation totale ou partielle des éléments du site, par quelque procédé que ce soit, sans l'autorisation expresse et écrite de Priscilia Leote, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>5. Liens hypertextes</h2>
+            <p>Le site "regards singuliers" peut contenir des liens hypertextes vers d'autres sites internet. La présence de ces liens n'engage pas la responsabilité de Priscilia Leote quant au contenu de ces sites. Priscilia Leote n'est pas responsable des liens hypertextes pointant vers son site et interdit à toute personne de mettre en place un tel lien sans son autorisation expresse et préalable.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>6. Données personnelles</h2>
+            <p>Les informations concernant la collecte et le traitement des données personnelles sont détaillées dans notre <a href="{{ path('confidentialite') }}">Politique de Confidentialité</a>.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>7. Cookies</h2>
+            <p>Le site "regards singuliers" utilise des cookies pour améliorer l'expérience utilisateur. Pour plus d'informations sur l'utilisation des cookies, veuillez consulter notre Politique de Cookies.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>8. Droit applicable et juridiction compétente</h2>
+            <p>Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
+        </section>
+        
+        <div class="legal-footer">
+            <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+            <p>Pour toute question concernant nos mentions légales, veuillez nous contacter à :</p>
+            <a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+<div class="legal-container">
+    <div class="legal-content">
+        <h1 class="legal-title">Politique de Confidentialité</h1>
+        
+        <section class="legal-section">
+            <h2>1. Introduction</h2>
+            <p>Chez regards singuliers, nous accordons une grande importance à la protection de vos données personnelles. La présente Politique de Confidentialité a pour objet de vous informer sur la manière dont nous collectons, utilisons et protégeons vos données personnelles lorsque vous utilisez notre site web et nos services.</p>
+            <p>Cette politique s'applique à tous les utilisateurs de notre site, y compris les visiteurs, les clients et les partenaires.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>2. Données collectées</h2>
+            <p>Nous collectons différents types de données personnelles, notamment :</p>
+            <ul>
+                <li>Données d'identification : nom, prénom, adresse email, numéro de téléphone</li>
+                <li>Données de connexion : adresse IP, cookies, historique de navigation</li>
+                <li>Données relatives à vos projets : informations sur votre logement, vos préférences de style, vos besoins</li>
+                <li>Données de paiement : coordonnées bancaires (uniquement lors du processus de paiement)</li>
+            </ul>
+        </section>
+        
+        <section class="legal-section">
+            <h2>3. Finalités de la collecte</h2>
+            <p>Nous utilisons vos données personnelles pour les finalités suivantes :</p>
+            <ul>
+                <li>Fournir nos services d'architecture d'intérieur et de décoration</li>
+                <li>Gérer votre compte client et vos réservations</li>
+                <li>Vous envoyer des informations relatives à nos services (devis, factures, suivi de projet)</li>
+                <li>Améliorer notre site web et nos services</li>
+                <li>Vous envoyer des communications marketing si vous y avez consenti</li>
+                <li>Respecter nos obligations légales et réglementaires</li>
+            </ul>
+        </section>
+        
+        <section class="legal-section">
+            <h2>4. Base légale du traitement</h2>
+            <p>Le traitement de vos données personnelles repose sur les bases légales suivantes :</p>
+            <ul>
+                <li>L'exécution du contrat qui nous lie lorsque vous utilisez nos services</li>
+                <li>Votre consentement, notamment pour l'envoi de communications marketing</li>
+                <li>Notre intérêt légitime à développer et améliorer nos services</li>
+                <li>Le respect de nos obligations légales</li>
+            </ul>
+        </section>
+        
+        <section class="legal-section">
+            <h2>5. Destinataires des données</h2>
+            <p>Vos données personnelles peuvent être partagées avec :</p>
+            <ul>
+                <li>Notre équipe interne, dans la limite de leurs attributions respectives</li>
+                <li>Nos sous-traitants (hébergeur web, prestataire de paiement, etc.)</li>
+                <li>Les autorités administratives ou judiciaires, si la loi l'exige</li>
+            </ul>
+            <p>Nous ne vendons jamais vos données personnelles à des tiers.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>6. Durée de conservation</h2>
+            <p>Nous conservons vos données personnelles pendant la durée nécessaire à la réalisation des finalités pour lesquelles elles ont été collectées, augmentée des délais légaux de prescription.</p>
+            <p>À titre indicatif :</p>
+            <ul>
+                <li>Données de compte client : pendant toute la durée de votre relation commerciale avec nous, puis 3 ans à compter de votre dernière activité</li>
+                <li>Données de facturation : 10 ans conformément aux obligations comptables et fiscales</li>
+                <li>Cookies : 13 mois maximum</li>
+            </ul>
+        </section>
+        
+        <section class="legal-section">
+            <h2>7. Vos droits</h2>
+            <p>Conformément à la réglementation applicable en matière de protection des données personnelles, vous disposez des droits suivants :</p>
+            <ul>
+                <li>Droit d'accès à vos données</li>
+                <li>Droit de rectification de vos données</li>
+                <li>Droit à l'effacement de vos données</li>
+                <li>Droit à la limitation du traitement</li>
+                <li>Droit à la portabilité de vos données</li>
+                <li>Droit d'opposition au traitement</li>
+                <li>Droit de retirer votre consentement à tout moment</li>
+                <li>Droit de définir des directives relatives au sort de vos données après votre décès</li>
+            </ul>
+            <p>Pour exercer ces droits, vous pouvez nous contacter à l'adresse email suivante : <a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a>.</p>
+            <p>Vous disposez également du droit d'introduire une réclamation auprès de la Commission Nationale de l'Informatique et des Libertés (CNIL).</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>8. Sécurité des données</h2>
+            <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données personnelles contre la destruction, la perte, l'altération, la divulgation non autorisée ou l'accès non autorisé.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>9. Cookies</h2>
+            <p>Notre site utilise des cookies pour améliorer votre expérience de navigation. Pour en savoir plus sur notre politique en matière de cookies, veuillez consulter notre <a href="#">Politique de Cookies</a>.</p>
+        </section>
+        
+        <section class="legal-section">
+            <h2>10. Modification de la politique de confidentialité</h2>
+            <p>Nous nous réservons le droit de modifier la présente Politique de Confidentialité à tout moment. Les modifications prendront effet dès leur publication sur notre site. Nous vous encourageons à consulter régulièrement cette page pour vous tenir informé des éventuelles mises à jour.</p>
+        </section>
+        
+        <div class="legal-footer">
+            <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+            <p>Pour toute question concernant notre Politique de Confidentialité, veuillez nous contacter à :</p>
+            <a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

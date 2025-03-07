@@ -1,25 +1,17 @@
 import './bootstrap.js';
+/*
+ * Welcome to your app's main JavaScript file!
+ *
+ * This file will be included onto the page via the importmap() Twig function,
+ * which should already be in your base.html.twig.
+ */
+
+/* CSS Imports */
 import './styles/app.css';
+import './styles/auth.css';
+import './styles/legal.css';
 
-// Import FlashMessageManager
-import FlashMessageManager from './js/modules/flashMessageManager.js';
-
-// Initialize FlashMessageManager when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    FlashMessageManager.init({
-        duration: 10000, // 10 secondes
-        containerSelector: '.flash-messages',
-        messageSelector: '.alert'
-    });
-});
-
-import { initFormValidation } from './js/modules/form-validation.js';
-
-document.addEventListener('DOMContentLoaded', () => {
-    initFormValidation(); // This will validate all forms with .needs-validation class
-    
-    // If you want to validate a specific form with a different selector:
-    // initFormValidation('#specific-form-id');
-});
+/* JavaScript Imports */
+import './js/header-scroll.js';
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

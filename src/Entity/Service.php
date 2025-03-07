@@ -16,43 +16,24 @@ class Service
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\Column(length: 50)]
+    private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
+    private ?string $price = null;
+
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column]
-    private ?float $price = null;
-
-    #[ORM\Column]
-    private ?bool $isVariablePrice = false;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $calendlyEventType = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $stripeProductId = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $stripePriceId = null;
-
-    #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]
-    private Collection $bookings;
-
-    #[ORM\Column]
-    private ?bool $isActive = true;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'service')]
+    private Collection $reservations;
 
     public function __construct()
     {
-        $this->bookings = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -60,14 +41,26 @@ class Service
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): static
+    public function setTitle(string $title): static
     {
-        $this->name = $name;
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    public function setPrice(string $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }
@@ -77,151 +70,40 @@ class Service
         return $this->description;
     }
 
-    public function setDescription(?string $description): static
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): static
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function isIsVariablePrice(): ?bool
-    {
-        return $this->isVariablePrice;
-    }
-
-    public function setIsVariablePrice(bool $isVariablePrice): static
-    {
-        $this->isVariablePrice = $isVariablePrice;
-
-        return $this;
-    }
-
-    public function getCalendlyEventType(): ?string
-    {
-        return $this->calendlyEventType;
-    }
-
-    public function setCalendlyEventType(?string $calendlyEventType): static
-    {
-        $this->calendlyEventType = $calendlyEventType;
-
-        return $this;
-    }
-
-    public function getStripeProductId(): ?string
-    {
-        return $this->stripeProductId;
-    }
-
-    public function setStripeProductId(?string $stripeProductId): static
-    {
-        $this->stripeProductId = $stripeProductId;
-
-        return $this;
-    }
-
-    public function getStripePriceId(): ?string
-    {
-        return $this->stripePriceId;
-    }
-
-    public function setStripePriceId(?string $stripePriceId): static
-    {
-        $this->stripePriceId = $stripePriceId;
-
-        return $this;
-    }
-
     /**
-     * @return Collection<int, Booking>
+     * @return Collection<int, Reservation>
      */
-    public function getBookings(): Collection
+    public function getReservations(): Collection
     {
-        return $this->bookings;
+        return $this->reservations;
     }
 
-    public function addBooking(Booking $booking): static
+    public function addReservation(Reservation $reservation): static
     {
-        if (!$this->bookings->contains($booking)) {
-            $this->bookings->add($booking);
-            $booking->setService($this);
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setService($this);
         }
 
         return $this;
     }
 
-    public function removeBooking(Booking $booking): static
+    public function removeReservation(Reservation $reservation): static
     {
-        if ($this->bookings->removeElement($booking)) {
+        if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
-            if ($booking->getService() === $this) {
-                $booking->setService(null);
+            if ($reservation->getService() === $this) {
+                $reservation->setService(null);
             }
         }
 
         return $this;
-    }
-
-    public function isIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): static
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getPriceDisplay(): string
-    {
-        if ($this->isVariablePrice) {
-            return 'À partir de ' . $this->price . '€';
-        }
-        
-        return $this->price . '€';
-    }
-
-    public function getDepositAmount(): float
-    {
-        // 50% du prix pour l'acompte
-        return $this->price * 0.5;
     }
 }

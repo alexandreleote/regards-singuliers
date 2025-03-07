@@ -1,38 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nos Prestations - regards singuliers{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1 class="mb-4">Nos Prestations</h1>
-    
-    <div class="row">
-        {% for service in services %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    {% if service.featuredImage %}
-                        <img src="{{ asset('uploads/services/' ~ service.featuredImage) }}" class="card-img-top" alt="{{ service.title }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ service.title }}</h5>
-                        <p class="card-text">{{ service.description|slice(0, 100) }}...</p>
-                        <p class="card-text font-weight-bold">Prix: {{ service.price }} €</p>
-                        
-                        {% if is_granted('ROLE_USER') %}
-                            <a href="{{ path('prestation_reservation', {'slug': service.slug}) }}" class="btn btn-primary">
-                                Réserver ce service
-                            </a>
-                        {% else %}
-                            <p class="text-warning">Connectez-vous pour réserver</p>
-                        {% endif %}
+    <div class="container">
+        <h1>Nos Prestations</h1>
+        <div class="row">
+            {% for service in services %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ service.title }}</h5>
+                            <p class="card-text">{{ service.description }}</p>
+                            <p class="card-text"><strong>Prix :</strong> {{ service.price }} €</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% else %}
-            <div class="col-12">
-                <p class="alert alert-info">Aucun service n'est actuellement disponible.</p>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-</div>
 {% endblock %}

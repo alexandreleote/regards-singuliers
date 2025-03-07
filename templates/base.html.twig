@@ -1,51 +1,47 @@
 <!DOCTYPE html>
-<html lang="fr">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>
-            {% block title %}{% endblock %}
-        </title>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{{ page_title }}{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
-            <link rel="stylesheet" href="/assets/styles/app.css">
-            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-		{% endblock %}
-	</head>
-	<body>
-		{% if is_granted('ROLE_ADMIN') %}
-			<a href="{{ path('admin') }}" class="admin-button" title="Administration">
-				<span class="material-symbols-outlined">
-					dashboard
-				</span>
-			</a>
-		{% endif %}
+        {% endblock %}
 
-		<header class="site-header">
-			<nav class="site-nav">
-				<a href="{{ path('home') }}" class="site-logo">
-					<h1>regards singuliers</h1>
-					<span>Priscilia Leote - Architecte d'intérieur</span>
-				</a>
-				<div class="nav-links">
-					<li><a href=>Le Studio</a></li>
-                    <li><a href="{{ path('realisations') }}">Réalisations</a></li>
-                    <li><a href="{{path('prestations')}}">Prestations</a></li>
-                    <li><a href=>Blog</a></li>
-                    <li><a href=>Contact</a></li>
-				</div>
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        <header class="site-header">
+            <nav class="site-nav">
+                <a href="{{ path('home') }}" class="site-logo">
+                    <h1>regards singuliers</h1>
+                    <span>Priscilia Leote - Architecte d'intérieur</span>
+                </a>
+                <div class="nav-links">
+                    <ul>
+                        <li><a href="#">Le Studio</a></li>
+                        <li><a href="#">Réalisations</a></li>
+                        <li><a href="#">Prestations</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
                 <div class="nav-auth">
-					{% if app.user %}
-						<a href="{{ path('profile') }}" class="connexion">Mon Profil</a>
-						<a href="{{ path('logout') }}" class="connexion">Déconnexion</a>
-					{% else %}
-						<a href="{{ path('login') }}" class="connexion">Connexion</a>
+                    {% if app.user %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin') }}" class="admin-link">Administration</a>
+                        {% endif %}
+                        <a href="#" class="profile-link">Mon Profil</a>
+                        <a href="{{ path('logout') }}" class="logout-link">Déconnexion</a>
+                    {% else %}
+                        <a href="{{ path('login') }}" class="login-link">Connexion</a>
                     {% endif %}
-				</div>
-			</nav>
-		</header>
+                </div>
+            </nav>
+        </header>
 
-		<main class="main-content"> 
-
+        <main class="main-container">
             {% block body %}
                 {% if app.flashes|length > 0 %}
                     <div class="flash-messages">
@@ -59,8 +55,7 @@
                     </div>
                 {% endif %}
             {% endblock %}
-
-		</main>
+        </main>
 
         <footer class="site-footer">
             <div class="footer-content">
@@ -85,12 +80,12 @@
                 <div class="footer-nav">
                     <h3>Navigation</h3>
                     <ul>
-                        <li><a href=>Le Studio</a></li>
-                        <li><a href="{{ path('realisations') }}">Réalisations</a></li>
-                        <li><a href=>Prestations</a></li>
-                        <li><a href=>Blog</a></li>
-                        <li><a href=>Contact</a></li>
-                        <li><a href=>F.A.Q</a></li>
+                        <li><a href="#">Le Studio</a></li>
+                        <li><a href="#">Réalisations</a></li>
+                        <li><a href="#">Prestations</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">F.A.Q</a></li>
                     </ul>
                 </div>
 
@@ -109,9 +104,9 @@
                 <div class="footer-legal">
                     <h3>Informations Légales</h3>
                     <ul>
-                        <li><a href=>C.G.U / C.G.V</a></li>
-                        <li><a href=>Confidentialité</a></li>
-                        <li><a href=>Mentions légales</a></li>
+                        <li><a href="{{ path('cgu') }}">C.G.U / C.G.V</a></li>
+                        <li><a href="{{ path('confidentialite') }}">Confidentialité</a></li>
+                        <li><a href="{{ path('mentions_legales') }}">Mentions légales</a></li>
                     </ul>
                 </div>
             </div>
@@ -120,9 +115,5 @@
                 <p>Tous droits réservés</p>
             </div>
         </footer>
-
-        {% block javascripts %}
-            {{ importmap('app') }}
-        {% endblock %}
     </body>
 </html>
