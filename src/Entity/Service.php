@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Service
 {
     #[ORM\Id]
@@ -105,5 +106,15 @@ class Service
         }
 
         return $this;
+    }
+
+    /* Cleaning description when persisting or updating */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function cleanDescription(): void
+    {
+        if ($this->description) {
+            $this->description = strip_tags($this->description);
+        }
     }
 }
