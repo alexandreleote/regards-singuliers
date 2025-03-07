@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.calendly.api_key: '%env(CALENDLY_API_KEY)%'
+    app.calendly.organization_url: '%env(CALENDLY_ORGANIZATION_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -17,8 +19,14 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
             - '../src/Kernel.php'
+
+
+    App\Service\CalendlyService:
+        arguments:
+            $client: '@http_client'
+            $apiKey: '%app.calendly.api_key%'
+            $organizationUrl: '%app.calendly.organization_url%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

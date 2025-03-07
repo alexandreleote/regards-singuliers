@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .date-selection-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            background-color: white;
+        }
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .error-message.visible {
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="date-selection-container">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold mb-6">Réserver - {{ service.title }}</h1>
+            
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-2">Détails de la prestation</h2>
+                <p class="text-gray-600 mb-2">{{ service.description }}</p>
+                <p class="text-lg font-medium">Prix : {{ service.price }}€</p>
+            </div>
+
+            <form id="reservation-form" class="mt-6">
+                <div class="form-group">
+                    <label for="date" class="form-label">Date souhaitée</label>
+                    <input type="date" 
+                           id="date" 
+                           name="date" 
+                           class="form-control"
+                           required
+                           min="{{ "now"|date('Y-m-d') }}"
+                           max="{{ "now"|date_modify("+3 months")|date('Y-m-d') }}">
+                    <div class="error-message" id="date-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="time" class="form-label">Heure souhaitée</label>
+                    <select id="time" name="time" class="form-control" required>
+                        <option value="">Sélectionnez une heure</option>
+                        {% for hour in 9..17 %}
+                            {% for minute in [0, 30] %}
+                                <option value="{{ hour|format('%02d') }}:{{ minute|format('%02d') }}">
+                                    {{ hour|format('%02d') }}:{{ minute|format('%02d') }}
+                                </option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                    <div class="error-message" id="time-error"></div>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                    Confirmer la date
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.getElementById('reservation-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const dateInput = document.getElementById('date');
+            const timeInput = document.getElementById('time');
+            const dateError = document.getElementById('date-error');
+            const timeError = document.getElementById('time-error');
+            
+            // Réinitialiser les messages d'erreur
+            dateError.textContent = '';
+            dateError.classList.remove('visible');
+            timeError.textContent = '';
+            timeError.classList.remove('visible');
+            
+            let hasError = false;
+            
+            if (!dateInput.value) {
+                dateError.textContent = 'Veuillez sélectionner une date';
+                dateError.classList.add('visible');
+                hasError = true;
+            }
+            
+            if (!timeInput.value) {
+                timeError.textContent = 'Veuillez sélectionner une heure';
+                timeError.classList.add('visible');
+                hasError = true;
+            }
+            
+            if (hasError) {
+                return;
+            }
+
+            // Combiner la date et l'heure
+            const datetime = new Date(dateInput.value + 'T' + timeInput.value);
+            
+            // Vérifier si la date est dans le passé
+            if (datetime < new Date()) {
+                dateError.textContent = 'Veuillez sélectionner une date et heure future';
+                dateError.classList.add('visible');
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ path('reservation_date_confirm', {'id': service.id}) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        datetime: datetime.toISOString()
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = result.redirect;
+                } else {
+                    throw new Error(result.error || 'Une erreur est survenue');
+                }
+            } catch (error) {
+                dateError.textContent = error.message;
+                dateError.classList.add('visible');
+            }
+        });
+    </script>
+{% endblock %}

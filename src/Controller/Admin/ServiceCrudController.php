@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ServiceCrudController extends AbstractCrudController
 {
@@ -21,8 +22,13 @@ class ServiceCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('title', 'Nom de la prestation')->setRequired(true),
-            TextEditorField::new('description', 'Description de la prestation')->setRequired(true),
+            TextField::new('title', 'Nom de la prestation')
+                ->setRequired(true),
+            TextEditorField::new('description', 'Description de la prestation')
+                ->setRequired(true)
+                ->setFormTypeOption('attr', [
+                    'class' => 'text-editor',
+                ]),
             MoneyField::new('price', 'Prix de la prestation')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(false)
@@ -44,7 +50,8 @@ class ServiceCrudController extends AbstractCrudController
             ->setPageTitle('new', 'Ajouter une prestation')
             ->setPageTitle('index', 'Prestations')
             ->setEntityLabelInPlural('Prestations')
-            ->setEntityLabelInSingular('Prestation');
+            ->setEntityLabelInSingular('Prestation')
+            ->setDefaultSort(['title' => 'ASC']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -75,5 +82,37 @@ class ServiceCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
                 return $action->setLabel('Sauvegarder et continuer de modifier');
             });
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Service) {
+            $description = $entityInstance->getDescription();
+            if ($description !== null) {
+                // Nettoyer tout le HTML sauf les balises <strong>
+                $cleanDescription = strip_tags($description, '<strong>');
+                // Supprimer les balises <strong> vides
+                $cleanDescription = preg_replace('/<strong>\s*<\/strong>/', '', $cleanDescription);
+                $entityInstance->setDescription($cleanDescription);
+            }
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Service) {
+            $description = $entityInstance->getDescription();
+            if ($description !== null) {
+                // Nettoyer tout le HTML sauf les balises <strong>
+                $cleanDescription = strip_tags($description, '<strong>');
+                // Supprimer les balises <strong> vides
+                $cleanDescription = preg_replace('/<strong>\s*<\/strong>/', '', $cleanDescription);
+                $entityInstance->setDescription($cleanDescription);
+            }
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }
