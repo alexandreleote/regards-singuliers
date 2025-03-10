@@ -3,30 +3,27 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8">{{ page_title }}</h1>
+    <div class="realisations-page-container">
+        <h2>{{ page_title }}</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="realisations-container">
             {% for realisation in realisations %}
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div class="relative h-64">
+                <a href="{{ path('realisation_show', {'id': realisation.id}) }}" class="realisation-item">
+                    <div class="realisation-image">
                         <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
                              alt="{{ realisation.title }}"
-                             class="w-full h-full object-cover">
+                             class="image-item">
                     </div>
-                    <div class="p-6">
-                        <h2 class="text-xl font-bold mb-2">{{ realisation.title }}</h2>
-                        <p class="text-gray-600 mb-4">
+                    <div class="realisation-content">
+                        <h3>{{ realisation.title }}</h3>
+                        <p>
                             {{ realisation.content|striptags|length > 150 ? 
                                realisation.content|striptags|slice(0, 150) ~ '...' : 
                                realisation.content|striptags }}
                         </p>
-                        <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
-                           class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-                            Voir le projet
-                        </a>
+                        <p>Voir le projet</p>
                     </div>
-                </div>
+                </a>
             {% endfor %}
         </div>
     </div>
