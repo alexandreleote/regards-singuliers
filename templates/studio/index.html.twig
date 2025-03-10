@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+
+<h2>Le Studio - regards singuliers</h2>
+
+{% for studio in studios %}
+    <div class="studio-content">{{ studio.content|raw }}</div>
+{% endfor %}
+
+{% endblock %}

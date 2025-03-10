@@ -26,17 +26,17 @@
 
 {% block body %}
     <!-- Carrousel des réalisations -->
-    <div class="swiper mb-12">
-        <div class="swiper-wrapper">
+    <div class="">
+        <div class="">
             {% for realisation in latest_realisations %}
-                <div class="swiper-slide relative">
+                <div class="">
                     <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
                          alt="{{ realisation.title }}"
-                         class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-6">
-                        <h2 class="text-2xl font-bold mb-2">{{ realisation.title }}</h2>
+                         class="">
+                    <div class="">
+                        <h2 class="">{{ realisation.title }}</h2>
                         <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
-                           class="inline-block bg-white text-black px-4 py-2 rounded hover:bg-gray-100">
+                           class="">
                             En savoir plus
                         </a>
                     </div>
@@ -48,24 +48,24 @@
         <div class="swiper-button-next"></div>
     </div>
 
-    <div class="container mx-auto px-4 mb-12">
+    <div class="">
         <div class="text-center mb-8">
             <a href="{{ path('realisations') }}" 
-               class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+               class="">
                 Voir toutes nos réalisations
             </a>
         </div>
 
         <!-- Section des prestations -->
-        <h2 class="text-3xl font-bold text-center mb-8">Nos prestations</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <h2 class="">Nos prestations</h2>
+        <div class="">
             {% for service in services %}
-                <div class="service-card bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-4">{{ service.title }}</h3>
-                        <p class="text-gray-600 mb-4">{{ service.description|striptags|length > 150 ? service.description|striptags|slice(0, 150) ~ '...' : service.description|striptags }}</p>
+                <div class="n">
+                    <div class="">
+                        <h3 class="">{{ service.title }}</h3>
+                        <p class="">{{ service.description|striptags|length > 150 ? service.description|striptags|slice(0, 150) ~ '...' : service.description|striptags }}</p>
                         <a href="{{ path('prestation_show', {'id': service.id}) }}" 
-                           class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                           class="">
                             En savoir plus
                         </a>
                     </div>

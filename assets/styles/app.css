@@ -107,6 +107,7 @@ body {
     display: flex;
     gap: 2em;
     list-style: none;
+    text-transform: uppercase;
 }
 
 .nav-links a {
@@ -293,6 +294,14 @@ body {
     font-size: var(--base-fs-sm);
     text-align: center;
 }
+
+/* Studio */
+
+.studio-content {
+    margin: 20px;
+    padding: 15px;
+}
+
 
 /* Realisations */
 
