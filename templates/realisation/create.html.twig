@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+    <div class="realisations-page-container">
+        <h2>{{ page_title }}</h2>
+
+        {{ form_start(form, {'attr': {'class': 'realisation-form'}}) }}
+            <div class="form-group">
+                {{ form_label(form.title) }}
+                {{ form_widget(form.title) }}
+                {{ form_errors(form.title) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.content) }}
+                {{ form_widget(form.content) }}
+                {{ form_errors(form.content) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.mainImage) }}
+                {{ form_widget(form.mainImage) }}
+                {{ form_errors(form.mainImage) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.imageFiles) }}
+                {{ form_widget(form.imageFiles) }}
+                {{ form_errors(form.imageFiles) }}
+            </div>
+
+            <button type="submit" class="submit-button">Créer la réalisation</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

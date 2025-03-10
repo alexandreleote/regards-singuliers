@@ -6,6 +6,8 @@
 parameters:
     app.calendly.api_key: '%env(CALENDLY_API_KEY)%'
     app.calendly.organization_url: '%env(CALENDLY_ORGANIZATION_URL)%'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+
 
 services:
     # default configuration for services in *this* file

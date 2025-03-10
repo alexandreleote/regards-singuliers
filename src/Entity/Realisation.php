@@ -3,10 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\RealisationRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: RealisationRepository::class)]
 class Realisation
@@ -25,16 +24,19 @@ class Realisation
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'realisation', targetEntity: RealisationImage::class, cascade: ['persist', 'remove'])]
-    private Collection $images;
-
     #[ORM\Column(length: 255)]
     private ?string $mainImage = null;
 
+    #[ORM\Column(type: Types::JSON)]
+    private array $additionalImages = [];
+
+    private ?array $imageFiles = [];
+
     public function __construct()
     {
-        $this->images = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->additionalImages = [];
+        $this->imageFiles = [];
     }
 
     public function getId(): ?int
@@ -80,36 +82,49 @@ class Realisation
         return $this->mainImage;
     }
 
-    public function setMainImage(string $mainImage): static
+    public function setMainImage(?string $mainImage): static
     {
         $this->mainImage = $mainImage;
         return $this;
     }
 
-    /**
-     * @return Collection<int, RealisationImage>
-     */
-    public function getImages(): Collection
+    public function getAdditionalImages(): array
     {
-        return $this->images;
+        return $this->additionalImages;
     }
 
-    public function addImage(RealisationImage $image): static
+    public function setAdditionalImages(array $additionalImages): static
     {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-            $image->setRealisation($this);
+        $this->additionalImages = $additionalImages;
+        return $this;
+    }
+
+    public function addAdditionalImage(string $imagePath): static
+    {
+        if (!in_array($imagePath, $this->additionalImages)) {
+            $this->additionalImages[] = $imagePath;
         }
         return $this;
     }
 
-    public function removeImage(RealisationImage $image): static
+    public function removeAdditionalImage(string $imagePath): static
     {
-        if ($this->images->removeElement($image)) {
-            if ($image->getRealisation() === $this) {
-                $image->setRealisation(null);
-            }
+        $key = array_search($imagePath, $this->additionalImages);
+        if ($key !== false) {
+            unset($this->additionalImages[$key]);
+            $this->additionalImages = array_values($this->additionalImages);
         }
+        return $this;
+    }
+
+    public function getImageFiles(): ?array
+    {
+        return $this->imageFiles;
+    }
+
+    public function setImageFiles(?array $imageFiles): static
+    {
+        $this->imageFiles = $imageFiles;
         return $this;
     }
 }

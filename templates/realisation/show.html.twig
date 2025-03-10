@@ -3,45 +3,41 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto px-4 py-8">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold mb-4">{{ realisation.title }}</h1>
-            <p class="text-gray-600">
+    <div class="realisations-page-container">
+        <div class="realisation-header">
+            <h2>{{ realisation.title }}</h2>
+            <p class="realisation-date">
                 Publié le {{ realisation.createdAt|date('d/m/Y') }}
             </p>
         </div>
 
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+        <div class="realisation-main-image">
             <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
                  alt="{{ realisation.title }}"
-                 class="w-full h-96 object-cover">
+                 class="image-item">
         </div>
 
-        <div class="prose max-w-none mb-12">
+        <div class="realisation-content">
             {{ realisation.content|raw }}
         </div>
 
-        {% if realisation.images|length > 0 %}
-            <h2 class="text-2xl font-bold mb-6">Galerie photos</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for image in realisation.images|sort((a, b) => a.position <=> b.position) %}
-                    <div class="relative group">
-                        <img src="{{ asset('uploads/realisations/' ~ image.path) }}" 
-                             alt="{{ image.caption }}"
-                             class="w-full h-64 object-cover rounded-lg">
-                        {% if image.caption %}
-                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4 rounded-b-lg">
-                                {{ image.caption }}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+        {% if realisation.additionalImages|length > 0 %}
+            <div class="realisation-gallery">
+                <h3>Galerie photos</h3>
+                <div class="gallery-container">
+                    {% for imagePath in realisation.additionalImages %}
+                        <div class="gallery-item">
+                            <img src="{{ asset('uploads/realisations/' ~ imagePath) }}" 
+                                 alt="Image supplémentaire"
+                                 class="image-item">
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         {% endif %}
 
-        <div class="mt-8">
-            <a href="{{ path('realisations') }}" 
-               class="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+        <div class="realisation-footer">
+            <a href="{{ path('realisations') }}" class="back-link">
                 Retour aux réalisations
             </a>
         </div>

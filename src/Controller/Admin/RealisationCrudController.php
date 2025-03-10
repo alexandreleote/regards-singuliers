@@ -3,16 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Realisation;
-use App\Form\RealisationImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -23,81 +19,78 @@ class RealisationCrudController extends AbstractCrudController
         return Realisation::class;
     }
 
-    public function configureFields(string $pageName): iterable
-    {
-        return [
-            TextField::new('title', 'Titre')
-                ->setRequired(true),
-            ImageField::new('mainImage', 'Image principale')
-                ->setBasePath('uploads/realisations')
-                ->setUploadDir('public/uploads/realisations')
-                ->setUploadedFileNamePattern('[randomhash].[extension]')
-                ->setRequired(true),
-            TextEditorField::new('content', 'Contenu')
-                ->setRequired(true),
-            CollectionField::new('images', 'Images')
-                ->setEntryType(RealisationImageType::class)
-                ->setFormTypeOption('by_reference', false)
-                ->onlyOnForms(),
-            DateTimeField::new('createdAt', 'Date de création')
-                ->hideOnForm(),
-        ];
-    }
-
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('index', 'Réalisations')
-            ->setPageTitle('new', 'Ajouter une réalisation')
-            ->setPageTitle('edit', 'Modifier la réalisation')
+            ->setEntityLabelInSingular('Réalisation')
+            ->setEntityLabelInPlural('Réalisations')
             ->setDefaultSort(['createdAt' => 'DESC']);
     }
 
-    public function configureActions(Actions $actions): Actions
+    public function configureFields(string $pageName): iterable
     {
-        return $actions
-            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
-                return $action->setLabel('Ajouter une réalisation');
-            })
-            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-                return $action->setLabel('Modifier');
-            })
-            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-                return $action->setLabel('Supprimer');
-            });
+        $uploadDir = 'uploads/realisations';
+        $uploadPath = $this->getParameter('kernel.project_dir').'/public/'.$uploadDir;
+
+        yield TextField::new('title', 'Titre');
+        yield TextEditorField::new('content', 'Contenu');
+        yield DateTimeField::new('createdAt', 'Date de création')
+            ->hideOnForm();
+        
+        yield ImageField::new('mainImage', 'Image principale')
+            ->setBasePath($uploadDir)
+            ->setUploadDir('public/'.$uploadDir)
+            ->setUploadedFileNamePattern('[randomhash].[extension]')
+            ->setRequired($pageName === Crud::PAGE_NEW);
+
+        yield ImageField::new('imageFiles', 'Images additionnelles')
+            ->setBasePath($uploadDir)
+            ->setUploadDir('public/'.$uploadDir)
+            ->setUploadedFileNamePattern('[randomhash].[extension]')
+            ->setFormTypeOption('multiple', true)
+            ->onlyOnForms();
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Realisation $entityInstance */
-        foreach ($entityInstance->getImages() as $image) {
-            if ($image->getFile() instanceof UploadedFile) {
-                $newFilename = uniqid().'.'.$image->getFile()->guessExtension();
-                $image->getFile()->move(
-                    'public/uploads/realisations',
-                    $newFilename
-                );
-                $image->setPath($newFilename);
+        
+        // Gérer les images additionnelles
+        if ($imageFiles = $entityInstance->getImageFiles()) {
+            foreach ($imageFiles as $imageFile) {
+                if ($imageFile instanceof UploadedFile) {
+                    $newFilename = uniqid().'.'.$imageFile->guessExtension();
+                    $imageFile->move(
+                        $this->getParameter('kernel.project_dir').'/public/uploads/realisations',
+                        $newFilename
+                    );
+                    $entityInstance->addAdditionalImage($newFilename);
+                }
             }
         }
 
-        parent::persistEntity($entityManager, $entityInstance);
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
     }
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Realisation $entityInstance */
-        foreach ($entityInstance->getImages() as $image) {
-            if ($image->getFile() instanceof UploadedFile) {
-                $newFilename = uniqid().'.'.$image->getFile()->guessExtension();
-                $image->getFile()->move(
-                    'public/uploads/realisations',
-                    $newFilename
-                );
-                $image->setPath($newFilename);
+        
+        // Gérer les images additionnelles
+        if ($imageFiles = $entityInstance->getImageFiles()) {
+            foreach ($imageFiles as $imageFile) {
+                if ($imageFile instanceof UploadedFile) {
+                    $newFilename = uniqid().'.'.$imageFile->guessExtension();
+                    $imageFile->move(
+                        $this->getParameter('kernel.project_dir').'/public/uploads/realisations',
+                        $newFilename
+                    );
+                    $entityInstance->addAdditionalImage($newFilename);
+                }
             }
         }
 
-        parent::updateEntity($entityManager, $entityInstance);
+        $entityManager->flush();
     }
 }
