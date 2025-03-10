@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class RealisationCrudController extends AbstractCrudController
@@ -43,11 +44,12 @@ class RealisationCrudController extends AbstractCrudController
             ->setUploadedFileNamePattern('[randomhash].[extension]')
             ->setRequired($pageName === Crud::PAGE_NEW);
 
-        yield ImageField::new('imageFiles', 'Images additionnelles')
+        yield ImageField::new('additionalImages', 'Images additionnelles')
             ->setBasePath($uploadDir)
             ->setUploadDir('public/'.$uploadDir)
             ->setUploadedFileNamePattern('[randomhash].[extension]')
             ->setFormTypeOption('multiple', true)
+            ->setRequired(false)
             ->onlyOnForms();
     }
 
@@ -55,12 +57,24 @@ class RealisationCrudController extends AbstractCrudController
     {
         /** @var Realisation $entityInstance */
         
-        // Gérer les images additionnelles
-        if ($imageFiles = $entityInstance->getImageFiles()) {
-            foreach ($imageFiles as $imageFile) {
-                if ($imageFile instanceof UploadedFile) {
-                    $newFilename = uniqid().'.'.$imageFile->guessExtension();
-                    $imageFile->move(
+        // Gestion de l'image principale
+        $mainImageFile = $this->getContext()->getRequest()->files->get('Realisation')['mainImage'] ?? null;
+        if ($mainImageFile instanceof UploadedFile) {
+            $newFilename = uniqid().'.'.$mainImageFile->guessExtension();
+            $mainImageFile->move(
+                $this->getParameter('kernel.project_dir').'/public/uploads/realisations',
+                $newFilename
+            );
+            $entityInstance->setMainImage($newFilename);
+        }
+
+        // Gestion des images additionnelles
+        $additionalFiles = $this->getContext()->getRequest()->files->get('Realisation')['additionalImages'] ?? [];
+        if (is_array($additionalFiles)) {
+            foreach ($additionalFiles as $file) {
+                if ($file instanceof UploadedFile) {
+                    $newFilename = uniqid().'.'.$file->guessExtension();
+                    $file->move(
                         $this->getParameter('kernel.project_dir').'/public/uploads/realisations',
                         $newFilename
                     );
@@ -77,12 +91,24 @@ class RealisationCrudController extends AbstractCrudController
     {
         /** @var Realisation $entityInstance */
         
-        // Gérer les images additionnelles
-        if ($imageFiles = $entityInstance->getImageFiles()) {
-            foreach ($imageFiles as $imageFile) {
-                if ($imageFile instanceof UploadedFile) {
-                    $newFilename = uniqid().'.'.$imageFile->guessExtension();
-                    $imageFile->move(
+        // Gestion de l'image principale
+        $mainImageFile = $this->getContext()->getRequest()->files->get('Realisation')['mainImage'] ?? null;
+        if ($mainImageFile instanceof UploadedFile) {
+            $newFilename = uniqid().'.'.$mainImageFile->guessExtension();
+            $mainImageFile->move(
+                $this->getParameter('kernel.project_dir').'/public/uploads/realisations',
+                $newFilename
+            );
+            $entityInstance->setMainImage($newFilename);
+        }
+
+        // Gestion des images additionnelles
+        $additionalFiles = $this->getContext()->getRequest()->files->get('Realisation')['additionalImages'] ?? [];
+        if (is_array($additionalFiles)) {
+            foreach ($additionalFiles as $file) {
+                if ($file instanceof UploadedFile) {
+                    $newFilename = uniqid().'.'.$file->guessExtension();
+                    $file->move(
                         $this->getParameter('kernel.project_dir').'/public/uploads/realisations',
                         $newFilename
                     );
