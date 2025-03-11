@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+<section class="contact-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="text-center mb-4">Contactez-nous</h1>
+                
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        {{ form_start(form) }}
+                            <div class="mb-4">
+                                {{ form_label(form.type) }}
+                                {{ form_widget(form.type) }}
+                                {{ form_errors(form.type) }}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.civilite) }}
+                                    {{ form_widget(form.civilite) }}
+                                    {{ form_errors(form.civilite) }}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.nom) }}
+                                    {{ form_widget(form.nom) }}
+                                    {{ form_errors(form.nom) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.prenom) }}
+                                    {{ form_widget(form.prenom) }}
+                                    {{ form_errors(form.prenom) }}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.email) }}
+                                    {{ form_widget(form.email) }}
+                                    {{ form_errors(form.email) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_label(form.telephone) }}
+                                    {{ form_widget(form.telephone) }}
+                                    {{ form_errors(form.telephone) }}
+                                </div>
+                            </div>
+                            
+                            {# Champs pour les professionnels #}
+                            <div class="professional-fields" style="display: none;">
+                                <div class="row">
+                                    {% if form.entreprise is defined %}
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(form.entreprise) }}
+                                        {{ form_widget(form.entreprise) }}
+                                        {{ form_errors(form.entreprise) }}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if form.localisation is defined %}
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(form.localisation) }}
+                                        {{ form_widget(form.localisation) }}
+                                        {{ form_errors(form.localisation) }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                {{ form_label(form.description) }}
+                                {{ form_widget(form.description) }}
+                                {{ form_errors(form.description) }}
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary px-4 py-2">Envoyer</button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fonction pour afficher/masquer les champs professionnels
+        function toggleProfessionalFields() {
+            const typeInputs = document.querySelectorAll('input[name="contact[type]"]');
+            const professionalFields = document.querySelector('.professional-fields');
+            
+            typeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value === 'professionnel' && this.checked) {
+                        professionalFields.style.display = 'block';
+                    } else if (this.value === 'particulier' && this.checked) {
+                        professionalFields.style.display = 'none';
+                    }
+                });
+                
+                // Initialiser l'affichage au chargement
+                if (input.value === 'professionnel' && input.checked) {
+                    professionalFields.style.display = 'block';
+                }
+            });
+        }
+        
+        toggleProfessionalFields();
+    });
+</script>
+{% endblock %}
+{% endblock %}

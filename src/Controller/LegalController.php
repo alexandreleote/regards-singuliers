@@ -31,4 +31,12 @@ final class LegalController extends AbstractController
             'page_title' => 'Mentions Légales - regards singuliers',
         ]);
     }
+
+    #[Route('/faq', name: 'faq')]
+    public function faq(): Response
+    {
+        return $this->render('legal/faq.html.twig', [
+            'page_title' => 'FAQ - regards singuliers',
+        ]);
+    }
 }

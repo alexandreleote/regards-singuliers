@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}{{ page_title }}{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM1z4v3nI1Qm5c5aD5f5f5f5f5f5f5f5f5f5f5" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM1z4v3nI1Qm5c5aD5f5f5f5f5f5f5f5f5f5" crossorigin="anonymous">
         {% block stylesheets %}
         {% endblock %}
 
@@ -25,13 +25,13 @@
                         <li><a href="{{ path('realisations') }}">Réalisations</a></li>
                         <li><a href="{{ path('prestations') }}">Prestations</a></li>
                         <li><a href="#">Blog</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="{{ path('contact') }}">Contact</a></li>
                     </ul>
                 </div>
                 <div class="nav-auth">
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('admin') }}" class="admin-link">Administration</a>
+                            <a href="{{ path('admin') }}" class="admin-link">Admin</a>
                         {% endif %}
                         <a href="#" class="profile-link">Mon Profil</a>
                         <a href="{{ path('logout') }}" class="logout-link">Déconnexion</a>
@@ -85,8 +85,8 @@
                         <li><a href="{{ path('realisations') }}">Réalisations</a></li>
                         <li><a href="{{ path('prestations') }}">Prestations</a></li>
                         <li><a href="#">Blog</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">F.A.Q</a></li>
+                        <li><a href="{{ path('contact') }}">Contact</a></li>
+                        <li><a href="{{ path('faq') }}">F.A.Q</a></li>
                     </ul>
                 </div>
 
@@ -114,6 +114,7 @@
                     </ul>
                 </div>
             </div>
+
             <div class="footer-copyright">
                 <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecte d'intérieur, Bretagne</p>
                 <p>Tous droits réservés</p>

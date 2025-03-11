@@ -1,0 +1,43 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Bannir définitivement un utilisateur{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Bannir définitivement l'utilisateur : {{ user.email }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-triangle"></i>
+                <strong>Attention !</strong> Cette action est irréversible. Le bannissement définitif va :
+                <ul class="mt-2">
+                    <li>Modifier l'adresse email de l'utilisateur en "banned@{{ user.id }}.del"</li>
+                    <li>Supprimer toutes les informations personnelles de l'utilisateur</li>
+                    <li>Empêcher définitivement l'utilisateur de se connecter</li>
+                </ul>
+            </div>
+            
+            <div class="user-info mb-4">
+                <p><strong>Email :</strong> {{ user.email }}</p>
+                {% if user.name or user.firstName %}
+                    <p><strong>Nom complet :</strong> {{ user.name }} {{ user.firstName }}</p>
+                {% endif %}
+                <p><strong>Date d'inscription :</strong> {{ user.createdAt|date('d/m/Y H:i') }}</p>
+            </div>
+            
+            {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_label(form.confirm) }}
+                    {{ form_widget(form.confirm) }}
+                    {{ form_errors(form.confirm) }}
+                </div>
+                
+                <div class="form-group mt-4">
+                    <a href="{{ ea_url().setAction('index').generateUrl() }}" class="btn btn-secondary">Retour</a>
+                    {{ form_widget(form.submit) }}
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
