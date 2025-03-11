@@ -1,11 +1,74 @@
-<h1>Hi! Please confirm your email!</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation d'inscription - regards singuliers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white !important;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .signature {
+            font-style: italic;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bienvenue ! <br>Confirmez votre adresse email</h1>
 
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
+    <p>
+        Merci de votre inscription ! Nous sommes ravis de vous compter parmi nous.
+    </p>
+    
+    <p>
+        Notre approche ? Sublimer l'existant, révéler le potentiel des espaces sans en faire trop, avec justesse et harmonie.
+    </p>
 
-<p>
-    Cheers!
-</p>
+    <p>
+        Pour finaliser votre inscription, il vous suffit de confirmer votre adresse email en cliquant sur le lien ci-dessous :
+    </p>
+
+    <p style="text-align: center;">
+        <a href="{{ signedUrl }}" class="btn">👉 Confirmer mon adresse email</a>
+    </p>
+
+    <p class="warning">
+        ⚠️ Ce lien est valable jusqu'à {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+    </p>
+
+    <p>
+        À très bientôt pour imaginer ensemble un intérieur qui vous ressemble.
+    </p>
+
+    <p class="signature">
+        <strong>regards singuliers</strong><br>
+        Priscilia Leote - Architecte d'intérieur
+    </p>
+</body>
+</html>

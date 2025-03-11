@@ -35,37 +35,53 @@ class RegistrationController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response
     {
+        // If the user is already logged in, redirect to home
+        if ($this->getUser()) {
+            return $this->redirectToRoute('home');
+        }
+        
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                /** @var string $plainPassword */
+                $plainPassword = $form->get('plainPassword')->getData();
 
-            // Add the creation date of the account
-            $user->setCreatedAt(new \DateTimeImmutable());
+                // Add the creation date of the account
+                $user->setCreatedAt(new \DateTimeImmutable());
 
-            // Set the user role
-            $user->setRoles(['ROLE_USER']);
+                // Set the user role
+                $user->setRoles(['ROLE_USER']);
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+                // encode the plain password
+                $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('no-reply@example.com', 'no-reply'))
-                    ->to((string) $user->getEmail())
-                    ->subject('Veuillez confirmer votre Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-            
-            $this->addFlash('success', 'Inscription réussie! Veuillez vérifier votre email et cliquer sur le lien de vérification.');
-            return $userAuthenticator->authenticateUser($user, $authenticator, $request);
+                // generate a signed url and email it to the user
+                $this->emailVerifier->sendEmailConfirmation('verify_email', $user,
+                    (new TemplatedEmail())
+                        ->from(new Address('no-reply@regards-singuliers.com', 'no-reply'))
+                        ->to((string) $user->getEmail())
+                        ->subject('Veuillez confirmer votre Email')
+                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                );
+                
+                $this->addFlash('success', 'Inscription réussie! Veuillez vérifier votre email et cliquer sur le lien de vérification.');
+                
+                // Authenticate user and redirect
+                return $userAuthenticator->authenticateUser($user, $authenticator, $request);
+            } else {
+                // If form is submitted but not valid, we need to handle Turbo by redirecting
+                // This is important for Turbo to work properly with form errors
+                $this->addFlash('error', 'Il y a des erreurs dans le formulaire. Veuillez vérifier vos informations.');
+                
+                // Redirect back to the registration page to show errors
+                return $this->redirectToRoute('register');
+            }
         }
 
         return $this->render('registration/register.html.twig', [

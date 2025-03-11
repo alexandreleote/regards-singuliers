@@ -14,39 +14,69 @@
                 <h2 class="auth-form-title">Inscription</h2>
                 <p class="auth-form-subtitle">Créez votre compte personnel</p>
                 
-                <form method="post">
-                    {% if error is defined and error %}
-                        <div class="auth-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% for flash_error in app.flashes('verify_email_error') %}
+                    <div class="auth-error" role="alert">{{ flash_error }}</div>
+                {% endfor %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="auth-success">{{ message }}</div>
+                {% endfor %}
+                
+                {% for message in app.flashes('error') %}
+                    <div class="auth-error">{{ message }}</div>
+                {% endfor %}
+                
+                {{ form_start(registrationForm, {'attr': {'data-turbo': 'false'}}) }}
+                    {% if form_errors(registrationForm) %}
+                        <div class="auth-error">
+                            {{ form_errors(registrationForm) }}
+                        </div>
                     {% endif %}
 
                     <div class="auth-form-group">
-                        <label for="email" class="auth-form-label">Email</label>
-                        <input type="email" name="email" id="email" class="auth-form-input" autocomplete="email" required autofocus>
+                        {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'auth-form-label'}}) }}
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'auth-form-input', 'autocomplete': 'email', 'autofocus': true}}) }}
+                        {{ form_errors(registrationForm.email) }}
                     </div>
                     
                     <div class="auth-form-group">
-                        <label for="password" class="auth-form-label">Mot de passe</label>
-                        <input type="password" name="password" id="password" class="auth-form-input" autocomplete="new-password" required>
+                        {{ form_label(registrationForm.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'auth-form-label'}}) }}
+                        {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'auth-form-input', 'autocomplete': 'new-password'}}) }}
+                        {% if form_errors(registrationForm.plainPassword.first) %}
+                            {{ form_errors(registrationForm.plainPassword.first) }}
+                            <small class="form-text text-muted">
+                                Votre mot de passe doit contenir au minimum :
+                                <ul>
+                                    <li>12 caractères</li>
+                                    <li>Une majuscule</li>
+                                    <li>Une minuscule</li>
+                                    <li>Un chiffre</li>
+                                    <li>Un caractère spécial (@$!%*?&)</li>
+                                </ul>
+                            </small>
+                        {% endif %}
                     </div>
                     
                     <div class="auth-form-group">
-                        <label for="password_confirm" class="auth-form-label">Confirmez le mot de passe</label>
-                        <input type="password" name="password_confirm" id="password_confirm" class="auth-form-input" autocomplete="new-password" required>
+                        {{ form_label(registrationForm.plainPassword.second, 'Confirmez le mot de passe', {'label_attr': {'class': 'auth-form-label'}}) }}
+                        {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'auth-form-input', 'autocomplete': 'new-password'}}) }}
+                        {{ form_errors(registrationForm.plainPassword.second) }}
                     </div>
-
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
 
                     <div class="auth-form-group">
                         <div class="checkbox">
-                            <input type="checkbox" name="agree_terms" id="agree_terms" required>
-                            <label for="agree_terms">J'accepte les <a href="{{ path('cgu') }}" target="_blank">conditions générales d'utilisation</a></label>
+                            {{ form_widget(registrationForm.agreeTerms) }}
+                            <label for="{{ registrationForm.agreeTerms.vars.id }}">
+                                J'accepte les <a href="{{ path('cgu') }}" target="_blank">conditions générales d'utilisation</a>
+                            </label>
+                            {{ form_errors(registrationForm.agreeTerms) }}
                         </div>
                     </div>
 
                     <button class="auth-submit-btn" type="submit">
                         S'inscrire
                     </button>
-                </form>
+                {{ form_end(registrationForm) }}
 
                 <div class="auth-links">
                     <a href="{{ path('login') }}" class="auth-link">Déjà un compte ?</a>
