@@ -18,6 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 class RegistrationController extends AbstractController
 {
@@ -45,42 +46,71 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+            // Vérifier d'abord si l'email existe déjà
+            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $form->get('email')->getData()]);
+            if ($existingUser) {
+                $this->addFlash('error', 'Cette adresse email est déjà utilisée. Veuillez vous connecter ou utiliser une autre adresse email.');
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form,
+                    'page_title' => 'Inscription - regards singuliers'
+                ]);
+            }
+            
             if ($form->isValid()) {
-                /** @var string $plainPassword */
-                $plainPassword = $form->get('plainPassword')->getData();
+                try {
+                    /** @var string $plainPassword */
+                    $plainPassword = $form->get('plainPassword')->getData();
 
-                // Add the creation date of the account
-                $user->setCreatedAt(new \DateTimeImmutable());
+                    // Add the creation date of the account
+                    $user->setCreatedAt(new \DateTimeImmutable());
 
-                // Set the user role
-                $user->setRoles(['ROLE_USER']);
+                    // Set the user role
+                    $user->setRoles(['ROLE_USER']);
 
-                // encode the plain password
-                $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+                    // encode the plain password
+                    $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-                $entityManager->persist($user);
-                $entityManager->flush();
+                    $entityManager->persist($user);
+                    $entityManager->flush();
 
-                // generate a signed url and email it to the user
-                $this->emailVerifier->sendEmailConfirmation('verify_email', $user,
-                    (new TemplatedEmail())
-                        ->from(new Address('no-reply@regards-singuliers.com', 'no-reply'))
-                        ->to((string) $user->getEmail())
-                        ->subject('Veuillez confirmer votre Email')
-                        ->htmlTemplate('registration/confirmation_email.html.twig')
-                );
-                
-                $this->addFlash('success', 'Inscription réussie! Veuillez vérifier votre email et cliquer sur le lien de vérification.');
-                
-                // Authenticate user and redirect
-                return $userAuthenticator->authenticateUser($user, $authenticator, $request);
+                    // generate a signed url and email it to the user
+                    $this->emailVerifier->sendEmailConfirmation('verify_email', $user,
+                        (new TemplatedEmail())
+                            ->from(new Address('no-reply@regards-singuliers.com', 'no-reply'))
+                            ->to((string) $user->getEmail())
+                            ->subject('Veuillez confirmer votre Email')
+                            ->htmlTemplate('registration/confirmation_email.html.twig')
+                    );
+                    
+                    $this->addFlash('success', 'Inscription réussie! Veuillez vérifier votre email et cliquer sur le lien de vérification.');
+                    
+                    // Authenticate user and redirect
+                    return $userAuthenticator->authenticateUser($user, $authenticator, $request);
+                } catch (UniqueConstraintViolationException $e) {
+                    $this->addFlash('error', 'Cette adresse email est déjà utilisée. Veuillez vous connecter ou utiliser une autre adresse email.');
+                    return $this->render('registration/register.html.twig', [
+                        'registrationForm' => $form,
+                        'page_title' => 'Inscription - regards singuliers'
+                    ]);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
+                    return $this->render('registration/register.html.twig', [
+                        'registrationForm' => $form,
+                        'page_title' => 'Inscription - regards singuliers'
+                    ]);
+                }
             } else {
-                // If form is submitted but not valid, we need to handle Turbo by redirecting
-                // This is important for Turbo to work properly with form errors
-                $this->addFlash('error', 'Il y a des erreurs dans le formulaire. Veuillez vérifier vos informations.');
-                
-                // Redirect back to the registration page to show errors
-                return $this->redirectToRoute('register');
+                // Check if there are password errors
+                if ($form->get('plainPassword')->getErrors(true)->count() > 0) {
+                    $passwordErrorMessage = "Votre mot de passe doit contenir au minimum :<br>
+                        - 12 caractères<br>
+                        - Une majuscule<br>
+                        - Une minuscule<br>
+                        - Un chiffre<br>
+                        - Un caractère spécial (@$!%*?&)";
+                    
+                    $this->addFlash('password_error', $passwordErrorMessage);
+                }
             }
         }
 
@@ -106,7 +136,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('register');
         }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Votre adresse email a bien été vérifiée.');
 
         return $this->redirectToRoute('home');

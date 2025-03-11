@@ -22,8 +22,14 @@
                     <div class="auth-success">{{ message }}</div>
                 {% endfor %}
                 
-                {% for message in app.flashes('error') %}
-                    <div class="auth-error">{{ message }}</div>
+                {% for flash_error in app.flashes('error') %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ flash_error }}
+                    </div>
+                {% endfor %}
+                
+                {% for message in app.flashes('password_error') %}
+                    <div class="auth-error">{{ message|raw }}</div>
                 {% endfor %}
                 
                 {{ form_start(registrationForm, {'attr': {'data-turbo': 'false'}}) }}
@@ -36,31 +42,16 @@
                     <div class="auth-form-group">
                         {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'auth-form-label'}}) }}
                         {{ form_widget(registrationForm.email, {'attr': {'class': 'auth-form-input', 'autocomplete': 'email', 'autofocus': true}}) }}
-                        {{ form_errors(registrationForm.email) }}
                     </div>
                     
                     <div class="auth-form-group">
                         {{ form_label(registrationForm.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'auth-form-label'}}) }}
                         {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'auth-form-input', 'autocomplete': 'new-password'}}) }}
-                        {% if form_errors(registrationForm.plainPassword.first) %}
-                            {{ form_errors(registrationForm.plainPassword.first) }}
-                            <small class="form-text text-muted">
-                                Votre mot de passe doit contenir au minimum :
-                                <ul>
-                                    <li>12 caractères</li>
-                                    <li>Une majuscule</li>
-                                    <li>Une minuscule</li>
-                                    <li>Un chiffre</li>
-                                    <li>Un caractère spécial (@$!%*?&)</li>
-                                </ul>
-                            </small>
-                        {% endif %}
                     </div>
                     
                     <div class="auth-form-group">
                         {{ form_label(registrationForm.plainPassword.second, 'Confirmez le mot de passe', {'label_attr': {'class': 'auth-form-label'}}) }}
                         {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'auth-form-input', 'autocomplete': 'new-password'}}) }}
-                        {{ form_errors(registrationForm.plainPassword.second) }}
                     </div>
 
                     <div class="auth-form-group">
