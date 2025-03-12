@@ -4,92 +4,92 @@
 
 {% block body %}
 <section class="page-container">
-    <div class="">
-        <div class="">
-            <div class="">
-                <h1 class="">Contactez-nous</h1>
+    <div class="contact-container">
+        <div class="contact-content">
+            <div class="contact-header">
+                <h2 class="contact-title">Contactez-nous</h2>
                 
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}
                         <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
                             {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times;</button>
                         </div>
                     {% endfor %}
                 {% endfor %}
                 
-                <div class="">
-                    <div class="">
-                        {{ form_start(form) }}
-                            <div class="">
-                                {{ form_label(form.type) }}
-                                {{ form_widget(form.type) }}
+                <div class="contact-form-wrapper">
+                    <div class="contact-form">
+                        {{ form_start(form, {'attr': {'class': 'contact-form-inner'}}) }}
+                            <div class="form-group">
+                                {{ form_label(form.type, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.type, {'attr': {'class': 'form-check-group'}, 'row_attr': {'class': 'form-check'}}) }}
                                 {{ form_errors(form.type) }}
                             </div>
                             
-                            <div class="">
-                                <div class="">
-                                    {{ form_label(form.civilite) }}
-                                    {{ form_widget(form.civilite) }}
+                            <div class="form-group">
+                                <div class="form-field">
+                                    {{ form_label(form.civilite, null, {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.civilite, {'attr': {'class': 'form-check-group'}, 'row_attr': {'class': 'form-check'}}) }}
                                     {{ form_errors(form.civilite) }}
                                 </div>
                             </div>
                             
-                            <div class="">
-                                <div class="">
-                                    {{ form_label(form.nom) }}
-                                    {{ form_widget(form.nom) }}
+                            <div class="form-row">
+                                <div class="form-field">
+                                    {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
                                     {{ form_errors(form.nom) }}
                                 </div>
-                                <div class="">
-                                    {{ form_label(form.prenom) }}
-                                    {{ form_widget(form.prenom) }}
+                                <div class="form-field">
+                                    {{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
                                     {{ form_errors(form.prenom) }}
                                 </div>
                             </div>
                             
-                            <div class="">
-                                <div class="">
-                                    {{ form_label(form.email) }}
-                                    {{ form_widget(form.email) }}
+                            <div class="form-row">
+                                <div class="form-field">
+                                    {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
                                     {{ form_errors(form.email) }}
                                 </div>
-                                <div class="">
-                                    {{ form_label(form.telephone) }}
-                                    {{ form_widget(form.telephone) }}
+                                <div class="form-field">
+                                    {{ form_label(form.telephone, null, {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
                                     {{ form_errors(form.telephone) }}
                                 </div>
                             </div>
                             
                             {# Champs pour les professionnels #}
-                            <div class="professional-fields" style="display: none;">
-                                <div class="">
+                            <div class="professional-fields">
+                                <div class="form-row">
                                     {% if form.entreprise is defined %}
-                                    <div class="">
-                                        {{ form_label(form.entreprise) }}
-                                        {{ form_widget(form.entreprise) }}
+                                    <div class="form-field">
+                                        {{ form_label(form.entreprise, null, {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.entreprise, {'attr': {'class': 'form-control'}}) }}
                                         {{ form_errors(form.entreprise) }}
                                     </div>
                                     {% endif %}
                                     
                                     {% if form.localisation is defined %}
-                                    <div class="">
-                                        {{ form_label(form.localisation) }}
-                                        {{ form_widget(form.localisation) }}
+                                    <div class="form-field">
+                                        {{ form_label(form.localisation, null, {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
                                         {{ form_errors(form.localisation) }}
                                     </div>
                                     {% endif %}
                                 </div>
                             </div>
                             
-                            <div class="">
-                                {{ form_label(form.description) }}
-                                {{ form_widget(form.description) }}
+                            <div class="form-group">
+                                {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
                                 {{ form_errors(form.description) }}
                             </div>
                             
-                            <div class="">
-                                <button type="submit" class="">Envoyer</button>
+                            <div class="form-submit">
+                                <button type="submit" class="contact-submit-btn">Envoyer</button>
                             </div>
                         {{ form_end(form) }}
                     </div>
@@ -98,33 +98,4 @@
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block javascripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Fonction pour afficher/masquer les champs professionnels
-        function toggleProfessionalFields() {
-            const typeInputs = document.querySelectorAll('input[name="contact[type]"]');
-            const professionalFields = document.querySelector('.professional-fields');
-            
-            typeInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    if (this.value === 'professionnel' && this.checked) {
-                        professionalFields.style.display = 'block';
-                    } else if (this.value === 'particulier' && this.checked) {
-                        professionalFields.style.display = 'none';
-                    }
-                });
-                
-                // Initialiser l'affichage au chargement
-                if (input.value === 'professionnel' && input.checked) {
-                    professionalFields.style.display = 'block';
-                }
-            });
-        }
-        
-        toggleProfessionalFields();
-    });
-</script>
 {% endblock %}
