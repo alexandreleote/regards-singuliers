@@ -3,11 +3,11 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<section class="contact-section py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <h1 class="text-center mb-4">Contactez-nous</h1>
+<section class="page-container">
+    <div class="">
+        <div class="">
+            <div class="">
+                <h1 class="">Contactez-nous</h1>
                 
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}
@@ -18,43 +18,43 @@
                     {% endfor %}
                 {% endfor %}
                 
-                <div class="card shadow">
-                    <div class="card-body p-4">
+                <div class="">
+                    <div class="">
                         {{ form_start(form) }}
-                            <div class="mb-4">
+                            <div class="">
                                 {{ form_label(form.type) }}
                                 {{ form_widget(form.type) }}
                                 {{ form_errors(form.type) }}
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
+                            <div class="">
+                                <div class="">
                                     {{ form_label(form.civilite) }}
                                     {{ form_widget(form.civilite) }}
                                     {{ form_errors(form.civilite) }}
                                 </div>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
+                            <div class="">
+                                <div class="">
                                     {{ form_label(form.nom) }}
                                     {{ form_widget(form.nom) }}
                                     {{ form_errors(form.nom) }}
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="">
                                     {{ form_label(form.prenom) }}
                                     {{ form_widget(form.prenom) }}
                                     {{ form_errors(form.prenom) }}
                                 </div>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
+                            <div class="">
+                                <div class="">
                                     {{ form_label(form.email) }}
                                     {{ form_widget(form.email) }}
                                     {{ form_errors(form.email) }}
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="">
                                     {{ form_label(form.telephone) }}
                                     {{ form_widget(form.telephone) }}
                                     {{ form_errors(form.telephone) }}
@@ -63,9 +63,9 @@
                             
                             {# Champs pour les professionnels #}
                             <div class="professional-fields" style="display: none;">
-                                <div class="row">
+                                <div class="">
                                     {% if form.entreprise is defined %}
-                                    <div class="col-md-6 mb-3">
+                                    <div class="">
                                         {{ form_label(form.entreprise) }}
                                         {{ form_widget(form.entreprise) }}
                                         {{ form_errors(form.entreprise) }}
@@ -73,7 +73,7 @@
                                     {% endif %}
                                     
                                     {% if form.localisation is defined %}
-                                    <div class="col-md-6 mb-3">
+                                    <div class="">
                                         {{ form_label(form.localisation) }}
                                         {{ form_widget(form.localisation) }}
                                         {{ form_errors(form.localisation) }}
@@ -82,14 +82,14 @@
                                 </div>
                             </div>
                             
-                            <div class="mb-4">
+                            <div class="">
                                 {{ form_label(form.description) }}
                                 {{ form_widget(form.description) }}
                                 {{ form_errors(form.description) }}
                             </div>
                             
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary px-4 py-2">Envoyer</button>
+                            <div class="">
+                                <button type="submit" class="">Envoyer</button>
                             </div>
                         {{ form_end(form) }}
                     </div>
@@ -98,6 +98,7 @@
         </div>
     </div>
 </section>
+{% endblock %}
 
 {% block javascripts %}
 <script>
@@ -126,5 +127,4 @@
         toggleProfessionalFields();
     });
 </script>
-{% endblock %}
 {% endblock %}

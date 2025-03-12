@@ -14,5 +14,6 @@ import './styles/legal.css';
 /* JavaScript Imports */
 import './js/header-scroll.js';
 import './js/show-number.js';
+import './js/faq.js';
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

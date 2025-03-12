@@ -3,123 +3,102 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<section class="faq-section py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-10 mx-auto">
-                <h1 class="text-center mb-5">Foire Aux Questions</h1>
-                
-                <div class="accordion" id="faqAccordion">
-                    <!-- Question 1 -->
-                    <div class="accordion-item mb-3 shadow-sm">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Comment se déroule un projet d'architecture d'intérieur ?
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <p>Un projet d'architecture d'intérieur se déroule généralement en plusieurs étapes :</p>
-                                <ol>
-                                    <li><strong>Première rencontre</strong> : Nous discutons de vos besoins, vos envies et votre budget.</li>
-                                    <li><strong>Étude préliminaire</strong> : Nous analysons l'espace et proposons des premières idées.</li>
-                                    <li><strong>Avant-projet</strong> : Nous élaborons des plans, des croquis et des propositions de matériaux.</li>
-                                    <li><strong>Projet définitif</strong> : Nous finalisons les plans, les choix de matériaux et le budget.</li>
-                                    <li><strong>Réalisation</strong> : Nous coordonnons les travaux et veillons à leur bonne exécution.</li>
-                                    <li><strong>Livraison</strong> : Nous vous remettons les clés de votre nouvel espace.</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Question 2 -->
-                    <div class="accordion-item mb-3 shadow-sm">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Quel est le coût d'un projet d'architecture d'intérieur ?
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <p>Le coût d'un projet d'architecture d'intérieur varie en fonction de plusieurs facteurs :</p>
-                                <ul>
-                                    <li>La taille de l'espace à aménager</li>
-                                    <li>La complexité du projet</li>
-                                    <li>Les matériaux choisis</li>
-                                    <li>Les équipements et le mobilier</li>
-                                    <li>Les contraintes techniques</li>
-                                </ul>
-                                <p>Nous établissons un devis détaillé après la première phase d'étude, ce qui vous permet de connaître précisément le coût de votre projet avant de vous engager.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Question 3 -->
-                    <div class="accordion-item mb-3 shadow-sm">
-                        <h2 class="accordion-header" id="headingThree">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                Combien de temps dure un projet d'architecture d'intérieur ?
-                            </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <p>La durée d'un projet dépend de son ampleur et de sa complexité. Voici un calendrier indicatif :</p>
-                                <ul>
-                                    <li><strong>Petits projets</strong> (réaménagement d'une pièce) : 1 à 3 mois</li>
-                                    <li><strong>Projets moyens</strong> (rénovation d'un appartement) : 3 à 6 mois</li>
-                                    <li><strong>Grands projets</strong> (rénovation complète d'une maison) : 6 à 12 mois</li>
-                                </ul>
-                                <p>Ces délais incluent la phase de conception, la recherche des artisans et la réalisation des travaux.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Question 4 -->
-                    <div class="accordion-item mb-3 shadow-sm">
-                        <h2 class="accordion-header" id="headingFour">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                Travaillez-vous avec des particuliers ou des professionnels ?
-                            </button>
-                        </h2>
-                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <p>Nous travaillons aussi bien avec des particuliers que des professionnels :</p>
-                                <ul>
-                                    <li><strong>Particuliers</strong> : Maisons, appartements, résidences secondaires</li>
-                                    <li><strong>Professionnels</strong> : Bureaux, commerces, hôtels, restaurants</li>
-                                </ul>
-                                <p>Chaque projet est unique et reçoit la même attention, quelle que soit sa taille ou sa nature.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Question 5 -->
-                    <div class="accordion-item mb-3 shadow-sm">
-                        <h2 class="accordion-header" id="headingFive">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                Comment prendre rendez-vous pour un premier entretien ?
-                            </button>
-                        </h2>
-                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <p>Pour prendre rendez-vous, vous pouvez :</p>
-                                <ul>
-                                    <li>Nous contacter via notre <a href="{{ path('contact') }}">formulaire de contact</a></li>
-                                    <li>Nous appeler directement</li>
-                                    <li>Nous envoyer un email</li>
-                                </ul>
-                                <p>Le premier entretien permet de discuter de votre projet, de vos attentes et de votre budget. C'est une étape essentielle pour établir une relation de confiance et comprendre vos besoins.</p>
-                            </div>
-                        </div>
-                    </div>
+    <section class="page-container">
+        <h1>Foire Aux Questions</h1>
+        
+        <div class="faq-container">
+            <!-- Question 1 -->
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Comment se déroule un projet d'architecture d'intérieur ?</h3>
+                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
                 </div>
-                
-                <div class="text-center mt-5">
-                    <p>Vous avez d'autres questions ? N'hésitez pas à nous contacter !</p>
-                    <a href="{{ path('contact') }}" class="btn btn-primary mt-3">Contactez-nous</a>
+                <div class="faq-answer">
+                    <p>Un projet d'architecture d'intérieur se déroule généralement en plusieurs étapes :</p>
+                    <ol>
+                        <li><strong>Première rencontre</strong> : Nous discutons de vos besoins, vos envies et votre budget.</li>
+                        <li><strong>Étude préliminaire</strong> : Nous analysons l'espace et proposons des premières idées.</li>
+                        <li><strong>Avant-projet</strong> : Nous élaborons des plans, des croquis et des propositions de matériaux.</li>
+                        <li><strong>Projet définitif</strong> : Nous finalisons les plans, les choix de matériaux et le budget.</li>
+                        <li><strong>Réalisation</strong> : Nous coordonnons les travaux et veillons à leur bonne exécution.</li>
+                        <li><strong>Livraison</strong> : Nous vous remettons les clés de votre nouvel espace.</li>
+                    </ol>
                 </div>
             </div>
+            
+            <!-- Question 2 -->
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Quel est le coût d'un projet d'architecture d'intérieur ?</h3>
+                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+                <div class="faq-answer">
+                    <p>Le coût d'un projet d'architecture d'intérieur varie en fonction de plusieurs facteurs :</p>
+                    <ul>
+                        <li>La taille de l'espace à aménager</li>
+                        <li>La complexité du projet</li>
+                        <li>Les matériaux choisis</li>
+                        <li>Les équipements et le mobilier</li>
+                        <li>Les contraintes techniques</li>
+                    </ul>
+                    <p>Nous établissons un devis détaillé après la première phase d'étude, ce qui vous permet de connaître précisément le coût de votre projet avant de vous engager.</p>
+                </div>
+            </div>
+                
+            <!-- Question 3 -->
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Combien de temps dure un projet d'architecture d'intérieur ?</h3>
+                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+                <div class="faq-answer">
+                    <p>La durée d'un projet dépend de son ampleur et de sa complexité. Voici un calendrier indicatif :</p>
+                    <ul>
+                        <li><strong>Petits projets</strong> (réaménagement d'une pièce) : 1 à 3 mois</li>
+                        <li><strong>Projets moyens</strong> (rénovation d'un appartement) : 3 à 6 mois</li>
+                        <li><strong>Grands projets</strong> (rénovation complète d'une maison) : 6 à 12 mois</li>
+                    </ul>
+                    <p>Ces délais incluent la phase de conception, la recherche des artisans et la réalisation des travaux.</p>
+                </div>
+            </div>
+                
+            <!-- Question 4 -->
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Travaillez-vous avec des particuliers ou des professionnels ?</h3>
+                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+                <div class="faq-answer">
+                    <p>Nous travaillons aussi bien avec des particuliers que des professionnels :</p>
+                    <ul>
+                        <li><strong>Particuliers</strong> : Maisons, appartements, résidences secondaires</li>
+                        <li><strong>Professionnels</strong> : Bureaux, commerces, hôtels, restaurants</li>
+                    </ul>
+                    <p>Chaque projet est unique et reçoit la même attention, quelle que soit sa taille ou sa nature.</p>
+                </div>
+            </div>
+                
+            <!-- Question 5 -->
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Comment prendre rendez-vous pour un premier entretien ?</h3>
+                    <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+                <div class="faq-answer">
+                    <p>Pour prendre rendez-vous, vous pouvez :</p>
+                    <ul>
+                        <li>Nous contacter via notre <a href="/contact">formulaire de contact</a></li>
+                        <li>Nous appeler directement</li>
+                        <li>Nous envoyer un email</li>
+                    </ul>
+                    <p>Le premier entretien permet de discuter de votre projet, de vos attentes et de votre budget. C'est une étape essentielle pour établir une relation de confiance et comprendre vos besoins.</p>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <p>Vous avez d'autres questions ?</p>
+                <a href="/contact" class="contact-btn">Contactez-nous</a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 {% endblock %}
