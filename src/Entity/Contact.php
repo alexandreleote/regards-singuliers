@@ -25,7 +25,7 @@ class Contact
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank(message: 'Veuillez sélectionner un type de contact')]
     #[Assert\Choice(choices: [self::TYPE_PARTICULIER, self::TYPE_PROFESSIONNEL], message: 'Type de contact invalide')]
-    private ?string $type = null;
+    private ?string $type = self::TYPE_PARTICULIER;
     
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank(message: 'Veuillez sélectionner une civilité')]

@@ -6,6 +6,7 @@ use App\Entity\Contact;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,133 +21,68 @@ class ContactType extends AbstractType
     {
         $builder
             ->add('type', ChoiceType::class, [
-                'label' => 'Vous êtes',
                 'choices' => [
-                    'Un particulier' => Contact::TYPE_PARTICULIER,
-                    'Un professionnel' => Contact::TYPE_PROFESSIONNEL,
+                    'Particulier' => Contact::TYPE_PARTICULIER,
+                    'Professionnel' => Contact::TYPE_PROFESSIONNEL,
                 ],
                 'expanded' => true,
                 'multiple' => false,
-                'attr' => [
-                    'class' => 'js-contact-type-selector',
-                ],
-                'label_attr' => [
-                    'class' => 'radio-custom',
-                ],
+                'label' => false,
+                'attr' => ['class' => 'contact-type-choice'],
             ])
             ->add('civilite', ChoiceType::class, [
-                'label' => 'Civilité',
                 'choices' => [
                     'Monsieur' => Contact::CIVILITE_MONSIEUR,
                     'Madame' => Contact::CIVILITE_MADAME,
                 ],
                 'expanded' => true,
                 'multiple' => false,
-                'label_attr' => [
-                    'class' => 'radio-custom',
-                ],
+                'label' => 'Civilité',
+                'attr' => ['class' => 'civilite-choice'],
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
-                'attr' => [
-                    'placeholder' => 'Votre nom',
-                ],
+                'attr' => ['placeholder' => 'Votre nom'],
             ])
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => [
-                    'placeholder' => 'Votre prénom',
-                ],
+                'attr' => ['placeholder' => 'Votre prénom'],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => [
-                    'placeholder' => 'Votre adresse email',
-                ],
+                'attr' => ['placeholder' => 'votre@email.com'],
             ])
             ->add('telephone', TelType::class, [
                 'label' => 'Téléphone',
                 'required' => false,
+                'attr' => ['placeholder' => '01 23 45 67 89'],
+            ])
+            ->add('entreprise', TextType::class, [
+                'label' => 'Entreprise',
+                'required' => false,
                 'attr' => [
-                    'placeholder' => 'Votre numéro de téléphone (facultatif)',
+                    'placeholder' => 'Nom de votre entreprise',
+                    'class' => 'entreprise-field',
                 ],
             ])
+            ->add('localisation', TextType::class, [
+                'label' => 'Localisation',
+                'required' => false,
+                'attr' => ['placeholder' => 'Ville ou code postal'],
+            ])
             ->add('description', TextareaType::class, [
-                'label' => 'Votre message',
+                'label' => 'Description de votre projet',
                 'attr' => [
-                    'placeholder' => 'Décrivez votre projet ou votre besoin',
+                    'placeholder' => 'Décrivez votre projet ou vos besoins...',
                     'rows' => 5,
                 ],
             ]);
-
-        // Ajouter dynamiquement les champs pour les professionnels
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $contact = $event->getData();
-            $form = $event->getForm();
-
-            // Si c'est un professionnel ou si c'est un nouveau contact (type non défini)
-            if (!$contact || $contact->getType() === Contact::TYPE_PROFESSIONNEL || $contact->getType() === null) {
-                $form->add('entreprise', TextType::class, [
-                    'label' => 'Entreprise',
-                    'required' => false,
-                    'attr' => [
-                        'placeholder' => 'Nom de votre entreprise',
-                        'class' => 'js-professional-field',
-                    ],
-                ]);
-                $form->add('localisation', TextType::class, [
-                    'label' => 'Localisation',
-                    'required' => false,
-                    'attr' => [
-                        'placeholder' => 'Ville, région ou pays',
-                        'class' => 'js-professional-field',
-                    ],
-                ]);
-            }
-        });
-
-        // Mettre à jour le formulaire lorsque le type change
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $data = $event->getData();
-            $form = $event->getForm();
-
-            if (!isset($data['type'])) {
-                return;
-            }
-
-            if ($data['type'] === Contact::TYPE_PROFESSIONNEL) {
-                if (!$form->has('entreprise')) {
-                    $form->add('entreprise', TextType::class, [
-                        'label' => 'Entreprise',
-                        'required' => false,
-                        'attr' => [
-                            'placeholder' => 'Nom de votre entreprise',
-                            'class' => 'js-professional-field',
-                        ],
-                    ]);
-                }
-                if (!$form->has('localisation')) {
-                    $form->add('localisation', TextType::class, [
-                        'label' => 'Localisation',
-                        'required' => false,
-                        'attr' => [
-                            'placeholder' => 'Ville, région ou pays',
-                            'class' => 'js-professional-field',
-                        ],
-                    ]);
-                }
-            }
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Contact::class,
-            'attr' => [
-                'novalidate' => 'novalidate', // Désactiver la validation HTML5 pour utiliser celle de Symfony
-                'class' => 'contact-form',
-            ],
         ]);
     }
 }
