@@ -31,7 +31,7 @@
                 <div class="nav-auth">
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('admin') }}" class="admin-link">Admin</a>
+                            <a href="{{ path('admin') }}" class="admin-link" target="_blank">Admin</a>
                         {% endif %}
                         <a href="#" class="profile-link">Mon Profil</a>
                         <a href="{{ path('logout') }}" class="logout-link">Déconnexion</a>

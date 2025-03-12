@@ -1,41 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.querySelector('form[name="contact"]');
-    if (!contactForm) return;
+    const typeSelect = document.querySelector('[data-controller="contact-type"]');
+    const sections = document.querySelectorAll('[data-contact-type-target]');
+    const commonFields = document.getElementById('common-fields');
+    let activeSection = null;
 
-    const typeInputs = contactForm.querySelectorAll('input[name="contact[type]"]');
-    const entrepriseGroup = contactForm.querySelector('.form-group:has(input[name="contact[entreprise]"])');
-
-    function toggleEntrepriseField() {
-        const selectedType = contactForm.querySelector('input[name="contact[type]"]:checked').value;
-        if (entrepriseGroup) {
-            if (selectedType === 'professionnel') {
-                entrepriseGroup.classList.remove('hidden');
-                entrepriseGroup.querySelector('input').required = true;
+    function updateFormSections() {
+        const selectedType = typeSelect.value;
+        sections.forEach(section => {
+            if (section.dataset.contactTypeTarget === selectedType) {
+                section.style.display = 'block';
+                activeSection = section;
             } else {
-                entrepriseGroup.classList.add('hidden');
-                entrepriseGroup.querySelector('input').required = false;
-                entrepriseGroup.querySelector('input').value = '';
+                section.style.display = 'none';
             }
+        });
+
+        // Déplacer les champs communs dans la section active
+        if (activeSection) {
+            activeSection.insertBefore(commonFields, activeSection.firstChild);
+        }
+
+        // Mettre à jour le placeholder de l'email selon le type
+        const emailInput = document.querySelector('#contact_email');
+        if (emailInput) {
+            emailInput.placeholder = selectedType === 'professionnel' ? 
+                'exemple@entreprise.com' : 
+                'exemple@email.com';
         }
     }
 
-    // Initial state
-    toggleEntrepriseField();
-
-    // Event listeners
-    typeInputs.forEach(input => {
-        input.addEventListener('change', toggleEntrepriseField);
-    });
-
-    // Phone number formatting
-    const phoneInput = contactForm.querySelector('input[name="contact[telephone]"]');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                value = value.match(/.{1,2}/g).join(' ').substr(0, 14);
-            }
-            e.target.value = value;
-        });
-    }
+    typeSelect.addEventListener('change', updateFormSections);
+    updateFormSections(); // État initial
 });
