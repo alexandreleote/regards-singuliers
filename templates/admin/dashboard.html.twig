@@ -1,0 +1,131 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block main %}
+    <div class="dashboard-header">
+        <h1>Tableau de bord</h1>
+    </div>
+
+    {# Statistiques #}
+    <div class="dashboard-stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="stat-icon fa fa-users"></i>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.users }}</span>
+                    <span class="stat-label">Utilisateurs</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="stat-icon fa fa-image"></i>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.realisations }}</span>
+                    <span class="stat-label">Réalisations</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="stat-icon fa fa-gear"></i>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.services }}</span>
+                    <span class="stat-label">Services</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="stat-icon fa fa-envelope"></i>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.contacts }}</span>
+                    <span class="stat-label">Messages</span>
+                    {% if stats.unread_contacts > 0 %}
+                        <span class="unread-badge">{{ stats.unread_contacts }} non lu(s)</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Actions rapides #}
+    <div class="dashboard-actions">
+        <h2>Actions rapides</h2>
+        <div class="actions-grid">
+            {% for action in actions %}
+                <a href="{{ action.url }}" class="action-card">
+                    <i class="{{ action.icon }}"></i>
+                    <span>{{ action.title }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <style>
+        .dashboard-stats {
+            margin: 2rem 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: var(--text-muted);
+        }
+        .unread-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .dashboard-actions {
+            margin: 3rem 0;
+        }
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .action-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .action-card i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+    </style>
+{% endblock %}

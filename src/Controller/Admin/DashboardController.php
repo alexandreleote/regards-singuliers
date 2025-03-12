@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -25,73 +26,73 @@ class DashboardController extends AbstractDashboardController
     private $realisationRepository;
     private $serviceRepository;
     private $contactRepository;
+    private $adminUrlGenerator;
 
     public function __construct(
         UserRepository $userRepository,
         RealisationRepository $realisationRepository,
         ServiceRepository $serviceRepository,
-        ContactRepository $contactRepository
+        ContactRepository $contactRepository,
+        AdminUrlGenerator $adminUrlGenerator
     ) {
         $this->userRepository = $userRepository;
         $this->realisationRepository = $realisationRepository;
         $this->serviceRepository = $serviceRepository;
         $this->contactRepository = $contactRepository;
+        $this->adminUrlGenerator = $adminUrlGenerator;
     }
 
     public function index(): Response
     {
-        // Vérifier si nous sommes dans un contexte CRUD
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        
-        // Si nous avons des paramètres CRUD, utiliser le comportement par défaut d'EasyAdmin
-        if ($request->query->has('crudController')) {
-            return parent::index();
-        }
-        
-        // Sinon, afficher notre tableau de bord personnalisé
-        return $this->dashboard();
-    }
-    
-    private function dashboard(): Response
-    {
-        // Récupérer les statistiques pour le tableau de bord
-        $totalUsers = $this->userRepository->count([]);
-        $totalRealisations = $this->realisationRepository->count([]);
-        $totalServices = $this->serviceRepository->count([]);
-        $totalContacts = $this->contactRepository->count([]);
-        $unreadContacts = $this->contactRepository->count(['readAt' => null]);
-        
-        // Récupérer les utilisateurs récemment inscrits
-        $recentUsers = $this->userRepository->findBy([], ['createdAt' => 'DESC'], 5);
-        
-        // Récupérer les dernières réalisations ajoutées
-        $recentRealisations = $this->realisationRepository->findBy([], ['createdAt' => 'DESC'], 3);
-        
-        // Récupérer les derniers contacts reçus
-        $recentContacts = $this->contactRepository->findBy([], ['createdAt' => 'DESC'], 5);
+        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
 
-        // Ajouter des données personnalisées
-        $customData = [
-            'totalUsers' => $totalUsers,
-            'totalRealisations' => $totalRealisations,
-            'totalServices' => $totalServices,
-            'totalContacts' => $totalContacts,
-            'unreadContacts' => $unreadContacts,
-            'recentUsers' => $recentUsers,
-            'recentRealisations' => $recentRealisations,
-            'recentContacts' => $recentContacts,
+        // Statistiques pour le tableau de bord
+        $stats = [
+            'users' => $this->userRepository->count([]),
+            'realisations' => $this->realisationRepository->count([]),
+            'services' => $this->serviceRepository->count([]),
+            'contacts' => $this->contactRepository->count([]),
+            'unread_contacts' => $this->contactRepository->count(['readAt' => null]),
         ];
 
-        return $this->render('admin/dashboard/index.html.twig', [
-            'customData' => $customData,
-            'page_title' => 'Tableau de bord',
+        // Actions rapides
+        $actions = [
+            [
+                'title' => 'Nouvelle réalisation',
+                'url' => $adminUrlGenerator
+                    ->setController(RealisationCrudController::class)
+                    ->setAction('new')
+                    ->generateUrl(),
+                'icon' => 'fa fa-plus'
+            ],
+            [
+                'title' => 'Nouveau service',
+                'url' => $adminUrlGenerator
+                    ->setController(ServiceCrudController::class)
+                    ->setAction('new')
+                    ->generateUrl(),
+                'icon' => 'fa fa-gear'
+            ],
+            [
+                'title' => 'Messages non lus',
+                'url' => $adminUrlGenerator
+                    ->setController(ContactCrudController::class)
+                    ->setAction('index')
+                    ->generateUrl(),
+                'icon' => 'fa fa-envelope'
+            ]
+        ];
+
+        return $this->render('admin/dashboard.html.twig', [
+            'stats' => $stats,
+            'actions' => $actions
         ]);
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Tableau de bord')
+            ->setTitle('regards singuliers')
             ->setFaviconPath('favicon-admin.png')
             ->setTranslationDomain('admin')
         ;
