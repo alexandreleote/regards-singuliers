@@ -1,0 +1,49 @@
+<div {{ attributes }}>
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="contact-form-container">
+        {{ form_start(form, {'attr': {'data-action': 'live#action', 'data-action-name': 'save'}}) }}
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.individualOrProfessional) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.civility) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.firstName) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.email) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.phoneNumber) }}
+                </div>
+                {% if form.entreprise is defined %}
+                    <div class="col-12">
+                        {{ form_row(form.entreprise) }}
+                    </div>
+                {% endif %}
+                <div class="col-12">
+                    {{ form_row(form.localisation) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.description) }}
+                </div>
+                <div class="col-12 text-center mt-4">
+                    {{ form_row(form.submit) }}
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>

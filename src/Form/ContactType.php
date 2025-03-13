@@ -4,78 +4,82 @@ namespace App\Form;
 
 use App\Entity\Contact;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfonycasts\DynamicForms\DependentField;
+use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 class ContactType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder = new DynamicFormBuilder($builder);
+
         $builder
-            ->add('type', ChoiceType::class, [
+            ->add('individualOrProfessional', ChoiceType::class, [
                 'choices' => [
-                    'Particulier' => Contact::TYPE_PARTICULIER,
-                    'Professionnel' => Contact::TYPE_PROFESSIONNEL,
+                    'Particulier' => 'particulier',
+                    'Professionnel' => 'professionnel'
                 ],
+                'label' => 'Vous êtes un',
                 'expanded' => true,
                 'multiple' => false,
-                'label' => false,
-                'attr' => ['class' => 'contact-type-choice'],
+                'autocomplete' => true,
+                'required' => true,
             ])
-            ->add('civilite', ChoiceType::class, [
+            ->add('civility', ChoiceType::class, [
                 'choices' => [
-                    'Monsieur' => Contact::CIVILITE_MONSIEUR,
-                    'Madame' => Contact::CIVILITE_MADAME,
+                    'Madame' => 'Mme',
+                    'Monsieur' => 'M'
                 ],
-                'expanded' => true,
-                'multiple' => false,
                 'label' => 'Civilité',
-                'attr' => ['class' => 'civilite-choice'],
+                'expanded' => true,
+                'multiple' => false,
+                'autocomplete' => true,
+                'required' => true
             ])
-            ->add('nom', TextType::class, [
+            ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['placeholder' => 'Votre nom'],
+                'required' => true
             ])
-            ->add('prenom', TextType::class, [
+            ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['placeholder' => 'Votre prénom'],
+                'required' => true
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => ['placeholder' => 'votre@email.com'],
+                'required' => true
             ])
-            ->add('telephone', TelType::class, [
+            ->add('phoneNumber', TextType::class, [
                 'label' => 'Téléphone',
-                'required' => false,
-                'attr' => ['placeholder' => '01 23 45 67 89'],
+                'required' => true
             ])
-            ->add('entreprise', TextType::class, [
-                'label' => 'Entreprise',
-                'required' => false,
-                'attr' => [
-                    'placeholder' => 'Nom de votre entreprise',
-                    'class' => 'entreprise-field',
-                ],
-            ])
+            ->addDependent('entreprise', 'individualOrProfessional', function (DependentField $field, ?string $individualOrProfessional) {
+                if ($individualOrProfessional === 'professionnel') {
+                    $field->add(TextType::class, [
+                        'label' => 'Entreprise',
+                        'required' => false
+                    ]);
+                }
+            })
             ->add('localisation', TextType::class, [
                 'label' => 'Localisation',
-                'required' => false,
-                'attr' => ['placeholder' => 'Ville ou code postal'],
+                'required' => true
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description de votre projet',
+                'label' => 'Description',
+                'required' => true
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Envoyer',
                 'attr' => [
-                    'placeholder' => 'Décrivez votre projet ou vos besoins...',
-                    'rows' => 5,
-                ],
+                    'class' => 'btn btn-primary'
+                ]
             ]);
     }
 

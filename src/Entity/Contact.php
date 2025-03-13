@@ -3,271 +3,153 @@
 namespace App\Entity;
 
 use App\Repository\ContactRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class Contact
 {
-    public const TYPE_PARTICULIER = 'particulier';
-    public const TYPE_PROFESSIONNEL = 'professionnel';
-    
-    public const CIVILITE_MONSIEUR = 'monsieur';
-    public const CIVILITE_MADAME = 'madame';
-    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-    
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: 'Veuillez sélectionner un type de contact')]
-    #[Assert\Choice(choices: [self::TYPE_PARTICULIER, self::TYPE_PROFESSIONNEL], message: 'Type de contact invalide')]
-    private ?string $type = self::TYPE_PARTICULIER;
-    
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: 'Veuillez sélectionner une civilité')]
-    #[Assert\Choice(choices: [self::CIVILITE_MONSIEUR, self::CIVILITE_MADAME], message: 'Civilité invalide')]
-    private ?string $civilite = null;
-    
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: 'Veuillez saisir votre nom')]
-    #[Assert\Length(max: 50, maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères')]
-    private ?string $nom = null;
-    
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: 'Veuillez saisir votre prénom')]
-    #[Assert\Length(max: 50, maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères')]
-    private ?string $prenom = null;
-    
-    #[ORM\Column(length: 100)]
-    #[Assert\NotBlank(message: 'Veuillez saisir votre adresse email')]
-    #[Assert\Email(message: 'L\'adresse email {{ value }} n\'est pas valide')]
-    #[Assert\Length(max: 100, maxMessage: 'L\'email ne peut pas dépasser {{ limit }} caractères')]
+
+    #[ORM\Column(length: 255)]
+    private ?string $individualOrProfessional = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $civility = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $email = null;
-    
-    #[ORM\Column(length: 20, nullable: true)]
-    #[Assert\Length(max: 20, maxMessage: 'Le numéro de téléphone ne peut pas dépasser {{ limit }} caractères')]
-    private ?string $telephone = null;
-    
-    #[ORM\Column(length: 100, nullable: true)]
-    #[Assert\Length(max: 100, maxMessage: 'Le nom de l\'entreprise ne peut pas dépasser {{ limit }} caractères')]
+
+    #[ORM\Column(length: 255)]
+    private ?string $phoneNumber = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $entreprise = null;
-    
-    #[ORM\Column(length: 100, nullable: true)]
-    #[Assert\Length(max: 100, maxMessage: 'La localisation ne peut pas dépasser {{ limit }} caractères')]
+
+    #[ORM\Column(length: 255)]
     private ?string $localisation = null;
-    
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: 'Veuillez décrire votre projet ou besoin')]
+
+    #[ORM\Column(type: 'text')]
     private ?string $description = null;
-    
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-    
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $readAt = null;
-    
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $respondedAt = null;
-    
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
-    
-    public function getType(): ?string
+
+    public function getIndividualOrProfessional(): ?string
     {
-        return $this->type;
+        return $this->individualOrProfessional;
     }
-    
-    public function setType(string $type): static
+
+    public function setIndividualOrProfessional(string $individualOrProfessional): static
     {
-        $this->type = $type;
-        
+        $this->individualOrProfessional = $individualOrProfessional;
+
         return $this;
     }
-    
-    public function isParticulier(): bool
+
+    public function getCivility(): ?string
     {
-        return $this->type === self::TYPE_PARTICULIER;
+        return $this->civility;
     }
-    
-    public function isProfessionnel(): bool
+
+    public function setCivility(string $civility): static
     {
-        return $this->type === self::TYPE_PROFESSIONNEL;
-    }
-    
-    public function getCivilite(): ?string
-    {
-        return $this->civilite;
-    }
-    
-    public function setCivilite(string $civilite): static
-    {
-        $this->civilite = $civilite;
-        
+        $this->civility = $civility;
+
         return $this;
     }
-    
-    public function getNom(): ?string
+
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
-    
-    public function setNom(string $nom): static
+
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
-        
+        $this->name = $name;
+
         return $this;
     }
-    
-    public function getPrenom(): ?string
+
+    public function getFirstName(): ?string
     {
-        return $this->prenom;
+        return $this->firstName;
     }
-    
-    public function setPrenom(string $prenom): static
+
+    public function setFirstName(string $firstName): static
     {
-        $this->prenom = $prenom;
-        
+        $this->firstName = $firstName;
+
         return $this;
     }
-    
-    public function getNomComplet(): string
-    {
-        return $this->civilite === self::CIVILITE_MONSIEUR ? 'M. ' : 'Mme ' . $this->nom . ' ' . $this->prenom;
-    }
-    
+
     public function getEmail(): ?string
     {
         return $this->email;
     }
-    
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
-        
+
         return $this;
     }
-    
-    public function getTelephone(): ?string
+
+    public function getPhoneNumber(): ?string
     {
-        return $this->telephone;
+        return $this->phoneNumber;
     }
-    
-    public function setTelephone(?string $telephone): static
+
+    public function setPhoneNumber(string $phoneNumber): static
     {
-        $this->telephone = $telephone;
-        
+        $this->phoneNumber = $phoneNumber;
+
         return $this;
     }
-    
+
     public function getEntreprise(): ?string
     {
         return $this->entreprise;
     }
-    
+
     public function setEntreprise(?string $entreprise): static
     {
         $this->entreprise = $entreprise;
-        
+
         return $this;
     }
-    
+
     public function getLocalisation(): ?string
     {
         return $this->localisation;
     }
-    
-    public function setLocalisation(?string $localisation): static
+
+    public function setLocalisation(string $localisation): static
     {
         $this->localisation = $localisation;
-        
+
         return $this;
     }
-    
+
     public function getDescription(): ?string
     {
         return $this->description;
     }
-    
+
     public function setDescription(string $description): static
     {
         $this->description = $description;
-        
+
         return $this;
-    }
-    
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-    
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        
-        return $this;
-    }
-    
-    public function getReadAt(): ?\DateTimeImmutable
-    {
-        return $this->readAt;
-    }
-    
-    public function setReadAt(?\DateTimeImmutable $readAt): static
-    {
-        $this->readAt = $readAt;
-        
-        return $this;
-    }
-    
-    public function markAsRead(): static
-    {
-        if ($this->readAt === null) {
-            $this->readAt = new \DateTimeImmutable();
-        }
-        
-        return $this;
-    }
-    
-    public function isRead(): bool
-    {
-        return $this->readAt !== null;
-    }
-    
-    public function getRespondedAt(): ?\DateTimeImmutable
-    {
-        return $this->respondedAt;
-    }
-    
-    public function setRespondedAt(?\DateTimeImmutable $respondedAt): static
-    {
-        $this->respondedAt = $respondedAt;
-        
-        return $this;
-    }
-    
-    public function markAsResponded(): static
-    {
-        if ($this->respondedAt === null) {
-            $this->respondedAt = new \DateTimeImmutable();
-        }
-        
-        return $this;
-    }
-    
-    public function isResponded(): bool
-    {
-        return $this->respondedAt !== null;
     }
 }

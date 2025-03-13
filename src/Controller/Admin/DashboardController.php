@@ -2,22 +2,23 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Studio;
-use App\Entity\Service;
-use App\Entity\Realisation;
 use App\Entity\User;
 use App\Entity\Contact;
+use App\Entity\Service;
+use App\Entity\Realisation;
 use App\Repository\UserRepository;
-use App\Repository\RealisationRepository;
-use App\Repository\ServiceRepository;
 use App\Repository\ContactRepository;
+use App\Repository\ServiceRepository;
+use App\Repository\RealisationRepository;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Controller\Admin\ServiceCrudController;
+use App\Controller\Admin\RealisationCrudController;
+use App\Controller\Admin\ContactCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -25,8 +26,8 @@ class DashboardController extends AbstractDashboardController
     private $userRepository;
     private $realisationRepository;
     private $serviceRepository;
-    private $contactRepository;
     private $adminUrlGenerator;
+    private $contactRepository;
 
     public function __construct(
         UserRepository $userRepository,
@@ -38,8 +39,8 @@ class DashboardController extends AbstractDashboardController
         $this->userRepository = $userRepository;
         $this->realisationRepository = $realisationRepository;
         $this->serviceRepository = $serviceRepository;
-        $this->contactRepository = $contactRepository;
         $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->contactRepository = $contactRepository;
     }
 
     public function index(): Response
@@ -51,8 +52,6 @@ class DashboardController extends AbstractDashboardController
             'users' => $this->userRepository->count([]),
             'realisations' => $this->realisationRepository->count([]),
             'services' => $this->serviceRepository->count([]),
-            'contacts' => $this->contactRepository->count([]),
-            'unread_contacts' => $this->contactRepository->count(['readAt' => null]),
         ];
 
         // Actions rapides
@@ -74,7 +73,7 @@ class DashboardController extends AbstractDashboardController
                 'icon' => 'fa fa-gear'
             ],
             [
-                'title' => 'Messages non lus',
+                'title' => 'Lire les demandes de contact',
                 'url' => $adminUrlGenerator
                     ->setController(ContactCrudController::class)
                     ->setAction('index')
@@ -105,6 +104,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Projets', 'fa fa-file-pen', Realisation::class);
         yield MenuItem::linkToCrud('Prestations', 'fa fa-gear', Service::class);
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
-        yield MenuItem::linkToCrud('Demandes de contact', 'fa fa-envelope', Contact::class);
+        yield MenuItem::linkToCrud('Contact', 'fa fa-envelope', Contact::class);
     }
 }
