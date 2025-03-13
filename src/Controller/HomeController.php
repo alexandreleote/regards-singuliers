@@ -21,4 +21,12 @@ final class HomeController extends AbstractController
             'services' => $serviceRepository->findAll(),
         ]);
     }
+
+    #[Route('/studio', name: 'studio')]
+    public function studio(): Response
+    {
+        return $this->render('studio/index.html.twig', [
+            'page_title' => 'regards singuliers - Le Studio'
+        ]);
+    }
 }

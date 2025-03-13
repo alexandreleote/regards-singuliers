@@ -102,7 +102,6 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToRoute('Retourner sur le site', 'fa fa-chevron-left', 'home');
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-table-columns');
-        yield MenuItem::linkToCrud('Le Studio', 'fa fa-file-pen', Studio::class);
         yield MenuItem::linkToCrud('Projets', 'fa fa-file-pen', Realisation::class);
         yield MenuItem::linkToCrud('Prestations', 'fa fa-gear', Service::class);
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
