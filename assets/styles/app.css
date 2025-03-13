@@ -342,6 +342,48 @@ body {
     padding: 15px;
 }
 
+.studio-more h3 {
+    position: relative;
+    padding-right: 25px;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    color: var(--primary-color, #333);
+    margin-top: 2rem;
+}
+
+.studio-more h3:hover {
+    color: var(--primary-hover-color, #666);
+}
+
+.studio-more h3::after {
+    content: '›';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 0.3s ease;
+    font-size: 1.5em;
+    font-weight: 300;
+}
+
+.studio-more h3.active::after {
+    transform: translateY(-50%) rotate(-90deg);
+}
+
+.studio-more-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
+.studio-more-content.visible {
+    max-height: 2000px;
+    transition: max-height 0.8s ease-in;
+}
+
 
 /* Realisations */
 
