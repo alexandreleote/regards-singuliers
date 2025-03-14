@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['type', 'section', 'commonFields', 'email']
+    static targets = ['type', 'section', 'email']
     static classes = ['hidden']
 
     connect() {
@@ -13,11 +13,10 @@ export default class extends Controller {
         const selectedType = this.typeTargets.find(input => input.checked)?.value;
         if (!selectedType) return;
         
+        // Gérer l'affichage de la section entreprise
         this.sectionTargets.forEach(section => {
             if (section.dataset.contactTypeTarget === selectedType) {
                 section.classList.remove(this.hiddenClass);
-                // Déplacer les champs communs dans la section active
-                section.insertBefore(this.commonFieldsTarget, section.firstChild);
             } else {
                 section.classList.add(this.hiddenClass);
             }
@@ -62,6 +61,9 @@ export default class extends Controller {
             if (result.success) {
                 alert('Votre message a été envoyé avec succès !');
                 event.target.reset();
+                // Réinitialiser le formulaire à l'état initial (particulier)
+                this.typeTargets.find(input => input.value === 'particular').checked = true;
+                this.updateFormSections();
             } else {
                 alert(result.error || 'Une erreur est survenue lors de l\'envoi du formulaire.');
             }

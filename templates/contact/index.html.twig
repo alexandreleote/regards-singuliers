@@ -42,7 +42,8 @@
                     </label>
                 </div>
 
-                <div data-contact-target="commonFields">
+                <!-- Section commune initiale -->
+                <div class="form-section">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="lastName">Nom</label>
@@ -66,22 +67,28 @@
                     </div>
                 </div>
 
-                <div class="form-group company-field hidden" data-contact-target="section" data-contact-type-target="professional">
-                    <label for="company">Entreprise</label>
-                    <input type="text" id="company" name="company">
+                <!-- Section professionnelle -->
+                <div class="form-section hidden" data-contact-target="section" data-contact-type-target="professional">
+                    <div class="form-group">
+                        <label for="company">Entreprise</label>
+                        <input type="text" id="company" name="company">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="location">Localisation</label>
-                    <input type="text" id="location" name="location" required>
-                </div>
+                <!-- Section commune finale -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="location">Localisation</label>
+                        <input type="text" id="location" name="location" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="description">Description de votre projet</label>
-                    <textarea id="description" name="description" rows="4" required></textarea>
-                </div>
+                    <div class="form-group">
+                        <label for="description">Description de votre projet</label>
+                        <textarea id="description" name="description" rows="4" required></textarea>
+                    </div>
 
-                <button type="submit" class="submit-btn">Envoyer</button>
+                    <button type="submit" class="submit-btn">Envoyer</button>
+                </div>
             </form>
         </div>
     </div>
