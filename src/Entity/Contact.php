@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ContactRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
@@ -17,29 +18,32 @@ class Contact
     #[ORM\Column(length: 20)]
     private ?string $type = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
+    #[ORM\Column(length: 100)]
+    private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $firstName = null;
+    #[ORM\Column(length: 100)]
+    private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180)]
     private ?string $email = null;
 
     #[ORM\Column(length: 20)]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $company = null;
 
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
-    #[ORM\Column(type: 'text')]
-    private ?string $description = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $project = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(length: 20)]
+    private ?string $status = null;
 
     public function __construct()
     {
@@ -62,25 +66,25 @@ class Contact
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getName(): ?string
     {
-        return $this->lastName;
+        return $this->name;
     }
 
-    public function setLastName(string $lastName): static
+    public function setName(string $name): static
     {
-        $this->lastName = $lastName;
+        $this->name = $name;
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->firstName;
+        return $this->firstname;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstname(string $firstname): static
     {
-        $this->firstName = $firstName;
+        $this->firstname = $firstname;
         return $this;
     }
 
@@ -128,19 +132,36 @@ class Contact
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getProject(): ?string
     {
-        return $this->description;
+        return $this->project;
     }
 
-    public function setDescription(string $description): static
+    public function setProject(string $project): static
     {
-        $this->description = $description;
+        $this->project = $project;
         return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+        return $this;
     }
 }

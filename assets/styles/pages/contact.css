@@ -16,13 +16,13 @@
     gap: 2rem;
 }
 
-.contact-info {
+/* .contact-info {
     background: #fff;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     height: fit-content;
-}
+} */
 
 .contact-info h2 {
     color: #333;
@@ -30,10 +30,10 @@
     font-size: 1.5rem;
 }
 
-.contact-info p {
+/* .contact-info p {
     color: #666;
     margin-bottom: 2rem;
-}
+} */
 
 .info-section {
     margin-top: 2rem;
