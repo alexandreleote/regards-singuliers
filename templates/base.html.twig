@@ -99,8 +99,10 @@
                             <a href="mailto:hello@regards-singuliers.com">hello@regards-singuliers.com</a>
                         </li>
                         <li>
-                            <p id="show-phone" style="cursor: pointer;">Afficher le numéro</p>
-                            <p id="phone-number" style="display: none;">Tél : +33 (0)6 07 02 92 22</p>
+                            <div class="contact-info" data-controller="phone" data-phone-hidden-class="hidden">
+                                <p id="show-phone" data-phone-target="show" data-action="click->phone#toggle" class="cursor-pointer">Afficher le numéro</p>
+                                <p id="phone-number" data-phone-target="number">Tél : +33 (0)6 07 02 92 22</p>
+                            </div>
                         </li>
                     </ul>
                 </div>

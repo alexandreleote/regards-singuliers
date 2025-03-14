@@ -2,6 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static targets = ['type', 'section', 'commonFields', 'email']
+    static classes = ['hidden']
 
     connect() {
         // Le code ne s'exécute que si le contrôleur est connecté (présent sur la page)
@@ -14,11 +15,11 @@ export default class extends Controller {
         
         this.sectionTargets.forEach(section => {
             if (section.dataset.contactTypeTarget === selectedType) {
-                section.style.display = 'block';
+                section.classList.remove(this.hiddenClass);
                 // Déplacer les champs communs dans la section active
                 section.insertBefore(this.commonFieldsTarget, section.firstChild);
             } else {
-                section.style.display = 'none';
+                section.classList.add(this.hiddenClass);
             }
         });
 

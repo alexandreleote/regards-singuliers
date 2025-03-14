@@ -1,0 +1,42 @@
+/* Styles pour les templates d'email */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #6c757d;
+    color: white !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.warning {
+    color: #856404;
+    background-color: #fff3cd;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+
+.signature {
+    font-style: italic;
+    margin-top: 30px;
+}
+
+.text-center {
+    text-align: center;
+} 

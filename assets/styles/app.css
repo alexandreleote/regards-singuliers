@@ -824,3 +824,8 @@ textarea.form-control {
         font-size: var(--base-fs); 
     } 
 }
+
+/* Classes utilitaires */
+.cursor-pointer {
+    cursor: pointer;
+}
