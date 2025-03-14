@@ -1,9 +1,6 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block main %}
-    <div class="dashboard-header">
-        <h1>Tableau de bord</h1>
-    </div>
 
     {# Statistiques #}
     <div class="dashboard-stats">
@@ -32,9 +29,9 @@
             <div class="stat-card">
                 <i class="stat-icon fa fa-envelope"></i>
                 <div class="stat-content">
-                    <span class="stat-value">{{ stats.contacts }}</span>
+                    <span class="stat-value">{{ stats.contacts|default(0) }}</span>
                     <span class="stat-label">Messages</span>
-                    {% if stats.unread_contacts > 0 %}
+                    {% if stats.unread_contacts is defined and stats.unread_contacts > 0 %}
                         <span class="unread-badge">{{ stats.unread_contacts }} non lu(s)</span>
                     {% endif %}
                 </div>

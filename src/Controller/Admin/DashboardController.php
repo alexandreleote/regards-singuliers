@@ -52,6 +52,8 @@ class DashboardController extends AbstractDashboardController
             'users' => $this->userRepository->count([]),
             'realisations' => $this->realisationRepository->count([]),
             'services' => $this->serviceRepository->count([]),
+            'contacts' => $this->contactRepository->count([]),
+            'unread_contacts' => $this->contactRepository->countUnreadMessages()
         ];
 
         // Actions rapides
@@ -84,7 +86,8 @@ class DashboardController extends AbstractDashboardController
 
         return $this->render('admin/dashboard.html.twig', [
             'stats' => $stats,
-            'actions' => $actions
+            'actions' => $actions,
+            'page_title' => 'Administration'
         ]);
     }
 

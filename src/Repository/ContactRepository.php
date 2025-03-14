@@ -40,4 +40,9 @@ class ContactRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function countUnreadMessages(): int
+    {
+        return $this->count(['isRead' => false]);
+    }
 }

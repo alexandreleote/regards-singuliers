@@ -40,6 +40,9 @@ class Contact
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isRead = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -150,6 +153,17 @@ class Contact
     {
         $this->description = $description;
 
+        return $this;
+    }
+
+    public function isRead(): bool
+    {
+        return $this->isRead;
+    }
+
+    public function setIsRead(bool $isRead): static
+    {
+        $this->isRead = $isRead;
         return $this;
     }
 }
