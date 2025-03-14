@@ -6,6 +6,7 @@ use App\Repository\ContactRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
+#[ORM\Table(name: '`contact`')]
 class Contact
 {
     #[ORM\Id]
@@ -13,14 +14,11 @@ class Contact
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $individualOrProfessional = null;
+    #[ORM\Column(length: 20)]
+    private ?string $type = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $civility = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
@@ -28,59 +26,50 @@ class Contact
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $phoneNumber = null;
+    #[ORM\Column(length: 20)]
+    private ?string $phone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $entreprise = null;
+    private ?string $company = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $localisation = null;
+    private ?string $location = null;
 
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $isRead = false;
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIndividualOrProfessional(): ?string
+    public function getType(): ?string
     {
-        return $this->individualOrProfessional;
+        return $this->type;
     }
 
-    public function setIndividualOrProfessional(string $individualOrProfessional): static
+    public function setType(string $type): static
     {
-        $this->individualOrProfessional = $individualOrProfessional;
-
+        $this->type = $type;
         return $this;
     }
 
-    public function getCivility(): ?string
+    public function getLastName(): ?string
     {
-        return $this->civility;
+        return $this->lastName;
     }
 
-    public function setCivility(string $civility): static
+    public function setLastName(string $lastName): static
     {
-        $this->civility = $civility;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
+        $this->lastName = $lastName;
         return $this;
     }
 
@@ -92,7 +81,6 @@ class Contact
     public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
-
         return $this;
     }
 
@@ -104,43 +92,39 @@ class Contact
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    public function getPhoneNumber(): ?string
+    public function getPhone(): ?string
     {
-        return $this->phoneNumber;
+        return $this->phone;
     }
 
-    public function setPhoneNumber(string $phoneNumber): static
+    public function setPhone(string $phone): static
     {
-        $this->phoneNumber = $phoneNumber;
-
+        $this->phone = $phone;
         return $this;
     }
 
-    public function getEntreprise(): ?string
+    public function getCompany(): ?string
     {
-        return $this->entreprise;
+        return $this->company;
     }
 
-    public function setEntreprise(?string $entreprise): static
+    public function setCompany(?string $company): static
     {
-        $this->entreprise = $entreprise;
-
+        $this->company = $company;
         return $this;
     }
 
-    public function getLocalisation(): ?string
+    public function getLocation(): ?string
     {
-        return $this->localisation;
+        return $this->location;
     }
 
-    public function setLocalisation(string $localisation): static
+    public function setLocation(string $location): static
     {
-        $this->localisation = $localisation;
-
+        $this->location = $location;
         return $this;
     }
 
@@ -152,18 +136,11 @@ class Contact
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function isRead(): bool
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->isRead;
-    }
-
-    public function setIsRead(bool $isRead): static
-    {
-        $this->isRead = $isRead;
-        return $this;
+        return $this->createdAt;
     }
 }

@@ -1,7 +1,274 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ page_title }}{% endblock %}
+{% block title %}Contact - {{ page_title }}{% endblock %}
 
 {% block body %}
+<div class="contact-container">
+    <div class="contact-grid">
+        <!-- Colonne de gauche (1/3) -->
+        <div class="contact-info">
+            <h2>Contactez-moi</h2>
+            <p>Prenons le temps d'établir vos besoins et de discuter de votre projet.</p>
+            
+            <div class="info-section">
+                <h3>Informations de contact</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> contact@example.com</li>
+                    <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Paris, France</li>
+                </ul>
+            </div>
+            
+            <div class="info-section">
+                <h3>Horaires</h3>
+                <ul>
+                    <li>Lundi - Vendredi: 9h - 18h</li>
+                    <li>Samedi: 10h - 14h</li>
+                </ul>
+            </div>
+        </div>
 
+        <!-- Colonne de droite (2/3) -->
+        <div class="contact-form">
+            <form id="contactForm" class="form">
+                <div class="form-type">
+                    <label class="radio-label">
+                        <input type="radio" name="type" value="particular" checked>
+                        <span>Particulier</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="type" value="professional">
+                        <span>Professionnel</span>
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lastName">Nom</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">Prénom</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-group company-field" style="display: none;">
+                    <label for="company">Entreprise</label>
+                    <input type="text" id="company" name="company">
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Localisation</label>
+                    <input type="text" id="location" name="location" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description de votre projet</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+.contact-info {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.contact-info h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.info-section {
+    margin-top: 2rem;
+}
+
+.info-section h3 {
+    color: #444;
+    margin-bottom: 1rem;
+}
+
+.info-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-section li {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.contact-form {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-type {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    background: #007bff;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contactForm');
+    if (!form) {
+        console.log('Formulaire de contact non trouvé sur cette page');
+        return;
+    }
+
+    const typeInputs = form.querySelectorAll('input[name="type"]');
+    const companyField = document.querySelector('.company-field');
+
+    if (typeInputs.length && companyField) {
+        typeInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                companyField.style.display = this.value === 'professional' ? 'block' : 'none';
+            });
+        });
+    }
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            console.log('Données envoyées:', data);
+            
+            const response = await fetch('{{ path('contact_submit') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            console.log('Statut de la réponse:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('La réponse n\'est pas au format JSON');
+            }
+
+            const result = await response.json();
+            console.log('Réponse du serveur:', result);
+            
+            if (result.success) {
+                alert('Votre message a été envoyé avec succès !');
+                form.reset();
+            } else {
+                alert(result.error || 'Une erreur est survenue lors de l\'envoi du formulaire.');
+            }
+            
+        } catch (error) {
+            console.error('Erreur détaillée:', error);
+            alert('Une erreur est survenue lors de l\'envoi du formulaire. Veuillez réessayer.');
+        }
+    });
+});
+</script>
 {% endblock %}
