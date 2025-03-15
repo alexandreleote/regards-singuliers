@@ -20,6 +20,7 @@ final class ContactController extends AbstractController
     {
         return $this->render('contact/index.html.twig', [
             'page_title' => 'regards singuliers - Contact',
+            'google_maps_api_key' => $this->getParameter('app.google_maps_api_key'),
         ]);
     }
 

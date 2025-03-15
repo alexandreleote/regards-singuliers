@@ -61,7 +61,7 @@ export default class extends Controller {
     }
 
     async searchLocation(query) {
-        if (!query || query.length < 3) return;
+        if (!query || query.length < 2) return;
 
         try {
             const response = await fetch(`https://geo.api.gouv.fr/communes?nom=${query}&boost=population&limit=5`);
@@ -88,9 +88,17 @@ export default class extends Controller {
 
         suggestions.forEach(commune => {
             const li = document.createElement('li');
-            li.textContent = `${commune.nom} (${commune.codeDepartement})`;
+            const nomCommune = commune.nom;
+            const departement = commune.codeDepartement;
+            const region = commune.region ? commune.region.nom : '';
+            
+            li.innerHTML = `
+                <strong>${nomCommune}</strong>
+                <span class="text-muted">${departement}${region ? ` - ${region}` : ''}</span>
+            `;
+            
             li.addEventListener('click', () => {
-                this.locationTarget.value = `${commune.nom} (${commune.codeDepartement})`;
+                this.locationTarget.value = `${nomCommune} (${departement})`;
                 list.remove();
             });
             list.appendChild(li);
@@ -98,6 +106,13 @@ export default class extends Controller {
 
         // Insérer la liste après le champ de localisation
         this.locationTarget.parentNode.appendChild(list);
+
+        // Gérer la fermeture des suggestions lors d'un clic à l'extérieur
+        document.addEventListener('click', (e) => {
+            if (!this.locationTarget.contains(e.target) && !list.contains(e.target)) {
+                list.remove();
+            }
+        });
     }
 
     updateFormSections() {

@@ -3,107 +3,107 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<div class="contact-container">
-    <div class="contact-grid">
-        <!-- Colonne de gauche (1/3) -->
-        <div class="contact-info">
-            <h2>Contactez-moi</h2>
-            <p>Prenons le temps d'établir vos besoins et de discuter de votre projet.</p>
-            
-            <div class="info-section">
-                <h3>Informations de contact</h3>
-                <ul>
-                    <li><i class="fas fa-envelope"></i> hello@regards-singuliers.com</li>
-                    <li><i class="fas fa-phone"></i> 06 07 02 92 22</li>
-                    <li><i class="fas fa-map-marker-alt"></i> 6 Le Bronz 56480 Saint-Aignan</li>
-                </ul>
+<div {{ stimulus_controller('map') }} data-map-api-key-value="{{ google_maps_api_key|default('') }}">
+    <div class="contact-container">
+        <div class="contact-grid">
+            <!-- Colonne de gauche (1/3) -->
+            <div class="contact-info">
+                <h2>Contactez-moi</h2>
+                <p>Prenons le temps d'établir vos besoins et de discuter de votre projet.</p>
+                
+                <div class="info-section">
+                    <h3>Informations de contact</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> hello@regards-singuliers.com</li>
+                        <li><i class="fas fa-phone"></i> 06 07 02 92 22</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 6 Le Bronz 56480 Saint-Aignan</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3>Horaires</h3>
+                    <ul>
+                        <li>Lundi - Vendredi: 9h - 18h</li>
+                        <li>Samedi: 10h - 14h</li>
+                    </ul>
+                </div>
             </div>
-            
-            <div class="info-section">
-                <h3>Horaires</h3>
-                <ul>
-                    <li>Lundi - Vendredi: 9h - 18h</li>
-                    <li>Samedi: 10h - 14h</li>
-                </ul>
-            </div>
+
+            <!-- Colonne de droite (2/3) -->
+
+                <form {{ stimulus_controller('contact') }} 
+                      data-contact-hidden-class="hidden"
+                      data-action="submit->contact#submit"
+                      class="contact-form" onsubmit="return false;">
+                    <div class="form-type">
+                        <div class="form-check">
+                            <input type="radio" id="type-particular" name="type" value="particular" class="form-check-input" 
+                                   {{ stimulus_target('contact', 'type') }}
+                                   data-action="change->contact#change"
+                                   checked>
+                            <label class="form-check-label" for="type-particular">Particulier</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" id="type-professional" name="type" value="professional" class="form-check-input" 
+                                   {{ stimulus_target('contact', 'type') }}
+                                   data-action="change->contact#change">
+                            <label class="form-check-label" for="type-professional">Professionnel</label>
+                        </div>
+                    </div>
+
+                    <!-- Section commune initiale -->
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label for="name">Nom</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firstname">Prénom</label>
+                            <input type="text" id="firstname" name="firstname" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" 
+                                   {{ stimulus_target('contact', 'email') }} required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Téléphone</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" data-contact-target="phone" required>
+                        </div>
+
+                        <div class="form-group location-field-container">
+                            <label for="location">Ville</label>
+                            <input type="text" id="location" name="location" class="form-control" data-contact-target="location" required>
+                        </div>
+                    </div>
+
+                    <!-- Section professionnelle -->
+                    <div class="form-section hidden" {{ stimulus_target('contact', 'section') }} data-contact-type-target="professional">
+                        <div class="form-group">
+                            <label for="company">Entreprise</label>
+                            <input type="text" id="company" name="company" class="form-control" 
+                                   {{ stimulus_target('contact', 'company') }}>
+                        </div>
+                    </div>
+
+                    <!-- Section finale commune -->
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label for="project">Description du projet</label>
+                            <textarea id="project" name="project" class="form-control" rows="5" required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Envoyer</button>
+                    </div>
+                </form>
         </div>
+    </div>
 
-        <!-- Colonne de droite (2/3) -->
-
-            <form {{ stimulus_controller('contact') }} 
-                  data-contact-hidden-class="hidden"
-                  data-action="submit->contact#submit"
-                  class="contact-form" onsubmit="return false;">
-                <div class="form-type">
-                    <div class="form-check">
-                        <input type="radio" id="type-particular" name="type" value="particular" class="form-check-input" 
-                               {{ stimulus_target('contact', 'type') }}
-                               data-action="change->contact#change"
-                               checked>
-                        <label class="form-check-label" for="type-particular">Particulier</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="radio" id="type-professional" name="type" value="professional" class="form-check-input" 
-                               {{ stimulus_target('contact', 'type') }}
-                               data-action="change->contact#change">
-                        <label class="form-check-label" for="type-professional">Professionnel</label>
-                    </div>
-                </div>
-
-                <!-- Section commune initiale -->
-                <div class="form-section">
-                    <div class="form-group">
-                        <label for="name">Nom</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="firstname">Prénom</label>
-                        <input type="text" id="firstname" name="firstname" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" 
-                               {{ stimulus_target('contact', 'email') }} required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">Téléphone</label>
-                        <input type="tel" id="phone" name="phone" class="form-control" 
-                               {{ stimulus_target('contact', 'phone') }}
-                               placeholder="06 07 08 09 10"
-                               pattern="[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}">
-                    </div>
-                </div>
-
-                <!-- Section professionnelle -->
-                <div class="form-section hidden" {{ stimulus_target('contact', 'section') }} data-contact-type-target="professional">
-                    <div class="form-group">
-                        <label for="company">Entreprise</label>
-                        <input type="text" id="company" name="company" class="form-control" 
-                               {{ stimulus_target('contact', 'company') }}>
-                    </div>
-                </div>
-
-                <!-- Section finale commune -->
-                <div class="form-section">
-                    <div class="form-group">
-                        <label for="location">Localisation</label>
-                        <input type="text" id="location" name="location" class="form-control" 
-                               {{ stimulus_target('contact', 'location') }}
-                               placeholder="Commencez à taper le nom de votre ville...">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="project">Description du projet</label>
-                        <textarea id="project" name="project" class="form-control" rows="5" required></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Envoyer</button>
-                </div>
-            </form>
-
+    <div class="map-container">
+        <div id="map"></div>
     </div>
 </div>
 {% endblock %}
