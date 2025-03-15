@@ -44,7 +44,7 @@ export default class extends Controller {
                 if (value.length > 0) {
                     value = value.match(/.{1,2}/g).join(' ');
                 }
-                
+
                 e.target.value = value;
             });
         }
@@ -145,10 +145,8 @@ export default class extends Controller {
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
             
-            // Log des données avant l'envoi
             console.log('Données à envoyer:', data);
             
-            // Utiliser l'URL absolue
             const response = await fetch(window.location.origin + '/contact/submit', {
                 method: 'POST',
                 headers: {
@@ -162,23 +160,27 @@ export default class extends Controller {
             console.log('Réponse du serveur:', result);
             
             if (response.ok && result.success) {
-                alert('Votre message a été envoyé avec succès !');
-                event.target.reset();
-                this.typeTargets.find(input => input.value === 'particular').checked = true;
-                this.updateFormSections();
-            } else {
-                if (result.errors) {
-                    Object.entries(result.errors).forEach(([field, message]) => {
-                        this.showError(field, message);
-                    });
-                } else {
-                    alert(result.error || 'Une erreur est survenue lors de l\'envoi du formulaire.');
-                }
+                window.location.href = window.location.origin + '/contact/confirmation';
+                return; // Arrêter l'exécution ici
             }
             
+            // Gestion des erreurs
+            if (result.errors) {
+                Object.entries(result.errors).forEach(([field, message]) => {
+                    this.showError(field, message);
+                });
+            } else {
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'alert alert-danger mt-3';
+                errorMessage.textContent = result.error || 'Une erreur est survenue lors de l\'envoi du formulaire.';
+                event.target.insertBefore(errorMessage, event.target.firstChild);
+            }
         } catch (error) {
             console.error('Erreur détaillée:', error);
-            alert('Une erreur est survenue lors de l\'envoi du formulaire. Veuillez réessayer.');
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'alert alert-danger mt-3';
+            errorMessage.textContent = 'Une erreur est survenue lors de l\'envoi du formulaire. Veuillez réessayer.';
+            event.target.insertBefore(errorMessage, event.target.firstChild);
         }
     }
 } 

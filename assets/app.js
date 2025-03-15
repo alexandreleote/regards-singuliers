@@ -11,6 +11,7 @@ import './styles/app.css';
 import './styles/auth.css';
 import './styles/legal.css';
 import './styles/pages/contact.css';
+import './styles/confirmation.css';
 
 /* JavaScript Imports */
 import './js/header-scroll.js';

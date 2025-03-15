@@ -23,7 +23,7 @@ final class ContactController extends AbstractController
         ]);
     }
 
-    #[Route('/contact/submit', name: 'app_contact_submit', methods: ['POST'])]
+    #[Route('/contact/submit', name: 'contact_submit', methods: ['POST'])]
     public function submit(
         Request $request, 
         ValidatorInterface $validator, 
@@ -51,8 +51,8 @@ final class ContactController extends AbstractController
             'firstname' => [new Assert\NotBlank(), new Assert\Length(['min' => 2, 'max' => 100])],
             'email' => [new Assert\NotBlank(), new Assert\Email()],
             'phone' => [new Assert\Regex([
-                'pattern' => '/^[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}$/',
-                'message' => 'Le numéro de téléphone doit être au format XX XX XX XX XX'
+                'pattern' => '/^(0[1-7]) [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}$/',
+                'message' => 'Le numéro de téléphone doit commencer par 01, 02, 03, 04, 05, 06 ou 07 et être au format XX XX XX XX XX'
             ])],
             'location' => [new Assert\NotBlank()],
             'project' => [
