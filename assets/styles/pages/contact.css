@@ -278,4 +278,35 @@
     height: 400px;
     border: none;
     pointer-events: none; /* Désactive toutes les interactions avec la carte */
+}
+
+/* Section de contact */ 
+.contact-section { 
+    text-align: center; 
+    margin: 3rem 0; 
+    padding: 2rem; 
+    background-color: #f5f5f5; 
+    border-radius: 5px; 
+} 
+
+.contact-section p { 
+    margin-bottom: 1rem; 
+    font-size: var(--base-fs-xl); 
+    font-family: var(--title-font); 
+} 
+
+.contact-btn { 
+    display: inline-block; 
+    padding: 0.75rem 1.5rem; 
+    background-color: var(--primary-black); 
+    color: #fff; 
+    text-decoration: none; 
+    border-radius: 4px; 
+    font-family: var(--main-font); 
+    font-size: var(--base-fs); 
+    transition: background-color 0.3s ease; 
+} 
+
+.contact-btn:hover { 
+    background-color: #333; 
 } 

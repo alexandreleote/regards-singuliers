@@ -1,0 +1,43 @@
+/* Variables CSS */
+:root {
+    /* Fonts */
+    --main-font: 'Montserrat', sans-serif;
+    --title-font: 'DM Serif Display', serif;
+
+    /* Sizes */
+    --base-fs-xs: 0.75rem;
+    --base-fs-sm: 0.875rem;
+    --base-fs: 1rem;
+    --base-fs-xl: 1.5rem;
+    --base-fs-xxl: 2rem;
+    --base-fs-xxxl: 3rem;
+
+    --title-fs: 2rem;
+
+    /* Weights */
+    --regular-weight: 400;
+    --bold-weight: 700;
+
+    /* Colors */
+    --overlay-color3: rgba(0, 0, 0, 0.3);
+    --overlay-color1: rgba(0, 0, 0, 0.1);
+
+    --primary-black: #0c0c0c;
+    --primary-darkgrey: #333333;
+    --primary-grey: #6c6c6c;
+    --primary-lightgrey: #e5e5e5;
+    --primary-white: #ffffff;
+
+    --error-color: #dc3545;
+    --error-background: #f8d7da;
+
+    --success-color: #198754;
+    --success-background: #d1e7dd;
+
+    --gradient-primary: linear-gradient(90deg, #007bff, #0069d9);
+    --gradient-primary-hover: linear-gradient(90deg, #0056b3, #0047a5);
+
+    /* Breakpoints */
+    --mobile-breakpoint: 576px;
+    --tablet-breakpoint: 991px;
+} 
