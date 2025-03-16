@@ -24,6 +24,10 @@ export default class extends Controller {
         const particularLabel = switchContainer.querySelector('label[for="type-particular"]');
         const professionalLabel = switchContainer.querySelector('label[for="type-professional"]');
         
+        // Initialiser les couleurs des labels
+        particularLabel.style.color = '#fff';
+        professionalLabel.style.color = '#666';
+        
         // Définir la largeur du background en fonction du label
         const updateBackgroundSize = () => {
             const activeLabel = this.element.querySelector('#type-professional').checked ? professionalLabel : particularLabel;
