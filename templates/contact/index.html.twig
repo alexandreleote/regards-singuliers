@@ -36,18 +36,16 @@
                       data-action="submit->contact#submit"
                       class="contact-form" onsubmit="return false;">
                     <div class="form-type">
-                        <div class="form-check">
-                            <input type="radio" id="type-particular" name="type" value="particular" class="form-check-input" 
+                        <div class="switch-container">
+                            <input type="radio" id="type-particular" name="type" value="particular" 
                                    {{ stimulus_target('contact', 'type') }}
                                    data-action="change->contact#change"
                                    checked>
-                            <label class="form-check-label" for="type-particular">Particulier</label>
-                        </div>
-                        <div class="form-check">
-                            <input type="radio" id="type-professional" name="type" value="professional" class="form-check-input" 
+                            <input type="radio" id="type-professional" name="type" value="professional"
                                    {{ stimulus_target('contact', 'type') }}
                                    data-action="change->contact#change">
-                            <label class="form-check-label" for="type-professional">Professionnel</label>
+                            <label for="type-particular">Particulier</label>
+                            <label for="type-professional">Professionnel</label>
                         </div>
                     </div>
 
@@ -55,28 +53,27 @@
                     <div class="form-section">
                         <div class="form-group">
                             <label for="name">Nom</label>
-                            <input type="text" id="name" name="name" class="form-control" required>
+                            <input type="text" id="name" name="name" class="form-control" {{ stimulus_target('contact', 'name') }} required>
                         </div>
 
                         <div class="form-group">
                             <label for="firstname">Prénom</label>
-                            <input type="text" id="firstname" name="firstname" class="form-control" required>
+                            <input type="text" id="firstname" name="firstname" class="form-control" {{ stimulus_target('contact', 'firstname') }} required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" 
-                                   {{ stimulus_target('contact', 'email') }} required>
+                            <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
                         </div>
 
                         <div class="form-group">
                             <label for="phone">Téléphone</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" data-contact-target="phone" required>
+                            <input type="tel" id="phone" name="phone" class="form-control" {{ stimulus_target('contact', 'phone') }} required>
                         </div>
 
                         <div class="form-group location-field-container">
                             <label for="location">Ville</label>
-                            <input type="text" id="location" name="location" class="form-control" data-contact-target="location" required>
+                            <input type="text" id="location" name="location" class="form-control" {{ stimulus_target('contact', 'location') }} required>
                         </div>
                     </div>
 
@@ -93,7 +90,7 @@
                     <div class="form-section">
                         <div class="form-group">
                             <label for="project">Description du projet</label>
-                            <textarea id="project" name="project" class="form-control" rows="5" required></textarea>
+                            <textarea id="project" name="project" class="form-control" rows="5" {{ stimulus_target('contact', 'description') }} required></textarea>
                         </div>
 
                         <button type="submit" class="submit-btn">Envoyer</button>

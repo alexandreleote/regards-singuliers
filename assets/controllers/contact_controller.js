@@ -1,15 +1,58 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['type', 'section', 'email', 'phone', 'location', 'company']
+    static targets = ['type', 'section', 'name', 'firstname', 'email', 'phone', 'location', 'company', 'description']
     static classes = ['hidden']
 
     connect() {
-        // Le code ne s'exécute que si le contrôleur est connecté (présent sur la page)
-        this.updateFormSections();
-        this.setupPhoneInput();
-        this.setupLocationAutocomplete();
-        this.clearErrors();
+        // Créer l'élément de fond
+        const switchContainer = this.element.querySelector('.switch-container');
+        const switchBackground = document.createElement('span');
+        switchBackground.classList.add('switch-background');
+        switchContainer.appendChild(switchBackground);
+        
+        // Appliquer les styles initiaux
+        switchBackground.style.position = 'absolute';
+        switchBackground.style.height = 'calc(100% - 8px)';
+        switchBackground.style.backgroundColor = '#007bff';
+        switchBackground.style.borderRadius = '25px';
+        switchBackground.style.top = '4px';
+        switchBackground.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        switchBackground.style.zIndex = '1';
+
+        // Calculer la largeur exacte pour chaque label
+        const particularLabel = switchContainer.querySelector('label[for="type-particular"]');
+        const professionalLabel = switchContainer.querySelector('label[for="type-professional"]');
+        
+        // Définir la largeur du background en fonction du label
+        const updateBackgroundSize = () => {
+            const activeLabel = this.element.querySelector('#type-professional').checked ? professionalLabel : particularLabel;
+            const width = activeLabel.offsetWidth;
+            const left = activeLabel.offsetLeft;
+            
+            switchBackground.style.width = `${width}px`;
+            switchBackground.style.left = `${left}px`;
+        };
+
+        // Observer les changements de taille
+        const resizeObserver = new ResizeObserver(() => {
+            updateBackgroundSize();
+        });
+
+        resizeObserver.observe(particularLabel);
+        resizeObserver.observe(professionalLabel);
+
+        // Initialiser l'apparence
+        updateBackgroundSize();
+
+        // Initialiser les placeholders
+        this.nameTarget.placeholder = 'Votre nom de famille';
+        this.firstnameTarget.placeholder = 'Votre prénom';
+        this.emailTarget.placeholder = 'Votre adresse email';
+        this.phoneTarget.placeholder = 'Votre numéro de téléphone';
+        this.locationTarget.placeholder = 'Votre ville';
+        this.companyTarget.placeholder = 'Nom de votre entreprise';
+        this.descriptionTarget.placeholder = 'Décrivez votre projet en quelques mots (style souhaité, budget, contraintes particulières...)';
     }
 
     clearErrors() {
@@ -115,87 +158,78 @@ export default class extends Controller {
         });
     }
 
-    updateFormSections() {
-        const selectedType = this.typeTargets.find(input => input.checked)?.value;
-        if (!selectedType) return;
-
-        console.log('Type sélectionné:', selectedType);
+    updateSwitchAppearance() {
+        const switchBackground = this.element.querySelector('.switch-background');
+        const professionalRadio = this.element.querySelector('#type-professional');
+        const particularLabel = this.element.querySelector('label[for="type-particular"]');
+        const professionalLabel = this.element.querySelector('label[for="type-professional"]');
         
-        this.sectionTargets.forEach(section => {
-            const targetType = section.dataset.contactTypeTarget;
-            console.log('Section type:', targetType);
-            
-            if (targetType === selectedType) {
-                section.classList.remove(this.hiddenClass);
-                if (this.hasCompanyTarget && targetType === 'professional') {
-                    this.companyTarget.required = true;
-                }
-            } else {
-                section.classList.add(this.hiddenClass);
-                if (this.hasCompanyTarget && targetType === 'professional') {
-                    this.companyTarget.required = false;
-                    this.companyTarget.value = ''; // Réinitialiser la valeur
-                }
-            }
-        });
-
-        if (this.hasEmailTarget) {
-            this.emailTarget.placeholder = selectedType === 'professional' ? 
-                'exemple@entreprise.com' : 
-                'exemple@email.com';
+        const activeLabel = professionalRadio.checked ? professionalLabel : particularLabel;
+        const width = activeLabel.offsetWidth;
+        const left = activeLabel.offsetLeft;
+        
+        switchBackground.style.width = `${width}px`;
+        switchBackground.style.left = `${left}px`;
+        
+        // Mettre à jour les couleurs
+        if (professionalRadio.checked) {
+            professionalLabel.style.color = '#fff';
+            particularLabel.style.color = '#666';
+        } else {
+            particularLabel.style.color = '#fff';
+            professionalLabel.style.color = '#666';
         }
     }
 
     change(event) {
-        console.log('Changement de type:', event.target.value);
-        this.updateFormSections();
+        this.updateSwitchAppearance();
+        
+        // Gérer l'affichage de la section entreprise
+        const type = event.target.value;
+        console.log('Type sélectionné:', type);
+        
+        if (type === 'professional') {
+            this.sectionTarget.classList.remove(this.hiddenClass);
+            this.companyTarget.required = true;
+        } else {
+            this.sectionTarget.classList.add(this.hiddenClass);
+            this.companyTarget.required = false;
+            this.companyTarget.value = '';
+        }
     }
 
     // Gestion de la soumission du formulaire
     async submit(event) {
         event.preventDefault();
-        this.clearErrors();
+        
+        const formData = new FormData(event.target);
+        const submitButton = event.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
         
         try {
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            console.log('Données à envoyer:', data);
-            
-            const response = await fetch(window.location.origin + '/contact/submit', {
+            const response = await fetch('/contact/submit', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
+                body: formData
             });
             
+            if (!response.ok) {
+                throw new Error('Erreur lors de l\'envoi du formulaire');
+            }
+            
             const result = await response.json();
-            console.log('Réponse du serveur:', result);
+            console.log('Réponse:', result);
             
-            if (response.ok && result.success) {
-                window.location.href = window.location.origin + '/contact/confirmation';
-                return; // Arrêter l'exécution ici
-            }
+            // Réinitialiser le formulaire
+            event.target.reset();
             
-            // Gestion des erreurs
-            if (result.errors) {
-                Object.entries(result.errors).forEach(([field, message]) => {
-                    this.showError(field, message);
-                });
-            } else {
-                const errorMessage = document.createElement('div');
-                errorMessage.className = 'alert alert-danger mt-3';
-                errorMessage.textContent = result.error || 'Une erreur est survenue lors de l\'envoi du formulaire.';
-                event.target.insertBefore(errorMessage, event.target.firstChild);
-            }
+            // Afficher un message de succès
+            alert('Votre message a été envoyé avec succès !');
+            
         } catch (error) {
-            console.error('Erreur détaillée:', error);
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'alert alert-danger mt-3';
-            errorMessage.textContent = 'Une erreur est survenue lors de l\'envoi du formulaire. Veuillez réessayer.';
-            event.target.insertBefore(errorMessage, event.target.firstChild);
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.');
+        } finally {
+            submitButton.disabled = false;
         }
     }
 } 
