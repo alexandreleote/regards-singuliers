@@ -19,5 +19,6 @@ import './js/show-number.js';
 import './js/faq.js';
 import './js/studio.js';
 import './js/map.js';
+import './js/menu-burger.js';
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
