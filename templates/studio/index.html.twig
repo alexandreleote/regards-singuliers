@@ -4,25 +4,193 @@
 
 {% block body %}
     <div class="page-container">
-        <h2>Bienvenue au studio <em>regards singuliers</em> !</h2>
+        <h1 class="page-title">Bienvenue au studio <em>regards singuliers</em></h1>
 
-        <div class="studio-content">
-            Je suis Priscilia Leote, architecte d'intérieur et vous accompagne depuis 2019 dans vos projets d'aménagement et de décoration. Basée dans le nord du Morbihan, à deux pas du lac de Guerlédan, j'interviens principalement en Bretagne, dans la rénovation du bâti ancien de la conception jusqu'à la mise en place finale du mobilier et de la décoration. 
-            <br>
-            <br>
-            Selon la nature de votre projet, ma zone d'action peut être élargie à toute la France.  
+        <div class="studio-intro">
+            <div class="studio-intro-content">
+                <p>
+                    Je suis Priscilia Leote, architecte d'intérieur et vous accompagne depuis 2019 dans vos projets d'aménagement et de décoration.<br>
+                    <br>
+                    Basée dans le nord du Morbihan, à deux pas du lac de Guerlédan, j'interviens principalement en Bretagne, dans la rénovation du 
+                    bâti ancien de la conception jusqu'à la mise en place finale du mobilier et de la décoration.
+                </p><br>
+                <p>
+                    Selon la nature de votre projet, ma zone d'action peut être élargie à toute la France.
+                </p>
+            </div>
+            <div class="studio-intro-image">
+                <img src="{{ asset('images/studio/terrasse.jpg') }}" alt="Espace extérieur aménagé" class="img-fluid">
+            </div>
+        </div>
+
+        <div class="cta-container">
+            <a href="{{ path('contact') }}" class="contact-btn">Discuter de votre projet</a>
+        </div>
+
+        <div class="studio-more">
+            <h3>En savoir plus sur mon parcours...</h3>
+
+            <div class="studio-more-content">
+                <div class="studio-more-grid">
+                    <div class="studio-more-images image-left">
+                        <img src="{{ asset('images/studio/interieur.jpg') }}" alt="Intérieur design" class="img-fluid">
+                    </div>
+                    <div class="studio-more-text">
+                        <p>
+                            Après avoir fait mes études à l'école des Beaux-Arts de Mulhouse, j'ai exercé pendant plusieurs années en tant que designer textile, d'abord dans le prêt à porter, puis dans la décoration et l'ameublement. Ces premières expériences ont développé ma sensibilité artistique et nourri mon attrait pour les espaces harmonieux et narratifs. Elles m'ont aussi appris à faire des choix en conscience, à respecter le patrimoine et le vivant dont nous faisons tous partie. Pour parfaire mon approche et vous offrir un accompagnement holistique, j'ai complété mes connaissances avec l'école du design intérieur durable et l'école de la décoration consciente.
+                        </p>
+                    </div>
+                </div>
+                <div class="studio-more-text">
+                    <p>
+                        Aujourd'hui, j'ai à cœur de concevoir des intérieurs harmonieux et fonctionnels, pertinents et ressourçants, adaptés aux habitants et à leur mode de vie. Sensible à l'artisanat, j'aime inclure dans mes projets des matériaux sains, biosourcés et locaux. Pour préserver votre santé et vous proposer des espaces de vie chaleureux, en cohérence avec les lieux dans lesquels ils s'inscrivent. Je favorise le déjà-là et votre histoire pour imaginer avec vous un foyer intemporel et unique, qui se patinera dans le temps et dans lequel vous vous sentirez naturellement bien. Prêts à découvrir votre intérieur sous un nouveau regard ?
+                    </p>
+                </div>
+                <div class="studio-more-images">
+                    <img src="{{ asset('images/studio/plan.jpg') }}" alt="Plan d'aménagement" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-container cta-grid">
+            <a href="{{ path('realisations') }}" class="contact-btn">Découvrir mes réalisations</a>
+            <a href="{{ path('prestations') }}" class="contact-btn">Explorer mes prestations</a>
         </div>
     </div>
+{% endblock %}
 
-    <a href="{{ path('contact') }}">Discuter plus en détail de mon projet</a>
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .studio-intro {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+        align-items: center;
+    }
 
-    <div class="studio-more">
-        <h3>En savoir plus sur mon parcours...</h3>
+    .studio-intro-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
 
-        <div class="studio-more-content">
-            Après avoir fait mes études à l’école des Beaux-Arts de Mulhouse, j’ai exercé pendant plusieurs années en tant que designer textile, d’abord dans le prêt à porter, puis dans la décoration et l’ameublement. Ces premières expériences ont développé ma sensibilité artistique et nourri mon attrait pour les espaces harmonieux et narratifs. Elles m’ont aussi appris à faire des choix en conscience, à respecter le patrimoine et le vivant dont nous faisons tous partie. Pour parfaire mon approche et vous offrir un accompagnement holistique, j’ai complété mes connaissances avec l’école du design intérieur durable et l’école de la décoration consciente.
+    .studio-more {
+        margin: 4rem 0;
+    }
 
-            Aujourd’hui, j’ai à cœur de concevoir des intérieurs harmonieux et fonctionnels, pertinents et ressourçants, adaptés aux habitants et à leur mode de vie. Sensible à l’artisanat, j’aime inclure dans mes projets des matériaux sains, biosourcés et locaux. Pour préserver votre santé et vous proposer des espaces de vie chaleureux, en cohérence avec les lieux dans lesquels ils s’inscrivent. Je favorise le déjà-là et votre histoire pour imaginer avec vous un foyer intemporel et unique, qui se patinera dans le temps et dans lequel vous vous sentirez naturellement bien. Prêts à découvrir votre intérieur sous un nouveau regard ? 
-        </div>
-    </div>
+    .studio-more h3 {
+        cursor: pointer;
+        font-family: var(--title-font);
+        font-size: var(--base-fs-xl);
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+        transition: color 0.3s ease;
+    }
+
+    .studio-more h3:hover {
+        color: var(--primary-grey);
+    }
+
+    .studio-more h3::after {
+        content: '+';
+        position: absolute;
+        right: -1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.3s ease;
+    }
+
+    .studio-more h3.active::after {
+        transform: translateY(-50%) rotate(45deg);
+    }
+
+    .studio-more-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: all 0.5s ease;
+    }
+
+    .studio-more-grid {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .studio-more-content.visible {
+        max-height: 2000px;
+        opacity: 1;
+        margin-top: 2rem;
+    }
+
+    .studio-more-images {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .studio-more-images.image-left {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .studio-more-images img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+        object-fit: cover;
+    }
+
+    .studio-more-images.image-left img {
+        aspect-ratio: 3/4;
+    }
+
+    .studio-more-images img:hover {
+        transform: scale(1.02);
+    }
+
+    .cta-container {
+        text-align: center;
+        margin: 3rem 0;
+    }
+
+    .cta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+        .studio-intro,
+        .studio-more-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .studio-more-images.image-left {
+            max-width: 100%;
+        }
+
+        .studio-more-images.image-left img {
+            aspect-ratio: 16/9;
+        }
+
+        .cta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .studio-more h3 {
+            font-size: var(--base-fs-xl);
+        }
+    }
+</style>
 {% endblock %}
