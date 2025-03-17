@@ -36,6 +36,7 @@
                           data-contact-hidden-class="hidden"
                           data-action="submit->contact#submit"
                           class="contact-form">
+                        <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
                         <div class="form-type">
                             <div class="switch-container">
                                 <input type="radio" id="type-particulier" name="type" value="particulier" 
@@ -95,7 +96,7 @@
                         </div>
 
                         <!-- Section professionnelle -->
-                        <div class="form-section hidden" {{ stimulus_target('contact', 'section') }} data-contact-type-target="professionnel">
+                        <div class="form-section hidden" {{ stimulus_target('contact', 'section') }}>
                             <div class="form-group">
                                 <label for="entreprise">Entreprise</label>
                                 <input type="text" id="entreprise" name="entreprise" class="form-control" 

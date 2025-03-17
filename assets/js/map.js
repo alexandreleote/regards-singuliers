@@ -1,8 +1,8 @@
 // Définir la fonction initMap globalement
-window.initMap = async function() {
+window.initMap = function() {
     const location = { lat: 48.0022, lng: -3.0126 }; // Coordonnées approximatives de Saint-Aignan
     const map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 8,
+        zoom: 9,
         center: location,
         styles: [
             {
@@ -69,6 +69,9 @@ window.initMap = async function() {
                 "elementType": "labels.text",
                 "stylers": [
                     {
+                        "visibility": "on"
+                    },
+                    {
                         "weight": 0.5
                     }
                 ]
@@ -89,6 +92,15 @@ window.initMap = async function() {
                         "visibility": "off"
                     }
                 ]
+            },
+            {
+                "featureType": "administrative",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    }
+                ]
             }
         ],
         draggable: false,
@@ -98,14 +110,14 @@ window.initMap = async function() {
         streetViewControl: false,
         mapTypeControl: false,
         fullscreenControl: false,
-        gestureHandling: 'none'
+        gestureHandling: 'none',
+        keyboardShortcuts: false
     });
 
     // Créer un marqueur standard
     new google.maps.Marker({
         position: location,
         map: map,
-        title: 'Zone Saint-Aignan',
-        clickable: false
+        title: 'regards singuliers'
     });
 }; 

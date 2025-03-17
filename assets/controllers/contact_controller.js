@@ -1,56 +1,14 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['type', 'section', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'entreprise', 'description']
-    static classes = ['hidden']
+    static targets = ['type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'description'];
+    static values = {
+        hiddenClass: String
+    }
 
     connect() {
-        // Créer l'élément de fond
-        const switchContainer = this.element.querySelector('.switch-container');
-        const switchBackground = document.createElement('span');
-        switchBackground.classList.add('switch-background');
-        switchContainer.appendChild(switchBackground);
-        
-        // Appliquer les styles initiaux
-        switchBackground.style.position = 'absolute';
-        switchBackground.style.height = 'calc(100% - 8px)';
-        switchBackground.style.backgroundColor = '#007bff';
-        switchBackground.style.borderRadius = '25px';
-        switchBackground.style.top = '4px';
-        switchBackground.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        switchBackground.style.zIndex = '1';
-
-        // Calculer la largeur exacte pour chaque label
-        const particulierLabel = switchContainer.querySelector('label[for="type-particulier"]');
-        const professionnelLabel = switchContainer.querySelector('label[for="type-professionnel"]');
-        
-        // Initialiser les couleurs des labels
-        particulierLabel.style.color = '#fff';
-        professionnelLabel.style.color = '#666';
-        
-        // Définir la largeur du background en fonction du label
-        const updateBackgroundSize = () => {
-            const activeLabel = this.element.querySelector('#type-professionnel').checked ? professionnelLabel : particulierLabel;
-            const width = activeLabel.offsetWidth;
-            const left = activeLabel.offsetLeft;
-            
-            switchBackground.style.width = `${width}px`;
-            switchBackground.style.left = `${left}px`;
-        };
-
-        // Observer les changements de taille
-        const resizeObserver = new ResizeObserver(() => {
-            updateBackgroundSize();
-        });
-
-        resizeObserver.observe(particulierLabel);
-        resizeObserver.observe(professionnelLabel);
-
-        // Initialiser l'apparence
-        updateBackgroundSize();
-
         // Initialiser les placeholders
-        this.nomTarget.placeholder = 'Votre nom de famille';
+        this.nomTarget.placeholder = 'Votre nom';
         this.prenomTarget.placeholder = 'Votre prénom';
         this.emailTarget.placeholder = 'Votre adresse email';
         this.telephoneTarget.placeholder = 'Votre numéro de téléphone';
@@ -61,48 +19,51 @@ export default class extends Controller {
         // Initialiser les gestionnaires d'événements
         this.setupPhoneInput();
         this.setupLocationAutocomplete();
+
+        // Vérifier l'état initial du type
+        const isProfessionnel = this.typeTargets.find(target => target.checked)?.value === 'professionnel';
+        this.toggleProfessionnelSection(isProfessionnel);
     }
 
-    clearErrors() {
-        // Supprimer tous les messages d'erreur existants
-        document.querySelectorAll('.error-message').forEach(el => el.remove());
-        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    change(event) {
+        const isProfessionnel = event.target.value === 'professionnel';
+        this.toggleProfessionnelSection(isProfessionnel);
     }
 
-    showError(field, message) {
-        const input = document.querySelector(`[name="${field}"]`);
-        if (!input) return;
-
-        input.classList.add('is-invalid');
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message invalid-feedback';
-        errorDiv.textContent = message;
-        input.parentNode.appendChild(errorDiv);
+    toggleProfessionnelSection(isProfessionnel) {
+        if (isProfessionnel) {
+            this.sectionTarget.classList.remove('hidden');
+            this.entrepriseTarget.required = true;
+        } else {
+            this.sectionTarget.classList.add('hidden');
+            this.entrepriseTarget.required = false;
+            this.entrepriseTarget.value = ''; // Réinitialiser la valeur
+        }
     }
 
     setupPhoneInput() {
-        if (this.hasTelephoneTarget) {
-            this.telephoneTarget.addEventListener('input', (e) => {
-                // Supprimer tous les caractères non numériques
-                let value = e.target.value.replace(/\D/g, '');
-                
-                // Limiter à 10 chiffres
-                if (value.length > 10) {
-                    value = value.slice(0, 10);
-                }
-                
-                // Formater avec des espaces tous les 2 chiffres
-                value = value.replace(/(\d{2})/g, '$1 ').trim();
-                
-                // Mettre à jour la valeur
-                e.target.value = value;
-            });
+        this.telephoneTarget.addEventListener('input', (e) => {
+            // Supprimer tous les caractères non numériques
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Limiter à 10 chiffres
+            value = value.substring(0, 10);
+            
+            // Formater le numéro (XX XX XX XX XX)
+            if (value.length > 0) {
+                value = value.match(/.{1,2}/g).join(' ');
+            }
+            
+            e.target.value = value;
 
-            // Nettoyer les espaces avant la soumission
-            this.telephoneTarget.addEventListener('blur', (e) => {
-                e.target.value = e.target.value.replace(/\s/g, '');
-            });
-        }
+            // Vérifier la validité
+            const numericValue = value.replace(/\s/g, '');
+            if (numericValue.length === 10) {
+                e.target.setCustomValidity('');
+            } else {
+                e.target.setCustomValidity('Le numéro doit contenir exactement 10 chiffres');
+            }
+        });
     }
 
     setupLocationAutocomplete() {
@@ -116,7 +77,7 @@ export default class extends Controller {
     }
 
     async searchLocation(query) {
-        if (!query) return;
+        if (!query || query.length < 3) return;
 
         try {
             const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
@@ -158,50 +119,40 @@ export default class extends Controller {
         }
     }
 
-    updateSwitchAppearance() {
-        const switchBackground = this.element.querySelector('.switch-background');
-        const professionnelRadio = this.element.querySelector('#type-professionnel');
-        const particulierLabel = this.element.querySelector('label[for="type-particulier"]');
-        const professionnelLabel = this.element.querySelector('label[for="type-professionnel"]');
-        
-        const activeLabel = professionnelRadio.checked ? professionnelLabel : particulierLabel;
-        const width = activeLabel.offsetWidth;
-        const left = activeLabel.offsetLeft;
-        
-        switchBackground.style.width = `${width}px`;
-        switchBackground.style.left = `${left}px`;
-        
-        // Mettre à jour les couleurs
-        if (professionnelRadio.checked) {
-            professionnelLabel.style.color = '#fff';
-            particulierLabel.style.color = '#666';
-        } else {
-            particulierLabel.style.color = '#fff';
-            professionnelLabel.style.color = '#666';
-        }
+    clearErrors() {
+        // Supprimer tous les messages d'erreur
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
     }
 
-    change(event) {
-        this.updateSwitchAppearance();
+    showError(field, message) {
+        const input = this.element.querySelector(`[name="${field}"]`);
+        if (!input) return;
+
+        input.classList.add('is-invalid');
         
-        // Gérer l'affichage de la section entreprise
-        const type = event.target.value;
-        console.log('Type sélectionné:', type);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
         
-        if (type === 'professionnel') {
-            this.sectionTarget.classList.remove(this.hiddenClass);
-            this.entrepriseTarget.required = true;
-        } else {
-            this.sectionTarget.classList.add(this.hiddenClass);
-            this.entrepriseTarget.required = false;
-            this.entrepriseTarget.value = '';
+        // Supprimer l'ancien message d'erreur s'il existe
+        const existingError = input.parentNode.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
         }
+        
+        input.parentNode.appendChild(errorDiv);
     }
 
-    // Gestion de la soumission du formulaire
     async submit(event) {
         event.preventDefault();
         this.clearErrors();
+        
+        // Vérifier la validité du formulaire
+        if (!event.target.checkValidity()) {
+            event.target.reportValidity();
+            return;
+        }
         
         const formData = new FormData(event.target);
         const submitButton = event.target.querySelector('button[type="submit"]');
@@ -209,22 +160,37 @@ export default class extends Controller {
         
         try {
             const data = {};
+            const csrfToken = formData.get('_token');
+            
             formData.forEach((value, key) => {
-                data[key] = value;
+                if (key !== '_token') {
+                    // Pour le téléphone, supprimer les espaces
+                    if (key === 'telephone') {
+                        data[key] = value.replace(/\s/g, '');
+                    } else {
+                        data[key] = this.sanitizeInput(value);
+                    }
+                }
             });
+
+            // Ne pas inclure le champ entreprise si on est en mode particulier
+            if (data.type !== 'professionnel') {
+                delete data.entreprise;
+            }
 
             const response = await fetch('/contact/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify(data)
             });
             
-            const result = await response.json();
-            
             if (!response.ok) {
+                const result = await response.json();
                 if (result.errors) {
+                    console.log('Erreurs de validation:', result.errors);
                     Object.entries(result.errors).forEach(([field, message]) => {
                         this.showError(field, message);
                     });
@@ -241,9 +207,24 @@ export default class extends Controller {
             
         } catch (error) {
             console.error('Erreur:', error);
-            alert(error.message);
+            if (error.message !== 'Veuillez corriger les erreurs dans le formulaire') {
+                alert(error.message);
+            }
         } finally {
             submitButton.disabled = false;
         }
     }
-} 
+
+    sanitizeInput(value) {
+        if (typeof value !== 'string') return value;
+        
+        // Convertir les caractères spéciaux en entités HTML
+        return value
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#x27;')
+            .replace(/\//g, '&#x2F;');
+    }
+}

@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
 
 final class ContactController extends AbstractController
 {
@@ -46,11 +47,12 @@ final class ContactController extends AbstractController
             }
 
             // Validation CSRF
-            if (!isset($data['_token'])) {
+            $token = $request->headers->get('X-CSRF-TOKEN');
+            if (!$token) {
                 throw new InvalidCsrfTokenException('Token CSRF manquant');
             }
 
-            if (!$csrfTokenManager->isTokenValid(new CsrfToken('contact_form', $data['_token']))) {
+            if (!$csrfTokenManager->isTokenValid(new CsrfToken('contact_form', $token))) {
                 throw new InvalidCsrfTokenException('Token CSRF invalide');
             }
 
