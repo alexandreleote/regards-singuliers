@@ -1,44 +1,37 @@
-/* Variables CSS */
 :root {
-    /* Fonts */
-    --main-font: 'Montserrat', sans-serif;
-    --title-font: 'DM Serif Display', serif;
-
-    /* Sizes */
-    --base-fs-xs: 0.75rem;
-    --base-fs-sm: 0.875rem;
-    --base-fs: 1rem;
-    --base-fs-xl: 1.5rem;
-    --base-fs-xxl: 2rem;
-    --base-fs-xxxl: 3rem;
-
-    --title-fs: 2rem;
-
-    /* Weights */
-    --regular-weight: 400;
-    --bold-weight: 700;
-
-    /* Colors */
-    --overlay-color3: rgba(0, 0, 0, 0.3);
-    --overlay-color1: rgba(0, 0, 0, 0.1);
-
-    --primary-black: #0c0c0c;
-    --primary-darkgrey: #333333;
-    --primary-grey: #6c6c6c;
-    --primary-lightgrey: #e5e5e5;
-    --primary-white: #ffffff;
-
-    --error-color: #dc3545;
-    --error-background: #f8d7da;
-
-    --success-color: #198754;
-    --success-background: #d1e7dd;
-
-    /* Gradients */
-    --gradient-primary: linear-gradient(90deg, #007bff, #0069d9);
-    --gradient-primary-hover: linear-gradient(90deg, #0056b3, #0047a5);
-
-    /* Breakpoints */
-    --mobile-breakpoint: 576px;
-    --tablet-breakpoint: 991px;
-} 
+  /* Palette de couleurs minimaliste */
+  --color-primary: #000000;
+  --color-secondary: #333333;
+  --color-accent: #666666;
+  --color-background: #ffffff;
+  --color-text: #000000;
+  --color-text-light: #666666;
+  --color-border: #e0e0e0;
+  --color-error: #d32f2f;
+  
+  /* Typographie */
+  --font-primary: 'Helvetica Neue', Arial, sans-serif;
+  --font-secondary: 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-base: 1rem;    /* 16px */
+  --font-size-md: 1.125rem;  /* 18px */
+  --font-size-lg: 1.25rem;   /* 20px */
+  --font-size-xl: 1.5rem;    /* 24px */
+  --font-size-2xl: 1.75rem;  /* 28px */
+  
+  /* Espacement */
+  --spacing-xs: 0.5rem;      /* 8px */
+  --spacing-sm: 1rem;        /* 16px */
+  --spacing-md: 1.5rem;      /* 24px */
+  --spacing-lg: 2rem;        /* 32px */
+  --spacing-xl: 3rem;        /* 48px */
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  
+  /* Layout */
+  --header-height: 70px;     /* Hauteur du header */
+  --container-max-width: 1200px;
+  --container-padding: 1rem;
+}

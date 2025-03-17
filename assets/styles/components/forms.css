@@ -1,412 +1,128 @@
-/* Styles de base pour les formulaires */
-.form-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.form-title {
-    font-family: var(--title-font);
-    font-size: var(--base-fs-xxl);
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.form-subtitle {
-    font-size: var(--base-fs);
-    color: var(--primary-grey);
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
 .form-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-md);
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: var(--bold-weight);
-    color: var(--primary-darkgrey);
-}
-
-.form-group label.required::after {
-    content: '*';
-    color: var(--error-color);
-    margin-left: 4px;
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-sm);
 }
 
 .form-control {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--primary-lightgrey);
-    border-radius: 4px;
-    font-family: var(--main-font);
-    font-size: var(--base-fs);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: var(--font-size-base);
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background-color: white;
+  border: 1px solid var(--color-border);
+  transition: border-color var(--transition-fast);
 }
 
 .form-control:focus {
-    outline: none;
-    border-color: var(--primary-black);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  outline: none;
+  border-color: var(--color-primary);
 }
 
-.form-control.is-invalid {
-    border-color: var(--error-color);
-}
-
-.invalid-feedback {
-    display: block;
-    color: var(--error-color);
-    font-size: var(--base-fs-sm);
-    margin-top: 0.5rem;
+.form-control::placeholder {
+  color: var(--color-text-light);
+  opacity: 0.7;
 }
 
 textarea.form-control {
-    min-height: 150px;
-    resize: vertical;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-select {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: var(--font-size-base);
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background-color: white;
+  border: 1px solid var(--color-border);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 16px;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .form-check {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
 }
 
 .form-check-input {
-    margin-right: 0.5rem;
-    margin-top: 0.25rem;
+  margin-right: var(--spacing-xs);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .form-check-label {
-    font-size: var(--base-fs-sm);
-    color: var(--primary-grey);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
 }
 
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
+.form-text {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
 }
 
-.form-button {
-    display: inline-block;
-    min-width: 150px;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--primary-black);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-family: var(--main-font);
-    font-size: var(--base-fs);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.form-button:hover {
-    background-color: #333;
-}
-
-.form-button:active {
-    background-color: #666;
-}
-
-.form-button.secondary {
-    background-color: transparent;
-    border: 1px solid var(--primary-black);
-    color: var(--primary-black);
-}
-
-.form-button.secondary:hover {
-    background-color: var(--primary-lightgrey);
-}
-
-/* Styles pour les messages de succès/erreur */
-.form-message {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 4px;
-    font-size: var(--base-fs-sm);
-}
-
-.form-message.success {
-    background-color: var(--success-background);
-    color: var(--success-color);
-}
-
-.form-message.error {
-    background-color: var(--error-background);
-    color: var(--error-color);
-}
-
-/* Styles pour les champs spéciaux */
-.input-group {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-group .form-control {
-    flex: 1;
-}
-
-.input-group-append {
-    margin-left: -1px;
-}
-
-.input-group-text {
-    padding: 0.75rem;
-    background-color: var(--primary-lightgrey);
-    border: 1px solid var(--primary-lightgrey);
-    border-radius: 0 4px 4px 0;
-    color: var(--primary-grey);
-}
-
-/* Styles pour les sélecteurs personnalisés */
-.custom-select {
-    position: relative;
-    width: 100%;
-}
-
-.custom-select select {
-    width: 100%;
-    padding: 0.75rem;
-    padding-right: 2rem;
-    border: 1px solid var(--primary-lightgrey);
-    border-radius: 4px;
-    background-color: #fff;
-    appearance: none;
-    cursor: pointer;
-}
-
-.custom-select::after {
-    content: '▼';
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    font-size: 0.8rem;
-    color: var(--primary-grey);
-}
-
-/* Styles pour les fichiers */
-.custom-file {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-}
-
-.custom-file-input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.custom-file-label {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    background-color: #fff;
-    border: 1px solid var(--primary-lightgrey);
-    border-radius: 4px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.custom-file-label::after {
-    content: 'Parcourir';
-    margin-left: auto;
-    padding: 0.375rem 0.75rem;
-    background-color: var(--primary-lightgrey);
-    border-radius: 2px;
-    color: var(--primary-darkgrey);
-}
-
-/* Responsive */
-@media (max-width: 767px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .form-button {
-        width: 100%;
-        min-width: auto;
-    }
-}
-
-/* Styles des formulaires */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: var(--bold-weight);
-}
-
-.form-control, .form-select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--input-background);
-    color: var(--text-color);
-    font-size: var(--base-fs);
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: var(--primary-black);
-    box-shadow: 0 0 0 2px rgba(12, 12, 12, 0.1);
-    outline: none;
+.form-error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
 }
 
 .form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -0.5rem;
 }
 
-/* Contact Form Styles */
-.contact-form-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: var(--primary-white);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.form-col {
+  flex: 1;
+  padding: 0 0.5rem;
 }
 
-.contact-intro {
-    margin-bottom: 2rem;
-    color: var(--text-color);
-    line-height: 1.6;
-    text-align: center;
+.form-submit {
+  margin-top: var(--spacing-md);
 }
 
-.contact-form {
-    display: flex;
+.form-submit button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.form-submit button:hover {
+  background-color: var(--color-accent);
+}
+
+@media (max-width: 767.98px) {
+  .form-row {
     flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-type-selector {
-    margin-bottom: 2rem;
-}
-
-.type-select {
+  }
+  
+  .form-col {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--input-background);
-    color: var(--text-color);
-    font-size: var(--base-fs);
-    transition: border-color 0.3s;
+    margin-bottom: var(--spacing-sm);
+  }
 }
-
-.description-section textarea {
-    min-height: 150px;
-    resize: vertical;
-}
-
-.form-footer {
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.contact-form-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 1.25rem 3rem;
-    background: var(--primary-white);
-    color: var(--primary-black);
-    border: 2px solid var(--primary-black);
-    border-radius: 4px;
-    font-size: calc(var(--base-fs) * 1.1);
-    font-weight: var(--bold-weight);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: auto;
-    min-width: 250px;
-    font-family: var(--main-font);
-}
-
-.contact-form-button:hover {
-    background: var(--primary-black);
-    color: var(--primary-white);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.contact-form-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Alerts */
-.alert {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 4px;
-    font-weight: var(--bold-weight);
-}
-
-.alert-success {
-    background-color: var(--success-background);
-    color: var(--success-color);
-    border: 1px solid var(--success-color);
-}
-
-.alert-danger {
-    background-color: var(--error-background);
-    color: var(--error-color);
-    border: 1px solid var(--error-color);
-}
-
-/* Style spécifique pour le groupe de civilité */
-.form-check-inline {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.form-check-inline input[type="radio"] {
-    margin: 0;
-}
-
-.form-check-inline label {
-    margin: 0;
-} 

@@ -9,17 +9,17 @@
 
 {% block body %}
     <!-- Carrousel des réalisations -->
-    <div class="">
-        <div class="">
+    <div class="slider">
+        <div class="swiper">
             {% for realisation in latest_realisations %}
-                <div class="">
+                <div class="swiper-slide">
                     <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
                          alt="{{ realisation.title }}"
-                         class="">
-                    <div class="">
-                        <h2 class="">{{ realisation.title }}</h2>
+                         class="slider-img">
+                    <div class="slider-content">
+                        <h2 class="slider-title">{{ realisation.title }}</h2>
                         <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
-                           class="">
+                           class="slider-link">
                             En savoir plus
                         </a>
                     </div>
@@ -31,24 +31,24 @@
         <div class="swiper-button-next"></div>
     </div>
 
-    <div class="">
-        <div class="text-center mb-8">
+    <div class="content">
+        <div class="cta">
             <a href="{{ path('realisations') }}" 
-               class="">
+               class="btn">
                 Voir toutes nos réalisations
             </a>
         </div>
 
         <!-- Section des prestations -->
-        <h2 class="">Nos prestations</h2>
-        <div class="">
+        <h2 class="section-title">Nos prestations</h2>
+        <div class="services">
             {% for service in services %}
-                <div class="n">
-                    <div class="">
-                        <h3 class="">{{ service.title }}</h3>
-                        <p class="">{{ service.description|striptags|length > 150 ? service.description|striptags|slice(0, 150) ~ '...' : service.description|striptags }}</p>
+                <div class="service">
+                    <div class="service-content">
+                        <h3 class="service-title">{{ service.title }}</h3>
+                        <p class="service-description">{{ service.description|striptags|length > 150 ? service.description|striptags|slice(0, 150) ~ '...' : service.description|striptags }}</p>
                         <a href="{{ path('prestation_show', {'id': service.id}) }}" 
-                           class="">
+                           class="service-link">
                             En savoir plus
                         </a>
                     </div>

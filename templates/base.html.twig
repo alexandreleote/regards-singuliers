@@ -15,6 +15,8 @@
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            {# Google Maps avec loading async #}
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWM6AMeAsMeI862bUKJr4GEi7PzIpeHHs&callback=initMap&libraries=marker&loading=async" defer></script>
         {% endblock %}
 
         <!-- Google Fonts -->
@@ -23,114 +25,149 @@
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     </head>
     <body>
-        <header class="site-header">
-            <nav class="site-nav">
-                <a href="{{ path('home') }}" class="site-logo">
-                    <h1>regards singuliers</h1>
-                    <span>Architecture d'intérieur</span>
-                </a>
-                <button class="menu-burger" aria-label="Menu">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <div class="nav-links">
-                    <ul>
-                        <li><a href="{{ path('studio') }}">Le Studio</a></li>
-                        <li><a href="{{ path('realisations') }}">Réalisations</a></li>
-                        <li><a href="{{ path('prestations') }}">Prestations</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="{{ path('contact') }}">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="nav-auth">
-                    {% if app.user %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('admin') }}" class="admin-link" target="_blank">Admin</a>
-                        {% endif %}
-                        <a href="#" class="profile-link">Mon Profil</a>
-                        <a href="{{ path('logout') }}" class="logout-link">Déconnexion</a>
-                    {% else %}
-                        <a href="{{ path('login') }}" class="login-link">Connexion</a>
-                    {% endif %}
-                </div>
-            </nav>
-        </header>
-
-        <main class="main-container">
-            {% block body %}
-                {% if app.flashes|length > 0 %}
-                    <div class="flash-messages">
-                        {% for type, messages in app.flashes %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ type }}">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endblock %}
-        </main>
-
-        <footer class="site-footer">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <a href="{{ path('home') }}" class="footer-logo">
-                        <h2>regards singuliers</h2>
+        <header class="header">
+            <div class="container header-container">
+                <div class="logo">
+                    <a href="{{ path('home') }}">
+                        <h1>regards singuliers</h1>
                         <span>Architecture d'intérieur</span>
                     </a>
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/rs.regards.singuliers/" target="_blank" aria-label="Facebook">
+                </div>
+                
+                <div class="burger-menu-btn" aria-label="Menu">
+                    <div class="burger-menu">
+                        <span class="burger-line"></span>
+                        <span class="burger-line"></span>
+                        <span class="burger-line"></span>
+                    </div>
+                </div>
+                
+                <nav>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="{{ path('studio') }}" class="nav-link">Le Studio</a></li>
+                        <li class="nav-item"><a href="{{ path('realisations') }}" class="nav-link">Réalisations</a></li>
+                        <li class="nav-item"><a href="{{ path('prestations') }}" class="nav-link">Prestations</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Blog</a></li>
+                        <li class="nav-item"><a href="{{ path('contact') }}" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="nav-mobile">
+                    <ul class="nav-list-mobile">
+                        <li class="nav-item-mobile"><a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a></li>
+                        <li class="nav-item-mobile"><a href="{{ path('realisations') }}" class="nav-link-mobile">Réalisations</a></li>
+                        <li class="nav-item-mobile"><a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a></li>
+                        <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Blog</a></li>
+                        <li class="nav-item-mobile"><a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a></li>
+                        
+                        {% if app.user %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li class="nav-item-mobile"><a href="{{ path('admin') }}" class="nav-link-mobile" target="_blank">Admin</a></li>
+                            {% endif %}
+                            <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Mon Profil</a></li>
+                            <li class="nav-item-mobile"><a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a></li>
+                        {% else %}
+                            <li class="nav-item-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <div class="header-auth">
+                    {% if app.user %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin') }}" class="nav-link" target="_blank">Admin</a>
+                        {% endif %}
+                        <a href="#" class="nav-link">Mon Profil</a>
+                        <a href="{{ path('logout') }}" class="nav-link">Déconnexion</a>
+                    {% else %}
+                        <a href="{{ path('login') }}" class="nav-link">Connexion</a>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <div class="menu-overlay"></div>
+
+        <main class="page-fullheight"> 
+            <div class="container page-content">
+                {% block body %}
+                    {% if app.flashes|length > 0 %}
+                        <div class="section">
+                            {% for type, messages in app.flashes %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ type }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container footer-container">
+                <div class="footer-col">
+                    <div class="footer-title">regards singuliers</div>
+                    <div class="footer-text">Architecture d'intérieur</div>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/rs.regards.singuliers/" target="_blank" aria-label="Facebook" class="footer-social-link">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
-                        <a href="https://www.instagram.com/regards_singuliers/" target="_blank" aria-label="Instagram">
+                        <a href="https://www.instagram.com/regards_singuliers/" target="_blank" aria-label="Instagram" class="footer-social-link">
                             <i class="fa-brands fa-instagram"></i>
                         </a>
-                        <a href="https://fr.pinterest.com/rsregardssinguliers/" target="_blank" aria-label="Pinterest">
+                        <a href="https://fr.pinterest.com/rsregardssinguliers/" target="_blank" aria-label="Pinterest" class="footer-social-link">
                             <i class="fa-brands fa-pinterest"></i>
                         </a>
                     </div>
                 </div>
 
-                <div class="footer-nav">
-                    <h3>Navigation</h3>
-                    <ul>
-                        <li><a href="{{ path('studio') }}">Le Studio</a></li>
-                        <li><a href="{{ path('realisations') }}">Réalisations</a></li>
-                        <li><a href="{{ path('prestations') }}">Prestations</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="{{ path('contact') }}">Contact</a></li>
-                        <li><a href="{{ path('faq') }}">F.A.Q</a></li>
+                <div class="footer-col">
+                    <div class="footer-title">Navigation</div>
+                    <ul class="footer-links">
+                        <li class="footer-link-item"><a href="{{ path('studio') }}" class="footer-link">Le Studio</a></li>
+                        <li class="footer-link-item"><a href="{{ path('realisations') }}" class="footer-link">Réalisations</a></li>
+                        <li class="footer-link-item"><a href="{{ path('prestations') }}" class="footer-link">Prestations</a></li>
+                        <li class="footer-link-item"><a href="#" class="footer-link">Blog</a></li>
+                        <li class="footer-link-item"><a href="{{ path('contact') }}" class="footer-link">Contact</a></li>
+                        <li class="footer-link-item"><a href="{{ path('faq') }}" class="footer-link">F.A.Q</a></li>
                     </ul>
                 </div>
 
-                <div class="footer-contact">
-                    <h3>Coordonnées</h3>
-                    <ul>
-                        <li>regards singuliers</li>
-                        <li>6 Le Bronz 56480 Saint-Aignan</li>
-                        <li>
+                <div class="footer-col">
+                    <div class="footer-title">Coordonnées</div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-text">regards singuliers</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-text">6 Le Bronz 56480 Saint-Aignan</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-text">
                             <a href="mailto:hello@regards-singuliers.com">hello@regards-singuliers.com</a>
-                        </li>
-                        <li>
-                            <div class="contact-info" data-controller="phone" data-phone-hidden-class="hidden">
-                                <p id="show-phone" data-phone-target="show" data-action="click->phone#toggle" class="cursor-pointer">Afficher le numéro</p>
-                                <p id="phone-number" data-phone-target="number" class="hidden">Tél : 06 07 02 92 22</p>
-                            </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-text" data-controller="phone" data-phone-hidden-class="hidden">
+                            <p id="show-phone" data-phone-target="show" data-action="click->phone#toggle" class="cursor-pointer">Afficher le numéro</p>
+                            <p id="phone-number" data-phone-target="number" class="hidden">Tél : 06 07 02 92 22</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="footer-legal">
-                    <h3>Informations Légales</h3>
-                    <ul>
-                        <li><a href="{{ path('cgu') }}">C.G.U / C.G.V</a></li>
-                        <li><a href="{{ path('confidentialite') }}">Confidentialité</a></li>
-                        <li><a href="{{ path('mentions_legales') }}">Mentions légales</a></li>
+                <div class="footer-col">
+                    <div class="footer-title">Informations Légales</div>
+                    <ul class="footer-links">
+                        <li class="footer-link-item"><a href="{{ path('cgu') }}" class="footer-link">C.G.U / C.G.V</a></li>
+                        <li class="footer-link-item"><a href="{{ path('confidentialite') }}" class="footer-link">Confidentialité</a></li>
+                        <li class="footer-link-item"><a href="{{ path('mentions_legales') }}" class="footer-link">Mentions légales</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="footer-copyright">
+            <div class="footer-bottom">
                 <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecture d'intérieur</p>
                 <p>Tous droits réservés</p>
             </div>
