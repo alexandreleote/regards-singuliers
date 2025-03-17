@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`contact`')]
 class Contact
 {
+    public const TYPE_PARTICULIER = 'particulier';
+    public const TYPE_PROFESSIONNEL = 'professionnel';
+    public const CIVILITE_MONSIEUR = 'monsieur';
+    public const CIVILITE_MADAME = 'madame';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -18,36 +23,50 @@ class Contact
     #[ORM\Column(length: 20)]
     private ?string $type = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $name = null;
+    #[ORM\Column(length: 20)]
+    private ?string $civilite = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $firstname = null;
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $prenom = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $phone = null;
+    private ?string $telephone = null;
 
     #[ORM\Column(length: 100, nullable: true)]
-    private ?string $company = null;
+    private ?string $entreprise = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $location = null;
+    private ?string $localisation = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $project = null;
+    private ?string $description = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $status = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isRead = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isResponded = false;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $readAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $respondedAt = null;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->isRead = false;
+        $this->isResponded = false;
     }
 
     public function getId(): ?int
@@ -66,25 +85,36 @@ class Contact
         return $this;
     }
 
-    public function getName(): ?string
+    public function getCivilite(): ?string
     {
-        return $this->name;
+        return $this->civilite;
     }
 
-    public function setName(string $name): static
+    public function setCivilite(string $civilite): static
     {
-        $this->name = $name;
+        $this->civilite = $civilite;
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getNom(): ?string
     {
-        return $this->firstname;
+        return $this->nom;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setNom(string $nom): static
     {
-        $this->firstname = $firstname;
+        $this->nom = $nom;
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): static
+    {
+        $this->prenom = $prenom;
         return $this;
     }
 
@@ -99,47 +129,47 @@ class Contact
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getTelephone(): ?string
     {
-        return $this->phone;
+        return $this->telephone;
     }
 
-    public function setPhone(string $phone): static
+    public function setTelephone(string $telephone): static
     {
-        $this->phone = $phone;
+        $this->telephone = $telephone;
         return $this;
     }
 
-    public function getCompany(): ?string
+    public function getEntreprise(): ?string
     {
-        return $this->company;
+        return $this->entreprise;
     }
 
-    public function setCompany(?string $company): static
+    public function setEntreprise(?string $entreprise): static
     {
-        $this->company = $company;
+        $this->entreprise = $entreprise;
         return $this;
     }
 
-    public function getLocation(): ?string
+    public function getLocalisation(): ?string
     {
-        return $this->location;
+        return $this->localisation;
     }
 
-    public function setLocation(string $location): static
+    public function setLocalisation(string $localisation): static
     {
-        $this->location = $location;
+        $this->localisation = $localisation;
         return $this;
     }
 
-    public function getProject(): ?string
+    public function getDescription(): ?string
     {
-        return $this->project;
+        return $this->description;
     }
 
-    public function setProject(string $project): static
+    public function setDescription(string $description): static
     {
-        $this->project = $project;
+        $this->description = $description;
         return $this;
     }
 
@@ -154,14 +184,59 @@ class Contact
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function isRead(): bool
     {
-        return $this->status;
+        return $this->isRead;
     }
 
-    public function setStatus(string $status): static
+    public function setIsRead(bool $isRead): static
     {
-        $this->status = $status;
+        $this->isRead = $isRead;
         return $this;
+    }
+
+    public function isResponded(): bool
+    {
+        return $this->isResponded;
+    }
+
+    public function setIsResponded(bool $isResponded): static
+    {
+        $this->isResponded = $isResponded;
+        return $this;
+    }
+
+    public function getReadAt(): ?\DateTimeImmutable
+    {
+        return $this->readAt;
+    }
+
+    public function setReadAt(?\DateTimeImmutable $readAt): static
+    {
+        $this->readAt = $readAt;
+        return $this;
+    }
+
+    public function getRespondedAt(): ?\DateTimeImmutable
+    {
+        return $this->respondedAt;
+    }
+
+    public function setRespondedAt(?\DateTimeImmutable $respondedAt): static
+    {
+        $this->respondedAt = $respondedAt;
+        return $this;
+    }
+
+    public function markAsRead(): void
+    {
+        $this->isRead = true;
+        $this->readAt = new \DateTimeImmutable();
+    }
+
+    public function markAsResponded(): void
+    {
+        $this->isResponded = true;
+        $this->respondedAt = new \DateTimeImmutable();
     }
 }

@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['type', 'section', 'name', 'firstname', 'email', 'phone', 'location', 'company', 'description']
+    static targets = ['type', 'section', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'entreprise', 'description']
     static classes = ['hidden']
 
     connect() {
@@ -21,16 +21,16 @@ export default class extends Controller {
         switchBackground.style.zIndex = '1';
 
         // Calculer la largeur exacte pour chaque label
-        const particularLabel = switchContainer.querySelector('label[for="type-particular"]');
-        const professionalLabel = switchContainer.querySelector('label[for="type-professional"]');
+        const particulierLabel = switchContainer.querySelector('label[for="type-particulier"]');
+        const professionnelLabel = switchContainer.querySelector('label[for="type-professionnel"]');
         
         // Initialiser les couleurs des labels
-        particularLabel.style.color = '#fff';
-        professionalLabel.style.color = '#666';
+        particulierLabel.style.color = '#fff';
+        professionnelLabel.style.color = '#666';
         
         // Définir la largeur du background en fonction du label
         const updateBackgroundSize = () => {
-            const activeLabel = this.element.querySelector('#type-professional').checked ? professionalLabel : particularLabel;
+            const activeLabel = this.element.querySelector('#type-professionnel').checked ? professionnelLabel : particulierLabel;
             const width = activeLabel.offsetWidth;
             const left = activeLabel.offsetLeft;
             
@@ -43,20 +43,24 @@ export default class extends Controller {
             updateBackgroundSize();
         });
 
-        resizeObserver.observe(particularLabel);
-        resizeObserver.observe(professionalLabel);
+        resizeObserver.observe(particulierLabel);
+        resizeObserver.observe(professionnelLabel);
 
         // Initialiser l'apparence
         updateBackgroundSize();
 
         // Initialiser les placeholders
-        this.nameTarget.placeholder = 'Votre nom de famille';
-        this.firstnameTarget.placeholder = 'Votre prénom';
+        this.nomTarget.placeholder = 'Votre nom de famille';
+        this.prenomTarget.placeholder = 'Votre prénom';
         this.emailTarget.placeholder = 'Votre adresse email';
-        this.phoneTarget.placeholder = 'Votre numéro de téléphone';
-        this.locationTarget.placeholder = 'Votre ville';
-        this.companyTarget.placeholder = 'Nom de votre entreprise';
+        this.telephoneTarget.placeholder = 'Votre numéro de téléphone';
+        this.localisationTarget.placeholder = 'Votre ville';
+        this.entrepriseTarget.placeholder = 'Nom de votre entreprise';
         this.descriptionTarget.placeholder = 'Décrivez votre projet en quelques mots (style souhaité, budget, contraintes particulières...)';
+
+        // Initialiser les gestionnaires d'événements
+        this.setupPhoneInput();
+        this.setupLocationAutocomplete();
     }
 
     clearErrors() {
@@ -77,8 +81,8 @@ export default class extends Controller {
     }
 
     setupPhoneInput() {
-        if (this.hasPhoneTarget) {
-            this.phoneTarget.addEventListener('input', (e) => {
+        if (this.hasTelephoneTarget) {
+            this.telephoneTarget.addEventListener('input', (e) => {
                 // Supprimer tous les caractères non numériques
                 let value = e.target.value.replace(/\D/g, '');
                 
@@ -87,20 +91,24 @@ export default class extends Controller {
                     value = value.slice(0, 10);
                 }
                 
-                // Formater le numéro (XX XX XX XX XX)
-                if (value.length > 0) {
-                    value = value.match(/.{1,2}/g).join(' ');
-                }
-
+                // Formater avec des espaces tous les 2 chiffres
+                value = value.replace(/(\d{2})/g, '$1 ').trim();
+                
+                // Mettre à jour la valeur
                 e.target.value = value;
+            });
+
+            // Nettoyer les espaces avant la soumission
+            this.telephoneTarget.addEventListener('blur', (e) => {
+                e.target.value = e.target.value.replace(/\s/g, '');
             });
         }
     }
 
     setupLocationAutocomplete() {
-        if (this.hasLocationTarget) {
+        if (this.hasLocalisationTarget) {
             let timeout;
-            this.locationTarget.addEventListener('input', (e) => {
+            this.localisationTarget.addEventListener('input', (e) => {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => this.searchLocation(e.target.value), 300);
             });
@@ -108,67 +116,55 @@ export default class extends Controller {
     }
 
     async searchLocation(query) {
-        if (!query || query.length < 2) return;
+        if (!query) return;
 
         try {
-            const response = await fetch(`https://geo.api.gouv.fr/communes?nom=${query}&boost=population&limit=5`);
-            if (!response.ok) throw new Error('Erreur réseau');
-            
+            const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
             const data = await response.json();
-            this.showLocationSuggestions(data);
-        } catch (error) {
-            console.error('Erreur lors de la recherche:', error);
-        }
-    }
-
-    showLocationSuggestions(suggestions) {
-        // Supprimer les anciennes suggestions
-        const existingList = document.getElementById('location-suggestions');
-        if (existingList) existingList.remove();
-
-        if (suggestions.length === 0) return;
-
-        // Créer la liste des suggestions
-        const list = document.createElement('ul');
-        list.id = 'location-suggestions';
-        list.className = 'location-suggestions';
-
-        suggestions.forEach(commune => {
-            const li = document.createElement('li');
-            const nomCommune = commune.nom;
-            const departement = commune.codeDepartement;
-            const region = commune.region ? commune.region.nom : '';
             
-            li.innerHTML = `
-                <strong>${nomCommune}</strong>
-                <span class="text-muted">${departement}${region ? ` - ${region}` : ''}</span>
-            `;
-            
-            li.addEventListener('click', () => {
-                this.locationTarget.value = `${nomCommune} (${departement})`;
-                list.remove();
-            });
-            list.appendChild(li);
-        });
-
-        // Insérer la liste après le champ de localisation
-        this.locationTarget.parentNode.appendChild(list);
-
-        // Gérer la fermeture des suggestions lors d'un clic à l'extérieur
-        document.addEventListener('click', (e) => {
-            if (!this.locationTarget.contains(e.target) && !list.contains(e.target)) {
-                list.remove();
+            // Supprimer les anciennes suggestions
+            const oldSuggestions = document.querySelector('.location-suggestions');
+            if (oldSuggestions) {
+                oldSuggestions.remove();
             }
-        });
+            
+            if (data.features && data.features.length > 0) {
+                const suggestions = document.createElement('ul');
+                suggestions.className = 'location-suggestions';
+                
+                data.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    const city = feature.properties.city;
+                    const postcode = feature.properties.postcode;
+                    const context = feature.properties.context;
+                    
+                    li.innerHTML = `
+                        <strong>${city}</strong>
+                        <span class="text-muted">${postcode} - ${context}</span>
+                    `;
+                    
+                    li.addEventListener('click', () => {
+                        this.localisationTarget.value = `${city}, ${postcode} - ${context}`;
+                        suggestions.remove();
+                    });
+                    
+                    suggestions.appendChild(li);
+                });
+                
+                this.localisationTarget.parentNode.appendChild(suggestions);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la recherche de localisation:', error);
+        }
     }
 
     updateSwitchAppearance() {
         const switchBackground = this.element.querySelector('.switch-background');
-        const professionalRadio = this.element.querySelector('#type-professional');
-        const particularLabel = this.element.querySelector('label[for="type-particular"]');
-        const professionalLabel = this.element.querySelector('label[for="type-professional"]');
+        const professionnelRadio = this.element.querySelector('#type-professionnel');
+        const particulierLabel = this.element.querySelector('label[for="type-particulier"]');
+        const professionnelLabel = this.element.querySelector('label[for="type-professionnel"]');
         
-        const activeLabel = professionalRadio.checked ? professionalLabel : particularLabel;
+        const activeLabel = professionnelRadio.checked ? professionnelLabel : particulierLabel;
         const width = activeLabel.offsetWidth;
         const left = activeLabel.offsetLeft;
         
@@ -176,12 +172,12 @@ export default class extends Controller {
         switchBackground.style.left = `${left}px`;
         
         // Mettre à jour les couleurs
-        if (professionalRadio.checked) {
-            professionalLabel.style.color = '#fff';
-            particularLabel.style.color = '#666';
+        if (professionnelRadio.checked) {
+            professionnelLabel.style.color = '#fff';
+            particulierLabel.style.color = '#666';
         } else {
-            particularLabel.style.color = '#fff';
-            professionalLabel.style.color = '#666';
+            particulierLabel.style.color = '#fff';
+            professionnelLabel.style.color = '#666';
         }
     }
 
@@ -192,46 +188,60 @@ export default class extends Controller {
         const type = event.target.value;
         console.log('Type sélectionné:', type);
         
-        if (type === 'professional') {
+        if (type === 'professionnel') {
             this.sectionTarget.classList.remove(this.hiddenClass);
-            this.companyTarget.required = true;
+            this.entrepriseTarget.required = true;
         } else {
             this.sectionTarget.classList.add(this.hiddenClass);
-            this.companyTarget.required = false;
-            this.companyTarget.value = '';
+            this.entrepriseTarget.required = false;
+            this.entrepriseTarget.value = '';
         }
     }
 
     // Gestion de la soumission du formulaire
     async submit(event) {
         event.preventDefault();
+        this.clearErrors();
         
         const formData = new FormData(event.target);
         const submitButton = event.target.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         
         try {
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
             const response = await fetch('/contact/submit', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
             });
             
-            if (!response.ok) {
-                throw new Error('Erreur lors de l\'envoi du formulaire');
-            }
-            
             const result = await response.json();
-            console.log('Réponse:', result);
+            
+            if (!response.ok) {
+                if (result.errors) {
+                    Object.entries(result.errors).forEach(([field, message]) => {
+                        this.showError(field, message);
+                    });
+                    throw new Error('Veuillez corriger les erreurs dans le formulaire');
+                }
+                throw new Error(result.error || 'Erreur lors de l\'envoi du formulaire');
+            }
             
             // Réinitialiser le formulaire
             event.target.reset();
             
-            // Afficher un message de succès
-            alert('Votre message a été envoyé avec succès !');
+            // Rediriger vers la page de confirmation
+            window.location.href = '/contact/confirmation';
             
         } catch (error) {
             console.error('Erreur:', error);
-            alert('Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.');
+            alert(error.message);
         } finally {
             submitButton.disabled = false;
         }

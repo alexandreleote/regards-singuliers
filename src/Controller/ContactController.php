@@ -12,6 +12,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final class ContactController extends AbstractController
 {
@@ -29,99 +31,119 @@ final class ContactController extends AbstractController
         Request $request, 
         ValidatorInterface $validator, 
         LoggerInterface $logger,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        CsrfTokenManagerInterface $csrfTokenManager
     ): JsonResponse {
-        $content = $request->getContent();
-        $logger->info('Contenu brut reçu:', ['content' => $content]);
-        
-        $data = json_decode($content, true);
-        $logger->info('Données décodées:', ['data' => $data]);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $logger->error('Erreur de décodage JSON:', ['error' => json_last_error_msg()]);
-            return new JsonResponse([
-                'success' => false,
-                'error' => 'Format JSON invalide: ' . json_last_error_msg()
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        // Validation de base pour tous les types
-        $baseConstraints = [
-            'type' => [new Assert\Choice(['choices' => ['particular', 'professional']])],
-            'name' => [new Assert\NotBlank(), new Assert\Length(['min' => 2, 'max' => 100])],
-            'firstname' => [new Assert\NotBlank(), new Assert\Length(['min' => 2, 'max' => 100])],
-            'email' => [new Assert\NotBlank(), new Assert\Email()],
-            'phone' => [new Assert\Regex([
-                'pattern' => '/^(0[1-7]) [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}$/',
-                'message' => 'Le numéro de téléphone doit commencer par 01, 02, 03, 04, 05, 06 ou 07 et être au format XX XX XX XX XX'
-            ])],
-            'location' => [new Assert\NotBlank()],
-            'project' => [
-                new Assert\NotBlank(['message' => 'La description du projet est obligatoire']),
-                new Assert\Length([
-                    'min' => 10,
-                    'minMessage' => 'La description du projet doit contenir au moins {{ limit }} caractères',
-                    'max' => 2000,
-                    'maxMessage' => 'La description du projet ne peut pas dépasser {{ limit }} caractères'
-                ])
-            ]
-        ];
-
-        // Ajouter la validation du champ company uniquement pour le type professional
-        if (isset($data['type']) && $data['type'] === 'professional') {
-            $baseConstraints['company'] = [
-                new Assert\NotBlank(['message' => 'Le champ entreprise est obligatoire pour les professionnels']),
-                new Assert\Length(['min' => 2, 'max' => 100])
-            ];
-        } else {
-            $baseConstraints['company'] = [new Assert\Optional()];
-        }
-
-        $constraints = new Assert\Collection($baseConstraints);
-        $violations = $validator->validate($data, $constraints);
-
-        if ($violations->count() > 0) {
-            $errors = [];
-            foreach ($violations as $violation) {
-                $errors[$violation->getPropertyPath()] = $violation->getMessage();
-            }
-            $logger->error('Erreurs de validation:', ['errors' => $errors]);
-            return new JsonResponse(['success' => false, 'errors' => $errors], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
         try {
-            // Créer une nouvelle instance de Contact
+            $content = $request->getContent();
+            $logger->info('Contenu brut reçu:', ['content' => $content]);
+            
+            $data = json_decode($content, true);
+            $logger->info('Données décodées:', ['data' => $data]);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \InvalidArgumentException('Format JSON invalide: ' . json_last_error_msg());
+            }
+
+            // Validation CSRF
+            if (!isset($data['_token'])) {
+                throw new InvalidCsrfTokenException('Token CSRF manquant');
+            }
+
+            if (!$csrfTokenManager->isTokenValid(new CsrfToken('contact_form', $data['_token']))) {
+                throw new InvalidCsrfTokenException('Token CSRF invalide');
+            }
+
+            // Validation de base pour tous les types
+            $baseConstraints = [
+                'type' => [new Assert\Choice(['choices' => [Contact::TYPE_PARTICULIER, Contact::TYPE_PROFESSIONNEL]])],
+                'civilite' => [new Assert\Choice(['choices' => [Contact::CIVILITE_MONSIEUR, Contact::CIVILITE_MADAME]])],
+                'nom' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 2, 'max' => 100]),
+                    new Assert\Regex([
+                        'pattern' => '/^[a-zA-ZÀ-ÿ\s\'-]+$/',
+                        'message' => 'Le nom ne peut contenir que des lettres, espaces, apostrophes et tirets'
+                    ])
+                ],
+                'prenom' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 2, 'max' => 100]),
+                    new Assert\Regex([
+                        'pattern' => '/^[a-zA-ZÀ-ÿ\s\'-]+$/',
+                        'message' => 'Le prénom ne peut contenir que des lettres, espaces, apostrophes et tirets'
+                    ])
+                ],
+                'email' => [
+                    new Assert\NotBlank(),
+                    new Assert\Email(['mode' => 'strict'])
+                ],
+                'telephone' => [
+                    new Assert\NotBlank(),
+                    new Assert\Regex([
+                        'pattern' => '/^[0-9]{10}$/',
+                        'message' => 'Le numéro de téléphone doit contenir exactement 10 chiffres'
+                    ])
+                ],
+                'localisation' => [new Assert\NotBlank()],
+                'description' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 10, 'max' => 2000])
+                ]
+            ];
+
+            // Validation supplémentaire pour les professionnels
+            if ($data['type'] === Contact::TYPE_PROFESSIONNEL) {
+                $baseConstraints['entreprise'] = [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 2, 'max' => 100])
+                ];
+            }
+
+            $violations = $validator->validate($data, new Assert\Collection($baseConstraints));
+
+            if (count($violations) > 0) {
+                $errors = [];
+                foreach ($violations as $violation) {
+                    $propertyPath = $violation->getPropertyPath();
+                    $errors[trim($propertyPath, '[]')] = $violation->getMessage();
+                }
+                return new JsonResponse(['errors' => $errors], JsonResponse::HTTP_BAD_REQUEST);
+            }
+
+            // Création et persistance du contact
             $contact = new Contact();
             $contact->setType($data['type']);
-            $contact->setName($data['name']);
-            $contact->setFirstname($data['firstname']);
-            $contact->setEmail($data['email']);
-            $contact->setPhone($data['phone']);
-            $contact->setCompany($data['company'] ?? null);
-            $contact->setLocation($data['location']);
-            $contact->setProject($data['project']);
+            $contact->setCivilite($data['civilite']);
+            $contact->setNom(strip_tags($data['nom']));
+            $contact->setPrenom(strip_tags($data['prenom']));
+            $contact->setEmail(filter_var($data['email'], FILTER_SANITIZE_EMAIL));
+            $contact->setTelephone(preg_replace('/[^0-9]/', '', $data['telephone']));
+            $contact->setLocalisation(strip_tags($data['localisation']));
+            $contact->setDescription(strip_tags($data['description']));
+            $contact->setIsRead(false);
             $contact->setCreatedAt(new \DateTimeImmutable());
-            $contact->setStatus('new');
 
-            // Persister l'entité
+            if ($data['type'] === Contact::TYPE_PROFESSIONNEL) {
+                $contact->setEntreprise(strip_tags($data['entreprise']));
+            }
+
             $entityManager->persist($contact);
             $entityManager->flush();
 
-            $logger->info('Contact enregistré avec succès', [
-                'id' => $contact->getId(),
-                'type' => $contact->getType()
-            ]);
-
             return new JsonResponse(['success' => true]);
-        } catch (\Exception $e) {
-            $logger->error('Erreur lors de l\'enregistrement du contact:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
 
+        } catch (InvalidCsrfTokenException $e) {
+            $logger->error('Erreur CSRF:', ['error' => $e->getMessage()]);
             return new JsonResponse([
                 'success' => false,
-                'error' => 'Une erreur est survenue lors de l\'enregistrement du contact.'
+                'error' => 'Token de sécurité invalide'
+            ], JsonResponse::HTTP_FORBIDDEN);
+        } catch (\Exception $e) {
+            $logger->error('Erreur lors du traitement:', ['error' => $e->getMessage()]);
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Une erreur est survenue lors du traitement de votre demande'
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

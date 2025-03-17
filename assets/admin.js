@@ -5,6 +5,6 @@
  */
 
 // Import admin styles
-import './styles/admin.css';
+import './styles/admin/admin.css';
 
 console.log('This log comes from assets/admin.js - welcome to Admin AssetMapper! 🎉');

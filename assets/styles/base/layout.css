@@ -1,4 +1,24 @@
-/* Styles de base pour le layout */
+/* RESETS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--main-font);
+    font-size: var(--base-fs);
+    font-weight: var(--regular-weight);
+    line-height: 1.5;
+    overflow-x: hidden;
+}
 
 /* Header */
 .site-header {
@@ -104,22 +124,6 @@
     min-height: calc(100vh - 70px);
 }
 
-/* Page */
-.page-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: calc(100vh - 70px);
-}
-
-.page-container h2 {
-    margin-bottom: 2rem;
-}
-
 /* Footer */
 .site-footer {
     width: 100%;
@@ -215,6 +219,22 @@
     border-top: 1px solid #ddd;
     font-size: var(--base-fs-sm);
     margin: 0 auto;
+}
+
+/* Page */
+.page-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 70px);
+}
+
+.page-container h2 {
+    margin-bottom: 2rem;
 }
 
 /* Classes utilitaires */

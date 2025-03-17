@@ -1,6 +1,10 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
+    
+    # Assets configuration
+    assets:
+        json_manifest_path: '%kernel.project_dir%/public/assets/manifest.json'
 
     # Note that the session will be started ONLY if you read or write from it.
     session: true

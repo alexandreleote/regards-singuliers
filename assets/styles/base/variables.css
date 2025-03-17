@@ -34,6 +34,7 @@
     --success-color: #198754;
     --success-background: #d1e7dd;
 
+    /* Gradients */
     --gradient-primary: linear-gradient(90deg, #007bff, #0069d9);
     --gradient-primary-hover: linear-gradient(90deg, #0056b3, #0047a5);
 

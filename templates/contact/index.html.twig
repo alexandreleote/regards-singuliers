@@ -30,72 +30,83 @@
             </div>
 
             <!-- Colonne de droite (2/3) -->
+            <form {{ stimulus_controller('contact') }} 
+                  data-contact-hidden-class="hidden"
+                  data-action="submit->contact#submit"
+                  class="contact-form">
+                <div class="form-type">
+                    <div class="switch-container">
+                        <input type="radio" id="type-particulier" name="type" value="particulier" 
+                               {{ stimulus_target('contact', 'type') }}
+                               data-action="change->contact#change"
+                               checked>
+                        <input type="radio" id="type-professionnel" name="type" value="professionnel"
+                               {{ stimulus_target('contact', 'type') }}
+                               data-action="change->contact#change">
+                        <label for="type-particulier">Particulier</label>
+                        <label for="type-professionnel">Professionnel</label>
+                    </div>
+                </div>
 
-                <form {{ stimulus_controller('contact') }} 
-                      data-contact-hidden-class="hidden"
-                      data-action="submit->contact#submit"
-                      class="contact-form" onsubmit="return false;">
-                    <div class="form-type">
-                        <div class="switch-container">
-                            <input type="radio" id="type-particular" name="type" value="particular" 
-                                   {{ stimulus_target('contact', 'type') }}
-                                   data-action="change->contact#change"
-                                   checked>
-                            <input type="radio" id="type-professional" name="type" value="professional"
-                                   {{ stimulus_target('contact', 'type') }}
-                                   data-action="change->contact#change">
-                            <label for="type-particular">Particulier</label>
-                            <label for="type-professional">Professionnel</label>
+                <!-- Section commune initiale -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>Civilité</label>
+                        <div class="radio-group">
+                            <input type="radio" id="civilite-monsieur" name="civilite" value="monsieur" 
+                                   {{ stimulus_target('contact', 'civilite') }} checked>
+                            <label for="civilite-monsieur">Monsieur</label>
+                            <input type="radio" id="civilite-madame" name="civilite" value="madame"
+                                   {{ stimulus_target('contact', 'civilite') }}>
+                            <label for="civilite-madame">Madame</label>
                         </div>
                     </div>
 
-                    <!-- Section commune initiale -->
-                    <div class="form-section">
-                        <div class="form-group">
-                            <label for="name">Nom</label>
-                            <input type="text" id="name" name="name" class="form-control" {{ stimulus_target('contact', 'name') }} required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="firstname">Prénom</label>
-                            <input type="text" id="firstname" name="firstname" class="form-control" {{ stimulus_target('contact', 'firstname') }} required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Téléphone</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" {{ stimulus_target('contact', 'phone') }} required>
-                        </div>
-
-                        <div class="form-group location-field-container">
-                            <label for="location">Ville</label>
-                            <input type="text" id="location" name="location" class="form-control" {{ stimulus_target('contact', 'location') }} required>
-                        </div>
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input type="text" id="nom" name="nom" class="form-control" {{ stimulus_target('contact', 'nom') }} required>
                     </div>
 
-                    <!-- Section professionnelle -->
-                    <div class="form-section hidden" {{ stimulus_target('contact', 'section') }} data-contact-type-target="professional">
-                        <div class="form-group">
-                            <label for="company">Entreprise</label>
-                            <input type="text" id="company" name="company" class="form-control" 
-                                   {{ stimulus_target('contact', 'company') }}>
-                        </div>
+                    <div class="form-group">
+                        <label for="prenom">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" class="form-control" {{ stimulus_target('contact', 'prenom') }} required>
                     </div>
 
-                    <!-- Section finale commune -->
-                    <div class="form-section">
-                        <div class="form-group">
-                            <label for="project">Description du projet</label>
-                            <textarea id="project" name="project" class="form-control" rows="5" {{ stimulus_target('contact', 'description') }} required></textarea>
-                        </div>
-
-                        <button type="submit" class="submit-btn">Envoyer</button>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
                     </div>
-                </form>
+
+                    <div class="form-group">
+                        <label for="telephone">Téléphone</label>
+                        <input type="tel" id="telephone" name="telephone" class="form-control" {{ stimulus_target('contact', 'telephone') }} required>
+                    </div>
+
+                    <div class="form-group location-field-container">
+                        <label for="localisation">Localisation</label>
+                        <input type="text" id="localisation" name="localisation" class="form-control" {{ stimulus_target('contact', 'localisation') }} required>
+                    </div>
+                </div>
+
+                <!-- Section professionnelle -->
+                <div class="form-section hidden" {{ stimulus_target('contact', 'section') }} data-contact-type-target="professionnel">
+                    <div class="form-group">
+                        <label for="entreprise">Entreprise</label>
+                        <input type="text" id="entreprise" name="entreprise" class="form-control" 
+                               {{ stimulus_target('contact', 'entreprise') }}>
+                    </div>
+                </div>
+
+                <!-- Section finale commune -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="description">Description du projet</label>
+                        <textarea id="description" name="description" class="form-control" rows="5" {{ stimulus_target('contact', 'description') }} required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Envoyer</button>
+                </div>
+            </form>
         </div>
     </div>
 
