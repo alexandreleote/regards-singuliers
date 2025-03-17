@@ -16,15 +16,28 @@
   margin-bottom: var(--spacing-lg);
 }
 
-.footer-title {
-  font-size: var(--font-size-md);
-  margin-bottom: var(--spacing-md);
-  font-weight: 400;
+.footer-col:first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.footer-text {
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--spacing-sm);
+.footer-logo a {
+  color: var(--color-primary);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo p:first-child {
+  font-size: var(--font-size-md);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.footer-logo p:last-child {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
 }
 
 .footer-contact-item {
