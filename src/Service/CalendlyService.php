@@ -2,14 +2,14 @@
 
 namespace App\Service;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Entity\Reservation;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CalendlyService
 {
-    private HttpClientInterface $client;
-    private string $apiKey;
-    private string $organizationUrl;
+    private $client;
+    private $apiKey;
+    private $organizationUrl;
 
     public function __construct(
         HttpClientInterface $client,
@@ -21,10 +21,7 @@ class CalendlyService
         $this->organizationUrl = $organizationUrl;
     }
 
-    /**
-     * Crée un événement dans Calendly
-     */
-    public function createEvent(Reservation $reservation): array
+    public function createEvent(Reservation $reservation): void
     {
         $response = $this->client->request('POST', 'https://api.calendly.com/scheduled_events', [
             'headers' => [
@@ -32,79 +29,25 @@ class CalendlyService
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-                'event_type' => $this->organizationUrl,
-                'invitee' => [
-                    'email' => $reservation->getUser()->getEmail(),
-                    'name' => $reservation->getUser()->getFullName(),
+                'start_time' => $reservation->getBookedAt()->format('Y-m-d\TH:i:s\Z'),
+                'end_time' => $reservation->getBookedAt()->modify('+30 minutes')->format('Y-m-d\TH:i:s\Z'),
+                'event_type' => 'https://api.calendly.com/event_types/' . $this->organizationUrl,
+                'location' => [
+                    'type' => 'custom',
+                    'location' => 'En ligne',
                 ],
-                'start_time' => $reservation->getBookedAt()->format('c'),
-                'event_memberships' => [],
-                'questions_and_answers' => [
-                    [
-                        'question' => 'Service réservé',
-                        'answer' => $reservation->getService()->getTitle()
-                    ]
-                ]
+                'invitees_counter' => true,
+                'name' => $reservation->getUser()->getEmail(),
+                'email' => $reservation->getUser()->getEmail(),
+                'custom_data' => [
+                    'reservation_id' => $reservation->getId(),
+                    'service_title' => $reservation->getService()->getTitle(),
+                ],
             ],
         ]);
 
-        return $response->toArray();
+        if ($response->getStatusCode() !== 201) {
+            throw new \RuntimeException('Erreur lors de la création de l\'événement Calendly');
+        }
     }
-
-    /**
-     * Récupère les créneaux disponibles
-     */
-    public function getAvailableSlots(\DateTime $startDate, \DateTime $endDate): array
-    {
-        // Récupérer d'abord l'UUID de l'utilisateur
-        $userResponse = $this->client->request('GET', 'https://api.calendly.com/users/me', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-            ],
-        ]);
-
-        $userData = $userResponse->toArray();
-        $userId = $userData['resource']['uri'];
-
-        // Ensuite, récupérer les créneaux disponibles
-        $response = $this->client->request('GET', 'https://api.calendly.com/user_availability_schedules', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-            ],
-            'query' => [
-                'user' => $userId,
-                'min_start_time' => $startDate->format('c'),
-                'max_start_time' => $endDate->format('c'),
-            ],
-        ]);
-
-        return $response->toArray();
-    }
-
-    /**
-     * Annule un événement
-     */
-    public function cancelEvent(string $eventId): void
-    {
-        $this->client->request('POST', sprintf('https://api.calendly.com/scheduled_events/%s/cancellation', $eventId), [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ],
-        ]);
-    }
-
-    /**
-     * Récupère les détails d'un événement
-     */
-    public function getEventDetails(string $eventId): array
-    {
-        $response = $this->client->request('GET', sprintf('https://api.calendly.com/scheduled_events/%s', $eventId), [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-            ],
-        ]);
-
-        return $response->toArray();
-    }
-}
+} 

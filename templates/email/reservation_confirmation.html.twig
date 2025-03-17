@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de votre réservation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        .content {
+            background-color: #f9fafb;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            color: #2563eb;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .detail-item {
+            margin-bottom: 8px;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #4b5563;
+        }
+        .important-notice {
+            background-color: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 30px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ absolute_url(asset('images/logo.png')) }}" alt="Logo" class="logo">
+        <h1>Confirmation de votre réservation</h1>
+    </div>
+
+    <div class="content">
+        <p>Bonjour {{ user.firstname }},</p>
+
+        <p>Nous vous remercions pour votre réservation. Voici les détails de votre prestation :</p>
+
+        <div class="section">
+            <div class="section-title">Détails de la réservation</div>
+            <div class="detail-item">
+                <span class="detail-label">Prestation :</span> {{ service.title }}
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date du rendez-vous :</span> {{ reservation.bookedAt|date('d/m/Y à H:i') }}
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Acompte payé :</span> {{ deposit_amount }}€
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Montant restant :</span> {{ service.price - deposit_amount }}€
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Engagements</div>
+            <p>En confirmant cette réservation, vous vous engagez à :</p>
+            <ul>
+                <li>Honorer le rendez-vous à la date et l'heure prévues</li>
+                <li>Effectuer le paiement du montant restant au plus tard le lendemain du rendez-vous</li>
+                <li>Nous informer de tout changement ou annulation au moins 72h avant le rendez-vous</li>
+            </ul>
+        </div>
+
+        <div class="important-notice">
+            <strong>Politique d'annulation :</strong>
+            <ul>
+                <li>Un remboursement total est possible jusqu'à 72h avant la date du rendez-vous</li>
+                <li>Passé ce délai, l'acompte ne sera pas remboursé</li>
+                <li>En cas d'absence au rendez-vous, l'acompte ne sera pas remboursé</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Prochaines étapes</div>
+            <p>Pour finaliser votre réservation, veuillez :</p>
+            <ul>
+                <li>Noter la date et l'heure de votre rendez-vous</li>
+                <li>Préparer les documents nécessaires (si applicable)</li>
+                <li>Nous contacter en cas de question ou de modification</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Si vous avez des questions, n'hésitez pas à nous contacter :</p>
+        <p>Email : contact@regards-singuliers.com<br>
+        Téléphone : +33 6 XX XX XX XX</p>
+    </div>
+</body>
+</html> 

@@ -3,114 +3,76 @@
 namespace App\Controller;
 
 use App\Entity\Service;
-use App\Entity\Reservation;
-use App\Entity\Payment;
-use App\Service\CalendlyService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ReservationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/prestations')]
+#[Route('/reservation')]
+#[IsGranted('ROLE_USER')]
 class ReservationController extends AbstractController
 {
-    #[Route('/{id}/reserver', name: 'reservation_date')]
-    public function selectDate(
-        Service $service,
-        Request $request
-    ): Response {
-        // Vérifier si l'utilisateur est connecté
-        if (!$this->getUser()) {
-            $this->addFlash('error', 'Vous devez être connecté pour effectuer une réservation.');
-            return $this->redirectToRoute('login');
-        }
+    private $reservationService;
 
-        return $this->render('reservation/select_date.html.twig', [
+    public function __construct(ReservationService $reservationService)
+    {
+        $this->reservationService = $reservationService;
+    }
+
+    #[Route('/payment/{id}', name: 'reservation_payment')]
+    public function payment(Service $service): Response
+    {
+        $reservation = $this->reservationService->createReservation($service, $this->getUser());
+        $paymentData = $this->reservationService->createPaymentIntent($reservation);
+
+        return $this->render('reservation/payment.html.twig', [
+            'page_title' => 'Paiement de l\'acompte',
             'service' => $service,
-            'page_title' => 'Réserver - ' . $service->getTitle(),
+            'deposit_amount' => $paymentData['depositAmount'],
+            'stripe_public_key' => $this->getParameter('stripe.public_key'),
+            'client_secret' => $paymentData['clientSecret'],
         ]);
     }
 
-    #[Route('/{id}/reserver/confirmer', name: 'reservation_date_confirm', methods: ['POST'])]
-    public function confirmDate(
-        Service $service,
-        Request $request,
-        EntityManagerInterface $em
-    ): Response {
-        if (!$this->getUser()) {
-            return $this->json(['error' => 'Vous devez être connecté'], Response::HTTP_UNAUTHORIZED);
-        }
-
-        $data = json_decode($request->getContent(), true);
-        $dateTime = new \DateTimeImmutable($data['datetime']);
-
-        $reservation = new Reservation();
-        $reservation->setService($service);
-        $reservation->setUser($this->getUser());
-        $reservation->setPrice($service->getPrice());
-        $reservation->setBookedAt($dateTime);
-        $reservation->setStatus('en attente de paiement');
-
-        $em->persist($reservation);
-        $em->flush();
-
-        return $this->json([
-            'success' => true,
-            'redirect' => $this->generateUrl('reservation_payment', ['id' => $reservation->getId()])
-        ]);
-    }
-
-    #[Route('/reservation/{id}/paiement', name: 'reservation_payment')]
-    public function payment(
-        Reservation $reservation,
-        Request $request
-    ): Response {
-        if ($this->getUser() !== $reservation->getUser()) {
-            throw $this->createAccessDeniedException();
+    #[Route('/success', name: 'reservation_success')]
+    public function success(Request $request): Response
+    {
+        $paymentIntentId = $request->query->get('payment_intent');
+        
+        if (!$paymentIntentId) {
+            return $this->redirectToRoute('reservation_canceled');
         }
 
         try {
-            Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
-
-            $paymentIntent = PaymentIntent::create([
-                'amount' => (int)($reservation->getPrice() * 100),
-                'currency' => 'eur',
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                ],
-                'metadata' => [
-                    'reservation_id' => $reservation->getId()
-                ],
-            ]);
-
-            return $this->render('reservation/payment.html.twig', [
-                'reservation' => $reservation,
-                'stripe_public_key' => $_ENV['STRIPE_PUBLIC_KEY'],
-                'client_secret' => $paymentIntent->client_secret,
-                'page_title' => 'Paiement - ' . $reservation->getService()->getTitle(),
+            $reservation = $this->reservationService->handlePaymentSuccess($paymentIntentId);
+            
+            return $this->render('reservation/success.html.twig', [
+                'page_title' => 'Paiement réussi',
+                'service' => $reservation->getService(),
+                'deposit_amount' => $reservation->getPrice() * 0.5,
             ]);
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors de l\'initialisation du paiement.');
-            return $this->redirectToRoute('prestations');
+            return $this->redirectToRoute('reservation_canceled');
         }
     }
 
-    #[Route('/reservation/success', name: 'reservation_success')]
-    public function success(): Response
+    #[Route('/canceled', name: 'reservation_canceled')]
+    public function canceled(): Response
     {
-        return $this->render('reservation/success.html.twig', [
-            'page_title' => 'Réservation confirmée',
+        return $this->render('reservation/canceled.html.twig', [
+            'page_title' => 'Paiement annulé',
         ]);
     }
 
-    #[Route('/reservation/cancel', name: 'reservation_cancel')]
-    public function cancel(): Response
+    #[Route('/date/{id}', name: 'reservation_date')]
+    public function date(Service $service): Response
     {
-        return $this->render('reservation/cancel.html.twig', [
-            'page_title' => 'Réservation annulée',
+        return $this->render('reservation/date.html.twig', [
+            'page_title' => 'Choisir une date',
+            'service' => $service,
+            'calendly_url' => $this->getParameter('calendly.url'),
         ]);
     }
 }

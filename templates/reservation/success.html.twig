@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .success-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .success-content {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+        }
+        .success-icon {
+            color: #059669;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .next-step-button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+        .next-step-button:hover {
+            background-color: #1d4ed8;
+        }
+        .reservation-details {
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #4b5563;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="success-container">
+        <div class="success-content">
+            <div class="success-icon">✅</div>
+            <h1 class="text-2xl font-bold mb-4">{{ page_title }}</h1>
+            
+            <div class="reservation-details">
+                <div class="detail-item">
+                    <span class="detail-label">Prestation :</span> {{ service.title }}
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Acompte payé :</span> {{ deposit_amount }}€
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Montant restant :</span> {{ service.price - deposit_amount }}€
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-4">
+                Votre acompte a été payé avec succès. Vous allez recevoir un email de confirmation avec tous les détails de votre réservation.
+            </p>
+
+            <a href="{{ path('reservation_date', {'id': service.id}) }}" class="next-step-button">
+                Choisir la date du rendez-vous
+            </a>
+        </div>
+    </div>
+{% endblock %} 

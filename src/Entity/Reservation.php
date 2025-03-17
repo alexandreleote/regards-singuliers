@@ -25,6 +25,9 @@ class Reservation
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
     private ?float $price = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripePaymentIntentId = null;
+
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -90,6 +93,17 @@ class Reservation
     {
         $this->price = $price;
 
+        return $this;
+    }
+
+    public function getStripePaymentIntentId(): ?string
+    {
+        return $this->stripePaymentIntentId;
+    }
+
+    public function setStripePaymentIntentId(?string $stripePaymentIntentId): self
+    {
+        $this->stripePaymentIntentId = $stripePaymentIntentId;
         return $this;
     }
 
