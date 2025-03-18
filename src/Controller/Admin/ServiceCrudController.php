@@ -6,6 +6,7 @@ use App\Entity\Service;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -22,14 +23,16 @@ class ServiceCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('title', 'Nom de la prestation')
+            TextField::new('name', 'Nom du service')
                 ->setRequired(true),
-            TextEditorField::new('description', 'Description de la prestation')
+            TextField::new('title', 'Titre')
+                ->setRequired(true),
+            TextEditorField::new('description', 'Description')
                 ->setRequired(true)
                 ->setFormTypeOption('attr', [
                     'class' => 'text-editor',
                 ]),
-            MoneyField::new('price', 'Prix de la prestation')
+            MoneyField::new('price', 'Prix')
                 ->setCurrency('EUR')
                 ->setStoredAsCents(false)
                 ->setRequired(true)
@@ -40,18 +43,21 @@ class ServiceCrudController extends AbstractCrudController
                     }
                     return number_format($value, 2, ',', ' ') . ' €';
                 }),
+            BooleanField::new('isActive', 'Service actif')
+                ->setRequired(true)
+                ->renderAsSwitch(true),
         ];
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('edit', 'Modifier la prestation')
-            ->setPageTitle('new', 'Ajouter une prestation')
-            ->setPageTitle('index', 'Prestations')
-            ->setEntityLabelInPlural('Prestations')
-            ->setEntityLabelInSingular('Prestation')
-            ->setDefaultSort(['title' => 'ASC']);
+            ->setPageTitle('edit', 'Modifier le service')
+            ->setPageTitle('new', 'Ajouter un service')
+            ->setPageTitle('index', 'Services')
+            ->setEntityLabelInPlural('Services')
+            ->setEntityLabelInSingular('Service')
+            ->setDefaultSort(['name' => 'ASC']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -59,7 +65,7 @@ class ServiceCrudController extends AbstractCrudController
         return $actions
             /* INDEX */
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
-                return $action->setLabel('Ajouter une prestation');
+                return $action->setLabel('Ajouter un service');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action->setLabel('Supprimer');
@@ -73,7 +79,7 @@ class ServiceCrudController extends AbstractCrudController
                 return $action->setLabel('Sauvegarder et terminer');
             })
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, function (Action $action) {
-                return $action->setLabel('Sauvegarder et ajouter une autre prestation');
+                return $action->setLabel('Sauvegarder et ajouter un autre service');
             })
             /* EDIT */
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {

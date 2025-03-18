@@ -34,8 +34,6 @@ class RealisationRepository extends ServiceEntityRepository
     public function findWithImages(): array
     {
         return $this->createQueryBuilder('r')
-            ->leftJoin('r.images', 'i')
-            ->addSelect('i')
             ->orderBy('r.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

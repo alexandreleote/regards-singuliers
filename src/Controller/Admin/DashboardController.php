@@ -49,7 +49,7 @@ class DashboardController extends AbstractDashboardController
         $stats = [
             'users' => $this->userRepository->count([]),
             'realisations' => $this->realisationRepository->count([]),
-            'services' => $this->serviceRepository->findActive(),
+            'services' => count($this->serviceRepository->findActive()),
             'contacts' => $this->contactRepository->count([]),
             'unread_contacts' => $this->contactRepository->countUnreadMessages(),
             'professional_contacts' => $this->contactRepository->findByType(Contact::TYPE_PROFESSIONNEL),
@@ -57,8 +57,37 @@ class DashboardController extends AbstractDashboardController
             'pending_contacts' => $this->contactRepository->findUnrespondedProfessional()
         ];
 
+        // Actions rapides
+        $actions = [
+            [
+                'title' => 'Nouvelle réalisation',
+                'url' => $this->adminUrlGenerator
+                    ->setController(RealisationCrudController::class)
+                    ->setAction('new')
+                    ->generateUrl(),
+                'icon' => 'fa fa-plus'
+            ],
+            [
+                'title' => 'Nouveau service',
+                'url' => $this->adminUrlGenerator
+                    ->setController(ServiceCrudController::class)
+                    ->setAction('new')
+                    ->generateUrl(),
+                'icon' => 'fa fa-briefcase'
+            ],
+            [
+                'title' => 'Messages non lus',
+                'url' => $this->adminUrlGenerator
+                    ->setController(ContactCrudController::class)
+                    ->setAction('index')
+                    ->generateUrl(),
+                'icon' => 'fa fa-envelope'
+            ]
+        ];
+
         return $this->render('admin/dashboard.html.twig', [
-            'stats' => $stats
+            'stats' => $stats,
+            'actions' => $actions
         ]);
     }
 
