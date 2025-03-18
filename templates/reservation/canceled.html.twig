@@ -4,53 +4,25 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .canceled-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .canceled-content {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            text-align: center;
-        }
-        .canceled-icon {
-            color: #dc2626;
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        .retry-button {
-            display: inline-block;
-            background-color: #2563eb;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            margin-top: 1rem;
-            transition: background-color 0.2s;
-        }
-        .retry-button:hover {
-            background-color: #1d4ed8;
-        }
-    </style>
+    {{ encore_entry_link_tags('reservation/canceled') }}
 {% endblock %}
 
 {% block body %}
     <div class="canceled-container">
         <div class="canceled-content">
-            <div class="canceled-icon">❌</div>
-            <h1 class="text-2xl font-bold mb-4">{{ page_title }}</h1>
-            
-            <p class="text-gray-600 mb-4">
-                Le paiement a été annulé. Vous pouvez réessayer votre réservation en cliquant sur le bouton ci-dessous.
+            <div class="error-icon">✕</div>
+            <h1 class="canceled-title">Paiement annulé</h1>
+            <p class="canceled-message">
+                Le paiement a été annulé. Vous pouvez réessayer ou revenir à l'accueil.
             </p>
-
-            <a href="{{ path('service_index') }}" class="retry-button">
-                Retour aux prestations
-            </a>
+            <div>
+                <a href="{{ path('reservation_payment', {id: service.id}) }}" class="retry-button">
+                    Réessayer le paiement
+                </a>
+                <a href="{{ path('app_home') }}" class="home-button">
+                    Retour à l'accueil
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %} 

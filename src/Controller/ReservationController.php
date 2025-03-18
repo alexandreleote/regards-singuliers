@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/reservation')]
 #[IsGranted('ROLE_USER')]
@@ -19,31 +21,111 @@ class ReservationController extends AbstractController
     private $reservationService;
     private $reservationRepository;
     private $serviceRepository;
+    private $entityManager;
 
     public function __construct(
         ReservationService $reservationService,
         ReservationRepository $reservationRepository,
-        ServiceRepository $serviceRepository
+        ServiceRepository $serviceRepository,
+        EntityManagerInterface $entityManager
     ) {
         $this->reservationService = $reservationService;
         $this->reservationRepository = $reservationRepository;
         $this->serviceRepository = $serviceRepository;
+        $this->entityManager = $entityManager;
+    }
+
+    #[Route('/date/{id}', name: 'reservation_date')]
+    public function date(Service $service): Response
+    {
+        if (!$service->isActive()) {
+            throw $this->createNotFoundException('Ce service n\'est pas disponible pour la réservation.');
+        }
+
+        return $this->render('reservation/date.html.twig', [
+            'page_title' => 'Choisir une date',
+            'service' => $service,
+            'calendly_url' => $this->getParameter('calendly.url')
+        ]);
+    }
+
+    #[Route('/process-date', name: 'reservation_process_date', methods: ['POST'])]
+    public function processDate(Request $request): Response
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (!$data) {
+                throw new \Exception('Données JSON invalides');
+            }
+
+            // Vérifier le token CSRF
+            $token = $request->headers->get('X-CSRF-TOKEN');
+            if (!$this->isCsrfTokenValid('process_date', $token)) {
+                throw new InvalidCsrfTokenException('Token CSRF invalide');
+            }
+
+            // Valider les données requises
+            if (!isset($data['serviceId'])) {
+                throw new \Exception('ID du service manquant');
+            }
+
+            if (!isset($data['event']['event_id']) || !isset($data['event']['invitee_id'])) {
+                throw new \Exception('Données de l\'événement Calendly manquantes');
+            }
+
+            $service = $this->serviceRepository->find($data['serviceId']);
+            if (!$service) {
+                throw new \Exception('Service non trouvé');
+            }
+
+            // Créer la réservation
+            $reservation = $this->reservationService->createReservation($service, $this->getUser());
+            
+            // Sauvegarder les IDs Calendly
+            $reservation->setCalendlyEventId($data['event']['event_id']);
+            $reservation->setCalendlyInviteeId($data['event']['invitee_id']);
+            
+            // Définir le statut initial
+            $reservation->setStatus('en attente');
+
+            // Sauvegarder la réservation
+            $this->entityManager->persist($reservation);
+            $this->entityManager->flush();
+
+            return $this->json([
+                'success' => true,
+                'redirect' => $this->generateUrl('reservation_payment', [
+                    'id' => $service->getId()
+                ])
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 400);
+        }
     }
 
     #[Route('/payment/{id}', name: 'reservation_payment')]
     public function payment(Service $service): Response
     {
-        // Vérifier que le service est actif
-        if (!$service->isActive()) {
-            throw $this->createNotFoundException('Ce service n\'est pas disponible pour la réservation.');
+        $reservation = $this->reservationRepository->findOneBy([
+            'user' => $this->getUser(),
+            'service' => $service,
+            'status' => 'en attente'
+        ], ['bookedAt' => 'DESC']);
+
+        if (!$reservation) {
+            return $this->redirectToRoute('reservation_date', ['id' => $service->getId()]);
         }
 
-        $reservation = $this->reservationService->createReservation($service, $this->getUser());
         $paymentData = $this->reservationService->createPaymentIntent($reservation);
 
         return $this->render('reservation/payment.html.twig', [
             'page_title' => 'Paiement de l\'acompte',
             'service' => $service,
+            'reservation' => $reservation,
             'deposit_amount' => $paymentData['depositAmount'],
             'stripe_public_key' => $this->getParameter('stripe.public_key'),
             'client_secret' => $paymentData['clientSecret'],
@@ -63,19 +145,17 @@ class ReservationController extends AbstractController
             throw $this->createNotFoundException('Réservation non trouvée');
         }
 
-        // Vérifier que l'utilisateur est bien le propriétaire de la réservation
         if ($reservation->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette réservation');
         }
 
-        // Création temporaire du paiement si non existant
         if ($reservation->getPayments()->isEmpty()) {
             $this->reservationService->handlePaymentSuccess($paymentIntentId);
         }
 
-        // Rediriger vers la page de sélection de date
-        return $this->redirectToRoute('reservation_date', [
-            'id' => $reservation->getService()->getId()
+        return $this->render('reservation/success.html.twig', [
+            'page_title' => 'Réservation confirmée',
+            'reservation' => $reservation
         ]);
     }
 
@@ -95,24 +175,6 @@ class ReservationController extends AbstractController
     {
         return $this->render('reservation/canceled.html.twig', [
             'page_title' => 'Paiement annulé',
-        ]);
-    }
-
-    #[Route('/date/{id}', name: 'reservation_date')]
-    public function date(Service $service): Response
-    {
-        // Récupérer la dernière réservation non confirmée de l'utilisateur pour ce service
-        $reservation = $this->reservationRepository->findOneBy([
-            'user' => $this->getUser(),
-            'service' => $service,
-            'status' => 'en attente'
-        ], ['bookedAt' => 'DESC']);
-
-        return $this->render('reservation/date.html.twig', [
-            'page_title' => 'Choisir une date',
-            'service' => $service,
-            'calendly_url' => $this->getParameter('calendly.url'),
-            'reservation' => $reservation,
         ]);
     }
 }

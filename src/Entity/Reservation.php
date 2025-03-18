@@ -28,6 +28,12 @@ class Reservation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stripePaymentIntentId = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $calendlyEventId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $calendlyInviteeId = null;
+
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -104,6 +110,28 @@ class Reservation
     public function setStripePaymentIntentId(?string $stripePaymentIntentId): self
     {
         $this->stripePaymentIntentId = $stripePaymentIntentId;
+        return $this;
+    }
+
+    public function getCalendlyEventId(): ?string
+    {
+        return $this->calendlyEventId;
+    }
+
+    public function setCalendlyEventId(?string $calendlyEventId): static
+    {
+        $this->calendlyEventId = $calendlyEventId;
+        return $this;
+    }
+
+    public function getCalendlyInviteeId(): ?string
+    {
+        return $this->calendlyInviteeId;
+    }
+
+    public function setCalendlyInviteeId(?string $calendlyInviteeId): static
+    {
+        $this->calendlyInviteeId = $calendlyInviteeId;
         return $this;
     }
 

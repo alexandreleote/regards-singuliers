@@ -4,85 +4,39 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .success-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .success-content {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            text-align: center;
-        }
-        .success-icon {
-            color: #059669;
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        .next-step-button {
-            display: inline-block;
-            background-color: #2563eb;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            margin-top: 1rem;
-            transition: background-color 0.2s;
-        }
-        .next-step-button:hover {
-            background-color: #1d4ed8;
-        }
-        .reservation-details {
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            text-align: left;
-        }
-        .detail-item {
-            margin-bottom: 0.5rem;
-        }
-        .detail-label {
-            font-weight: 600;
-            color: #4b5563;
-        }
-    </style>
+    {{ encore_entry_link_tags('reservation/success') }}
 {% endblock %}
 
 {% block body %}
-    <div class="success-container">
-        <div class="success-content">
-            <div class="success-icon">✅</div>
-            <h1 class="text-2xl font-bold mb-4">{{ page_title }}</h1>
-            
+    <div class="confirmation-container">
+        <div class="confirmation-content">
+            <div class="success-icon">✓</div>
+            <h1 class="confirmation-title">Réservation confirmée</h1>
+            <p class="confirmation-message">Votre réservation a été confirmée avec succès.</p>
+
             <div class="reservation-details">
-                <div class="detail-item">
-                    <span class="detail-label">Prestation :</span> {{ reservation.service.title }}
+                <div class="detail-row">
+                    <span class="detail-label">Prestation :</span>
+                    <span>{{ reservation.service.title }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date du rendez-vous :</span>
+                    <span>{{ reservation.bookedAt|date('d/m/Y à H:i') }}</span>
                 </div>
                 {% if reservation.payments|length > 0 %}
-                    <div class="detail-item">
-                        <span class="detail-label">Acompte payé :</span> {{ reservation.payments|last.amount }}€
+                    {% set lastPayment = reservation.payments|last %}
+                    <div class="detail-row">
+                        <span class="detail-label">Acompte payé :</span>
+                        <span>{{ lastPayment.depositAmount }}€</span>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Montant restant :</span> {{ reservation.service.price - reservation.payments|last.amount }}€
-                    </div>
-                {% else %}
-                    <div class="detail-item">
-                        <span class="detail-label">Montant total :</span> {{ reservation.service.price }}€
+                    <div class="detail-row">
+                        <span class="detail-label">Reste à payer :</span>
+                        <span>{{ reservation.service.price - lastPayment.depositAmount }}€</span>
                     </div>
                 {% endif %}
             </div>
 
-            <p class="text-gray-600 mb-4">
-                Votre acompte a été payé avec succès. Vous allez recevoir un email de confirmation avec tous les détails de votre réservation.
-            </p>
-
-            <a href="{{ path('home') }}" class="next-step-button">
-                Revenir à l'accueil
-            </a>
+            <a href="{{ path('mes_reservations') }}" class="back-button">Voir mes réservations</a>
         </div>
     </div>
 {% endblock %} 

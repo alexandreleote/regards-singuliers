@@ -1,0 +1,60 @@
+.canceled-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.canceled-content {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    text-align: center;
+}
+
+.error-icon {
+    color: #dc2626;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.canceled-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+.canceled-message {
+    color: #4b5563;
+    margin-bottom: 2rem;
+}
+
+.retry-button {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    margin-right: 1rem;
+}
+
+.retry-button:hover {
+    background-color: #1d4ed8;
+}
+
+.home-button {
+    display: inline-block;
+    background-color: #6b7280;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.home-button:hover {
+    background-color: #4b5563;
+} 

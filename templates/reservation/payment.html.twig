@@ -4,245 +4,47 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .payment-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-        }
-        .service-details {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .service-description {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
-            line-height: 1.6;
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-        }
-        .payment-form {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-        }
-        .payment-summary {
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .amount-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .amount-row:last-child {
-            border-bottom: none;
-            font-weight: 600;
-        }
-        .payment-element {
-            background-color: #ffffff;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid #e5e7eb;
-            margin-bottom: 1.5rem;
-            min-height: 300px;
-        }
-        .error-message {
-            display: none;
-            color: #dc2626;
-            background-color: #fee2e2;
-            border: 1px solid #fecaca;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-        .submit-button {
-            background-color: #2563eb;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            border: none;
-            width: 100%;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-        .submit-button:hover {
-            background-color: #1d4ed8;
-        }
-        .submit-button:disabled {
-            background-color: #93c5fd;
-            cursor: not-allowed;
-        }
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #ffffff;
-            border-top: 3px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.75rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    {{ encore_entry_link_tags('reservation/payment') }}
 {% endblock %}
 
 {% block body %}
     <div class="payment-container">
-        <div class="service-details">
-            <h1 class="text-3xl font-bold mb-6">{{ page_title }}</h1>
-            
-            <div class="payment-summary">
-                <div class="amount-row">
-                    <span>Prix total de la prestation</span>
-                    <span>{{ service.price }}€</span>
-                </div>
-                <div class="amount-row">
-                    <span>Acompte à payer maintenant (50%)</span>
-                    <span>{{ deposit_amount }}€</span>
-                </div>
-                <div class="amount-row">
-                    <span>Reste à payer lors de la prestation</span>
-                    <span>{{ service.price - deposit_amount }}€</span>
+        <div class="payment-content">
+            <div class="service-info">
+                <h1 class="service-title">{{ service.title }}</h1>
+                <p class="service-description">{{ service.description }}</p>
+                <div class="price-info">
+                    <div class="price-row">
+                        <span>Prix total :</span>
+                        <span>{{ service.price }}€</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Acompte à verser :</span>
+                        <span>{{ deposit_amount }}€</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="service-description">
-                <p class="text-gray-600">{{ service.description }}</p>
-            </div>
-        </div>
-
-        <div class="payment-form">
-            <form id="payment-form">
-                <div class="payment-element" id="payment-element"></div>
-                <div id="payment-message" class="error-message"></div>
-
-                <button id="submit" class="submit-button">
-                    <div id="spinner" class="spinner"></div>
-                    <span id="button-text">Payer l'acompte</span>
+            <form id="payment-form" class="payment-form">
+                <div id="payment-element"></div>
+                <button id="submit" class="payment-button">
+                    <span class="loading"></span>
+                    Payer l'acompte
                 </button>
+                <div id="payment-message"></div>
             </form>
         </div>
     </div>
+
+    <div 
+        data-stripe-key="{{ stripe_public_key }}"
+        data-client-secret="{{ client_secret }}"
+        data-return-url="{{ url('reservation_success') }}"
+    ></div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const stripe = Stripe('{{ stripe_public_key }}', {
-                locale: 'fr'
-            });
-
-            const elements = stripe.elements({
-                clientSecret: '{{ client_secret }}',
-                appearance: {
-                    theme: 'stripe',
-                    variables: {
-                        colorPrimary: '#2563eb',
-                        colorBackground: '#ffffff',
-                        colorText: '#1f2937',
-                        colorDanger: '#dc2626',
-                        fontFamily: 'system-ui, -apple-system, sans-serif',
-                        spacingUnit: '4px',
-                        borderRadius: '4px',
-                    },
-                    labels: 'floating'
-                }
-            });
-
-            const paymentElement = elements.create('payment', {
-                layout: {
-                    type: 'tabs',
-                    defaultCollapsed: false
-                },
-                defaultValues: {
-                    billingDetails: {
-                        name: '{{ app.user.fullName ?? app.user.email }}',
-                        email: '{{ app.user.email }}'
-                    }
-                }
-            });
-            
-            paymentElement.mount('#payment-element');
-
-            const form = document.getElementById('payment-form');
-            const submitButton = document.getElementById('submit');
-            const spinner = document.getElementById('spinner');
-            const buttonText = document.getElementById('button-text');
-            const paymentMessage = document.getElementById('payment-message');
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                submitButton.disabled = true;
-                spinner.style.display = 'inline-block';
-                buttonText.textContent = 'Traitement en cours...';
-                paymentMessage.style.display = 'none';
-
-                try {
-                    const {error} = await stripe.confirmPayment({
-                        elements,
-                        confirmParams: {
-                            return_url: '{{ url('reservation_success') }}'
-                        }
-                    });
-
-                    if (error) {
-                        paymentMessage.textContent = error.message;
-                        paymentMessage.style.display = 'block';
-                        submitButton.disabled = false;
-                        spinner.style.display = 'none';
-                        buttonText.textContent = 'Payer l\'acompte';
-                    }
-                } catch (e) {
-                    console.error('Erreur de paiement:', e);
-                    paymentMessage.textContent = 'Une erreur est survenue. Veuillez réessayer.';
-                    paymentMessage.style.display = 'block';
-                    submitButton.disabled = false;
-                    spinner.style.display = 'none';
-                    buttonText.textContent = 'Payer l\'acompte';
-                }
-            });
-
-            if ('{{ client_secret }}') {
-                stripe.retrievePaymentIntent('{{ client_secret }}').then(({paymentIntent}) => {
-                    switch (paymentIntent.status) {
-                        case 'succeeded':
-                            window.location.href = '{{ path('reservation_success') }}';
-                            break;
-                        case 'processing':
-                            paymentMessage.textContent = 'Votre paiement est en cours de traitement...';
-                            paymentMessage.style.display = 'block';
-                            break;
-                        case 'requires_payment_method':
-                            // Ne pas afficher de message d'erreur lors du chargement initial
-                            break;
-                        default:
-                            paymentMessage.textContent = 'Une erreur est survenue.';
-                            paymentMessage.style.display = 'block';
-                    }
-                });
-            }
-        });
-    </script>
+    {{ encore_entry_script_tags('reservation/payment') }}
 {% endblock %} 
