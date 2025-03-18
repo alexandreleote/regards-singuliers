@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .confirmation-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .confirmation-content {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+        }
+        .success-icon {
+            color: #059669;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .confirmation-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        .confirmation-message {
+            color: #4b5563;
+            margin-bottom: 2rem;
+        }
+        .back-button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .back-button:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="confirmation-container">
+        <div class="confirmation-content">
+            <div class="success-icon">✅</div>
+            <h1 class="confirmation-title">{{ page_title }}</h1>
+            <p class="confirmation-message">
+                Votre rendez-vous a été confirmé avec succès. Vous recevrez bientôt un email avec tous les détails.
+            </p>
+            <a href="{{ path('home') }}" class="back-button">Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %} 

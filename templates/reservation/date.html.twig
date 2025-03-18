@@ -39,10 +39,6 @@
             justify-content: space-between;
             margin-bottom: 0.5rem;
         }
-        .calendly-inline-widget {
-            min-width: 320px;
-            height: 700px;
-        }
     </style>
 {% endblock %}
 
@@ -67,9 +63,20 @@
                 {% endif %}
             </div>
 
-            <div class="calendly-inline-widget" data-url="{{ calendly_url }}"></div>
+            <!-- Calendly inline widget begin -->
+            <div class="calendly-inline-widget" data-url="{{ calendly_url }}" style="min-width:320px;height:700px;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+            <!-- Calendly inline widget end -->
         </div>
     </div>
 
-    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    <script>
+        window.addEventListener('message', function(e) {
+            if (e.data.event && e.data.event.indexOf('calendly') === 0) {
+                if (e.data.event === 'calendly.event_scheduled') {
+                    window.location.href = '{{ path('reservation_confirmation') }}';
+                }
+            }
+        });
+    </script>
 {% endblock %} 

@@ -20,19 +20,15 @@ class ContentSecurityPolicySubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
         
         $csp = [
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://assets.calendly.com https://cdn.segment.io https://connect.facebook.net https://*.googleapis.com https://*.gstatic.com https://cdn.jsdelivr.net",
-            "style-src 'self' 'unsafe-inline' https://assets.calendly.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
-            "img-src 'self' data: https: blob: https://*.googleapis.com https://*.gstatic.com",
-            "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com",
-            "connect-src 'self' https://api.stripe.com https://api.calendly.com https://*.googleapis.com https://*.gstatic.com",
-            "frame-src 'self' https://js.stripe.com https://assets.calendly.com https://www.facebook.com",
-            "media-src 'self'",
-            "object-src 'none'",
-            "base-uri 'self'",
-            "form-action 'self'",
-            "frame-ancestors 'none'",
-            "upgrade-insecure-requests"
+            "default-src *",
+            "script-src * 'unsafe-inline' 'unsafe-eval'",
+            "style-src * 'unsafe-inline'",
+            "img-src * data: blob:",
+            "font-src * data:",
+            "connect-src *",
+            "frame-src *",
+            "media-src *",
+            "frame-ancestors 'self'"
         ];
 
         $response->headers->set('Content-Security-Policy', implode('; ', $csp));

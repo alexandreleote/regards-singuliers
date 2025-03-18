@@ -55,7 +55,7 @@ class ReservationController extends AbstractController
     {
         $paymentIntentId = $request->query->get('payment_intent');
         if (!$paymentIntentId) {
-            throw $this->createNotFoundException('Paramètre payment_intent manquant');
+            throw $this->createNotFoundException('Payment Intent non trouvé');
         }
 
         $reservation = $this->reservationRepository->findByStripePaymentIntentId($paymentIntentId);
@@ -73,9 +73,9 @@ class ReservationController extends AbstractController
             $this->reservationService->handlePaymentSuccess($paymentIntentId);
         }
 
-        return $this->render('reservation/success.html.twig', [
-            'page_title' => 'Réservation confirmée',
-            'reservation' => $reservation,
+        // Rediriger vers la page de sélection de date
+        return $this->redirectToRoute('reservation_date', [
+            'id' => $reservation->getService()->getId()
         ]);
     }
 
