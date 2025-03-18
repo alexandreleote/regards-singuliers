@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Contact;
+use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,26 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 
 final class ContactController extends AbstractController
 {
+    private $contactRepository;
+    private $entityManager;
+    private $logger;
+    private $validator;
+    private $csrfTokenManager;
+
+    public function __construct(
+        ContactRepository $contactRepository,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        ValidatorInterface $validator,
+        CsrfTokenManagerInterface $csrfTokenManager
+    ) {
+        $this->contactRepository = $contactRepository;
+        $this->entityManager = $entityManager;
+        $this->logger = $logger;
+        $this->validator = $validator;
+        $this->csrfTokenManager = $csrfTokenManager;
+    }
+
     #[Route('/contact', name: 'contact')]
     public function index(): Response
     {
@@ -28,19 +49,14 @@ final class ContactController extends AbstractController
     }
 
     #[Route('/contact/submit', name: 'contact_submit', methods: ['POST'])]
-    public function submit(
-        Request $request, 
-        ValidatorInterface $validator, 
-        LoggerInterface $logger,
-        EntityManagerInterface $entityManager,
-        CsrfTokenManagerInterface $csrfTokenManager
-    ): JsonResponse {
+    public function submit(Request $request): Response
+    {
         try {
             $content = $request->getContent();
-            $logger->info('Contenu brut reçu:', ['content' => $content]);
+            $this->logger->info('Contenu brut reçu:', ['content' => $content]);
             
             $data = json_decode($content, true);
-            $logger->info('Données décodées:', ['data' => $data]);
+            $this->logger->info('Données décodées:', ['data' => $data]);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \InvalidArgumentException('Format JSON invalide: ' . json_last_error_msg());
@@ -52,49 +68,49 @@ final class ContactController extends AbstractController
                 throw new InvalidCsrfTokenException('Token CSRF manquant');
             }
 
-            if (!$csrfTokenManager->isTokenValid(new CsrfToken('contact_form', $token))) {
+            if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('contact_form', $token))) {
                 throw new InvalidCsrfTokenException('Token CSRF invalide');
             }
 
             // Validation de base pour tous les types
             $baseConstraints = [
-                'type' => [new Assert\Choice(['choices' => [Contact::TYPE_PARTICULIER, Contact::TYPE_PROFESSIONNEL]])],
-                'civilite' => [new Assert\Choice(['choices' => [Contact::CIVILITE_MONSIEUR, Contact::CIVILITE_MADAME]])],
+                'type' => [
+                    new Assert\NotBlank(),
+                    new Assert\Choice(['choices' => [Contact::TYPE_PARTICULIER, Contact::TYPE_PROFESSIONNEL]])
+                ],
+                'civilite' => [
+                    new Assert\NotBlank(),
+                    new Assert\Choice(['choices' => [Contact::CIVILITE_MONSIEUR, Contact::CIVILITE_MADAME]])
+                ],
                 'nom' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['min' => 2, 'max' => 100]),
-                    new Assert\Regex([
-                        'pattern' => '/^[a-zA-ZÀ-ÿ\s\'-]+$/',
-                        'message' => 'Le nom ne peut contenir que des lettres, espaces, apostrophes et tirets'
-                    ])
+                    new Assert\Length(['min' => 2, 'max' => 100])
                 ],
                 'prenom' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['min' => 2, 'max' => 100]),
-                    new Assert\Regex([
-                        'pattern' => '/^[a-zA-ZÀ-ÿ\s\'-]+$/',
-                        'message' => 'Le prénom ne peut contenir que des lettres, espaces, apostrophes et tirets'
-                    ])
+                    new Assert\Length(['min' => 2, 'max' => 100])
                 ],
                 'email' => [
                     new Assert\NotBlank(),
-                    new Assert\Email(['mode' => 'strict'])
+                    new Assert\Email()
                 ],
                 'telephone' => [
                     new Assert\NotBlank(),
                     new Assert\Regex([
-                        'pattern' => '/^[0-9]{10}$/',
-                        'message' => 'Le numéro de téléphone doit contenir exactement 10 chiffres'
+                        'pattern' => '/^[0-9\s\+\-\.]{10,15}$/',
+                        'message' => 'Le numéro de téléphone n\'est pas valide'
                     ])
                 ],
-                'localisation' => [new Assert\NotBlank()],
+                'localisation' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['max' => 255])
+                ],
                 'description' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['min' => 10, 'max' => 2000])
+                    new Assert\Length(['min' => 10])
                 ]
             ];
 
-            // Validation supplémentaire pour les professionnels
             if ($data['type'] === Contact::TYPE_PROFESSIONNEL) {
                 $baseConstraints['entreprise'] = [
                     new Assert\NotBlank(),
@@ -102,7 +118,7 @@ final class ContactController extends AbstractController
                 ];
             }
 
-            $violations = $validator->validate($data, new Assert\Collection($baseConstraints));
+            $violations = $this->validator->validate($data, new Assert\Collection($baseConstraints));
 
             if (count($violations) > 0) {
                 $errors = [];
@@ -130,19 +146,19 @@ final class ContactController extends AbstractController
                 $contact->setEntreprise(strip_tags($data['entreprise']));
             }
 
-            $entityManager->persist($contact);
-            $entityManager->flush();
+            $this->entityManager->persist($contact);
+            $this->entityManager->flush();
 
             return new JsonResponse(['success' => true]);
 
         } catch (InvalidCsrfTokenException $e) {
-            $logger->error('Erreur CSRF:', ['error' => $e->getMessage()]);
+            $this->logger->error('Erreur CSRF:', ['error' => $e->getMessage()]);
             return new JsonResponse([
                 'success' => false,
                 'error' => 'Token de sécurité invalide'
             ], JsonResponse::HTTP_FORBIDDEN);
         } catch (\Exception $e) {
-            $logger->error('Erreur lors du traitement:', ['error' => $e->getMessage()]);
+            $this->logger->error('Erreur lors du traitement:', ['error' => $e->getMessage()]);
             return new JsonResponse([
                 'success' => false,
                 'error' => 'Une erreur est survenue lors du traitement de votre demande'

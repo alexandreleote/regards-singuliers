@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Service;
 use App\Service\ReservationService;
+use App\Repository\ReservationRepository;
+use App\Repository\ServiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,15 +17,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ReservationController extends AbstractController
 {
     private $reservationService;
+    private $reservationRepository;
+    private $serviceRepository;
 
-    public function __construct(ReservationService $reservationService)
-    {
+    public function __construct(
+        ReservationService $reservationService,
+        ReservationRepository $reservationRepository,
+        ServiceRepository $serviceRepository
+    ) {
         $this->reservationService = $reservationService;
+        $this->reservationRepository = $reservationRepository;
+        $this->serviceRepository = $serviceRepository;
     }
 
     #[Route('/payment/{id}', name: 'reservation_payment')]
     public function payment(Service $service): Response
     {
+        // Vérifier que le service est actif
+        if (!$service->isActive()) {
+            throw $this->createNotFoundException('Ce service n\'est pas disponible pour la réservation.');
+        }
+
         $reservation = $this->reservationService->createReservation($service, $this->getUser());
         $paymentData = $this->reservationService->createPaymentIntent($reservation);
 
@@ -40,22 +54,35 @@ class ReservationController extends AbstractController
     public function success(Request $request): Response
     {
         $paymentIntentId = $request->query->get('payment_intent');
-        
         if (!$paymentIntentId) {
-            return $this->redirectToRoute('reservation_canceled');
+            throw $this->createNotFoundException('Paramètre payment_intent manquant');
         }
 
-        try {
-            $reservation = $this->reservationService->handlePaymentSuccess($paymentIntentId);
-            
-            return $this->render('reservation/success.html.twig', [
-                'page_title' => 'Paiement réussi',
-                'service' => $reservation->getService(),
-                'deposit_amount' => $reservation->getPrice() * 0.5,
-            ]);
-        } catch (\Exception $e) {
-            return $this->redirectToRoute('reservation_canceled');
+        $reservation = $this->reservationRepository->findByStripePaymentIntentId($paymentIntentId);
+        if (!$reservation) {
+            throw $this->createNotFoundException('Réservation non trouvée');
         }
+
+        // Vérifier que l'utilisateur est bien le propriétaire de la réservation
+        if ($reservation->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette réservation');
+        }
+
+        return $this->render('reservation/success.html.twig', [
+            'page_title' => 'Réservation confirmée',
+            'reservation' => $reservation,
+        ]);
+    }
+
+    #[Route('/mes-reservations', name: 'mes_reservations')]
+    public function myReservations(): Response
+    {
+        $reservations = $this->reservationRepository->findByUserWithRelations($this->getUser());
+
+        return $this->render('reservation/mes_reservations.html.twig', [
+            'page_title' => 'Mes réservations',
+            'reservations' => $reservations,
+        ]);
     }
 
     #[Route('/canceled', name: 'reservation_canceled')]

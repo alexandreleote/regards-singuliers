@@ -18,16 +18,19 @@ final class RealisationController extends AbstractController
     {
         return $this->render('realisation/index.html.twig', [
             'page_title' => 'Nos réalisations',
-            'realisations' => $realisationRepository->findAll(),
+            'realisations' => $realisationRepository->findWithImages(),
         ]);
     }
 
     #[Route('/realisations/{id}', name: 'realisation_show')]
-    public function show(Realisation $realisation): Response
-    {
+    public function show(
+        Realisation $realisation,
+        RealisationRepository $realisationRepository
+    ): Response {
         return $this->render('realisation/show.html.twig', [
             'page_title' => $realisation->getTitle(),
             'realisation' => $realisation,
+            'other_realisations' => $realisationRepository->findLatest(3),
         ]);
     }
 

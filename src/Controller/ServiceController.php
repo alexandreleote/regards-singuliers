@@ -14,21 +14,26 @@ final class ServiceController extends AbstractController
     public function index(
         ServiceRepository $serviceRepository
     ): Response {
-        $services = $serviceRepository->findAll();
-
         return $this->render('service/index.html.twig', [
             'page_title' => 'Prestations',
-            'services' => $services,
+            'services' => $serviceRepository->findActive(),
         ]);
     }
 
     #[Route('/prestations/{id}', name: 'prestation_show')]
     public function show(
-        Service $service
+        Service $service,
+        ServiceRepository $serviceRepository
     ): Response {
+        // Vérifier que le service est actif
+        if (!$service->isActive()) {
+            throw $this->createNotFoundException('Cette prestation n\'est pas disponible.');
+        }
+
         return $this->render('service/show.html.twig', [
             'service' => $service,
             'page_title' => $service->getTitle(),
+            'related_services' => $serviceRepository->findActive(),
         ]);
     }
 }

@@ -18,7 +18,7 @@ final class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'page_title' => 'regards singuliers - Architecte d\'intérieur',
             'latest_realisations' => $realisationRepository->findLatest(3),
-            'services' => $serviceRepository->findAll(),
+            'services' => $serviceRepository->findActive(),
         ]);
     }
 

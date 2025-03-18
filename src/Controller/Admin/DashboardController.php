@@ -45,68 +45,46 @@ class DashboardController extends AbstractDashboardController
 
     public function index(): Response
     {
-        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-
         // Statistiques pour le tableau de bord
         $stats = [
             'users' => $this->userRepository->count([]),
             'realisations' => $this->realisationRepository->count([]),
-            'services' => $this->serviceRepository->count([]),
+            'services' => $this->serviceRepository->findActive(),
             'contacts' => $this->contactRepository->count([]),
-            'unread_contacts' => $this->contactRepository->countUnreadMessages()
-        ];
-
-        // Actions rapides
-        $actions = [
-            [
-                'title' => 'Nouvelle réalisation',
-                'url' => $adminUrlGenerator
-                    ->setController(RealisationCrudController::class)
-                    ->setAction('new')
-                    ->generateUrl(),
-                'icon' => 'fa fa-plus'
-            ],
-            [
-                'title' => 'Nouveau service',
-                'url' => $adminUrlGenerator
-                    ->setController(ServiceCrudController::class)
-                    ->setAction('new')
-                    ->generateUrl(),
-                'icon' => 'fa fa-gear'
-            ],
-            [
-                'title' => 'Lire les demandes de contact',
-                'url' => $adminUrlGenerator
-                    ->setController(ContactCrudController::class)
-                    ->setAction('index')
-                    ->generateUrl(),
-                'icon' => 'fa fa-envelope'
-            ]
+            'unread_contacts' => $this->contactRepository->countUnreadMessages(),
+            'professional_contacts' => $this->contactRepository->findByType(Contact::TYPE_PROFESSIONNEL),
+            'latest_realisations' => $this->realisationRepository->findLatest(5),
+            'pending_contacts' => $this->contactRepository->findUnrespondedProfessional()
         ];
 
         return $this->render('admin/dashboard.html.twig', [
-            'stats' => $stats,
-            'actions' => $actions,
-            'page_title' => 'Administration'
+            'stats' => $stats
         ]);
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('regards singuliers')
-            ->setFaviconPath('favicon-admin.png')
-            ->setTranslationDomain('admin')
-        ;
+            ->setTitle('Regards Singuliers - Administration')
+            ->setFaviconPath('favicon.ico');
     }
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToRoute('Retourner sur le site', 'fa fa-chevron-left', 'home');
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-table-columns');
-        yield MenuItem::linkToCrud('Projets', 'fa fa-file-pen', Realisation::class);
-        yield MenuItem::linkToCrud('Prestations', 'fa fa-gear', Service::class);
+        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        
+        yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
-        yield MenuItem::linkToCrud('Contact', 'fa fa-envelope', Contact::class);
+        
+        yield MenuItem::section('Contenu');
+        yield MenuItem::linkToCrud('Services', 'fa fa-briefcase', Service::class);
+        yield MenuItem::linkToCrud('Réalisations', 'fa fa-image', Realisation::class);
+        
+        yield MenuItem::section('Communication');
+        yield MenuItem::linkToCrud('Contacts', 'fa fa-envelope', Contact::class)
+            ->setBadge($this->contactRepository->countUnreadMessages(), 'warning');
+        
+        yield MenuItem::section('Liens rapides');
+        yield MenuItem::linkToRoute('Retour au site', 'fa fa-arrow-left', 'home');
     }
 }
