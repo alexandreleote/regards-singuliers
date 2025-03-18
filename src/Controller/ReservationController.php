@@ -68,6 +68,11 @@ class ReservationController extends AbstractController
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette réservation');
         }
 
+        // Création temporaire du paiement si non existant
+        if ($reservation->getPayments()->isEmpty()) {
+            $this->reservationService->handlePaymentSuccess($paymentIntentId);
+        }
+
         return $this->render('reservation/success.html.twig', [
             'page_title' => 'Réservation confirmée',
             'reservation' => $reservation,
@@ -96,10 +101,18 @@ class ReservationController extends AbstractController
     #[Route('/date/{id}', name: 'reservation_date')]
     public function date(Service $service): Response
     {
+        // Récupérer la dernière réservation non confirmée de l'utilisateur pour ce service
+        $reservation = $this->reservationRepository->findOneBy([
+            'user' => $this->getUser(),
+            'service' => $service,
+            'status' => 'en attente'
+        ], ['bookedAt' => 'DESC']);
+
         return $this->render('reservation/date.html.twig', [
             'page_title' => 'Choisir une date',
             'service' => $service,
             'calendly_url' => $this->getParameter('calendly.url'),
+            'reservation' => $reservation,
         ]);
     }
 }

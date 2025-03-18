@@ -27,6 +27,8 @@
   text-decoration: none;
   display: flex;
   flex-direction: column;
+  text-transform: lowercase;
+
 }
 
 .footer-logo p:first-child {

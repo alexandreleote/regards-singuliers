@@ -8,6 +8,7 @@ parameters:
     app.calendly.organization_url: '%env(CALENDLY_ORGANIZATION_URL)%'
     uploads_directory: '%kernel.project_dir%/public/uploads'
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
+    calendly.url: '%env(CALENDLY_URL)%'
 
 
 services:
@@ -30,6 +31,10 @@ services:
             $client: '@http_client'
             $apiKey: '%app.calendly.api_key%'
             $organizationUrl: '%app.calendly.organization_url%'
+
+    App\EventListener\SecurityHeadersListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -60,21 +60,27 @@
             
             <div class="reservation-details">
                 <div class="detail-item">
-                    <span class="detail-label">Prestation :</span> {{ service.title }}
+                    <span class="detail-label">Prestation :</span> {{ reservation.service.title }}
                 </div>
-                <div class="detail-item">
-                    <span class="detail-label">Acompte payé :</span> {{ deposit_amount }}€
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Montant restant :</span> {{ service.price - deposit_amount }}€
-                </div>
+                {% if reservation.payments|length > 0 %}
+                    <div class="detail-item">
+                        <span class="detail-label">Acompte payé :</span> {{ reservation.payments|last.amount }}€
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Montant restant :</span> {{ reservation.service.price - reservation.payments|last.amount }}€
+                    </div>
+                {% else %}
+                    <div class="detail-item">
+                        <span class="detail-label">Montant total :</span> {{ reservation.service.price }}€
+                    </div>
+                {% endif %}
             </div>
 
             <p class="text-gray-600 mb-4">
                 Votre acompte a été payé avec succès. Vous allez recevoir un email de confirmation avec tous les détails de votre réservation.
             </p>
 
-            <a href="{{ path('reservation_date', {'id': service.id}) }}" class="next-step-button">
+            <a href="{{ path('reservation_date', {'id': reservation.service.id}) }}" class="next-step-button">
                 Choisir la date du rendez-vous
             </a>
         </div>

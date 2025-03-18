@@ -6,23 +6,42 @@
     {{ parent() }}
     <style>
         .date-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
+            max-width: 1024px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
         .date-content {
             background-color: white;
             border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 2rem;
         }
         .service-info {
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
         }
-        .calendly-container {
-            min-height: 600px;
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .service-description {
+            color: #4b5563;
+            margin-bottom: 1.5rem;
+        }
+        .price-info {
+            background-color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .calendly-inline-widget {
+            min-width: 320px;
+            height: 700px;
         }
     </style>
 {% endblock %}
@@ -30,21 +49,27 @@
 {% block body %}
     <div class="date-container">
         <div class="date-content">
-            <h1 class="text-2xl font-bold mb-4">{{ page_title }}</h1>
-            
             <div class="service-info">
-                <h2 class="text-xl font-semibold mb-2">{{ service.title }}</h2>
-                <p class="text-gray-600">{{ service.description }}</p>
-                <p class="text-lg font-medium mt-2">Prix total : {{ service.price }}€</p>
+                <h1 class="service-title">{{ service.title }}</h1>
+                <p class="service-description">{{ service.description }}</p>
+                
+                {% if reservation and reservation.payments|length > 0 %}
+                    <div class="price-info">
+                        <div class="price-row">
+                            <span>Acompte payé :</span>
+                            <span>{{ reservation.payments|last.amount }}€</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Reste à payer :</span>
+                            <span>{{ service.price - reservation.payments|last.amount }}€</span>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
 
-            <div class="calendly-container">
-                <div class="calendly-inline-widget" 
-                     data-url="{{ calendly_url }}" 
-                     style="min-width:320px;height:100%;">
-                </div>
-                <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-            </div>
+            <div class="calendly-inline-widget" data-url="{{ calendly_url }}"></div>
         </div>
     </div>
+
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 {% endblock %} 
