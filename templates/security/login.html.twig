@@ -3,51 +3,46 @@
 {% block title %}Connexion - regards singuliers{% endblock %}
 
 {% block body %}
-    <div class="auth-container login-container">
-        <div class="auth-form-section">
-            <div class="auth-form-container">
-                <a href="{{ path('home') }}" class="auth-logo">
-                    <h1>regards singuliers</h1>
-                    <span>Priscilia Leote - Architecte d'intérieur</span>
-                </a>
-                
-                <h2 class="auth-form-title">Connexion</h2>
-                <p class="auth-form-subtitle">Accédez à votre espace personnel</p>
-                
-                <form method="post">
+    <div class="auth-container">
+        <div class="auth-card login-layout">
+            <div class="form-side">
+                <div class="auth-form">
+                    <a href="{{ path('home') }}" class="form-title">
+                        <h1>regards singuliers</h1>
+                        <span>Architecture d'intérieur</span>
+                    </a>
+                    
                     {% if error %}
-                        <div class="auth-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                     {% endif %}
 
-                    <div class="auth-form-group">
-                        <label for="username" class="auth-form-label">Email</label>
-                        <input type="email" value="{{ last_username }}" name="_username" id="username" class="auth-form-input" autocomplete="email" required autofocus>
-                    </div>
-                    
-                    <div class="auth-form-group">
-                        <label for="password" class="auth-form-label">Mot de passe</label>
-                        <input type="password" name="_password" id="password" class="auth-form-input" autocomplete="current-password" required>
-                    </div>
-
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                    <div class="auth-form-group">
-                        <div class="checkbox">
-                            <input type="checkbox" name="_remember_me" id="_remember_me">
-                            <label for="_remember_me">Se souvenir de moi</label>
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="username">Email</label>
+                            <input type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus>
                         </div>
-                    </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" name="_password" id="password" autocomplete="current-password" required>
 
-                    <button class="auth-submit-btn" type="submit">
-                        Se connecter
-                    </button>
-                </form>
+                            <div class="checkbox">
+                                <input type="checkbox" name="_remember_me" id="_remember_me">
+                                <label for="_remember_me">Se souvenir de moi</label>
+                            </div>
+                        </div>
 
-                <div class="auth-links">
-                    <a href="{{ path('register') }}" class="auth-link">Pas encore de compte ?</a>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <button type="submit">Se connecter</button>
+
+                        <div class="form-footer">
+                            <a href="{{ path('register') }}">Pas encore de compte ?</a>
+                        </div>
+                    </form>
                 </div>
             </div>
+            <div class="image-side"></div>
         </div>
-        <div class="auth-image-section login-image"></div>
     </div>
 {% endblock %}

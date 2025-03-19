@@ -1,4 +1,4 @@
-import '../../css/reservation/payment.css';
+import '../../styles/reservation/payment.css';
 
 document.addEventListener('DOMContentLoaded', function() {
     const stripe = Stripe(document.querySelector('[data-stripe-key]').dataset.stripeKey);
@@ -54,4 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingElement.classList.remove('active');
         }
     });
-}); 
+});
+
+console.log('Payment JS loaded'); 

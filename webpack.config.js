@@ -21,10 +21,11 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('auth', './assets/js/auth.js')
     .addEntry('reservation/date', './assets/js/reservation/date.js')
     .addEntry('reservation/payment', './assets/js/reservation/payment.js')
-    .addStyleEntry('reservation/success', './assets/css/reservation/success.css')
-    .addStyleEntry('reservation/canceled', './assets/css/reservation/canceled.css')
+    .addEntry('reservation/success', './assets/js/reservation/success.js')
+    .addEntry('reservation/canceled', './assets/js/reservation/canceled.js')
 
     // enables the Symfony UX Stimulus bridge
     .enableStimulusBridge('./assets/controllers.json')

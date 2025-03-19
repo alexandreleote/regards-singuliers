@@ -1,4 +1,4 @@
-import '../../css/reservation/date.css';
+import '../../styles/reservation/date.css';
 
 document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('message', function(e) {
