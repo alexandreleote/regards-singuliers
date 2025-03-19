@@ -1,16 +1,6 @@
 {% extends 'auth_base.html.twig' %}
 
-{% block title %}Inscription - {{ parent() }}{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('auth') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('auth') }}
-{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
     <div class="auth-container">
