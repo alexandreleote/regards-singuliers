@@ -63,7 +63,7 @@
                             {% if is_granted('ROLE_ADMIN') %}
                                 <li class="nav-item-mobile"><a href="{{ path('admin') }}" class="nav-link-mobile" target="_blank">Admin</a></li>
                             {% endif %}
-                            <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Mon Profil</a></li>
+                            <li class="nav-item-mobile"><a href="{{ path('app_profile') }}" class="nav-link-mobile">Mon Profil</a></li>
                             <li class="nav-item-mobile"><a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a></li>
                         {% else %}
                             <li class="nav-item-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
@@ -76,7 +76,7 @@
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('admin') }}" class="nav-link" target="_blank">Admin</a>
                         {% endif %}
-                        <a href="#" class="nav-link">Mon Profil</a>
+                        <a href="{{ path('app_profile') }}" class="nav-link">Mon Profil</a>
                         <a href="{{ path('logout') }}" class="nav-link">Déconnexion</a>
                     {% else %}
                         <a href="{{ path('login') }}" class="nav-link">Connexion</a>

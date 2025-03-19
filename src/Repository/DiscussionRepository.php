@@ -83,6 +83,16 @@ class DiscussionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByUser(User $user): array
+    {
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('d.lastMessageAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Discussion[] Returns an array of Discussion objects
     //     */
