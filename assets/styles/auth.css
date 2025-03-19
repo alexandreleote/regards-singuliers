@@ -49,6 +49,30 @@ body {
     background-position: center;
 }
 
+/* Style spécifique pour la page d'inscription */
+.register-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    flex-direction: row-reverse;
+}
+
+.register-layout .form-side {
+    width: 50%;
+    padding: 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+}
+
+.register-layout .image-side {
+    width: 50%;
+    background-image: url('../images/register-background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
 .auth-form {
     width: 100%;
     max-width: 400px;
@@ -161,6 +185,18 @@ body {
     font-weight: 400;
 }
 
+.auth-form .form-group .checkbox label a {
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px solid #000;
+    transition: all 0.2s ease;
+}
+
+.auth-form .form-group .checkbox label a:hover {
+    color: #333;
+    border-bottom-color: #333;
+}
+
 .auth-form button {
     display: inline-block;
     width: 100%;
@@ -201,17 +237,20 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .login-layout {
+    .login-layout,
+    .register-layout {
         flex-direction: column;
     }
 
-    .login-layout .form-side {
+    .login-layout .form-side,
+    .register-layout .form-side {
         width: 100%;
         padding: 2rem;
         order: 2;
     }
 
-    .login-layout .image-side {
+    .login-layout .image-side,
+    .register-layout .image-side {
         width: 100%;
         height: 200px;
         order: 1;

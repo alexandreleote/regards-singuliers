@@ -1,79 +1,69 @@
 {% extends 'auth_base.html.twig' %}
 
-{% block title %}Inscription - regards singuliers{% endblock %}
+{% block title %}Inscription - {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('auth') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('auth') }}
+{% endblock %}
 
 {% block body %}
-    <div class="auth-container register-container">
-        <div class="auth-form-section">
-            <div class="auth-form-container">
-                <a href="{{ path('home') }}" class="auth-logo">
-                    <h1>regards singuliers</h1>
-                    <span>Priscilia Leote - Architecte d'intérieur</span>
-                </a>
-                
-                <h2 class="auth-form-title">Inscription</h2>
-                <p class="auth-form-subtitle">Créez votre compte personnel</p>
-                
-                {% for flash_error in app.flashes('verify_email_error') %}
-                    <div class="auth-error" role="alert">{{ flash_error }}</div>
-                {% endfor %}
+    <div class="auth-container">
+        <div class="register-layout">
+            <div class="form-side">
+                {{ form_start(registrationForm, {'attr': {'class': 'auth-form'}}) }}
+                    <a href="{{ path('home') }}" class="form-title">
+                        <h1>regards singuliers</h1>
+                        <span>Architecture d'intérieur</span>
+                    </a>
 
-                {% for message in app.flashes('success') %}
-                    <div class="auth-success">{{ message }}</div>
-                {% endfor %}
-                
-                {% for flash_error in app.flashes('error') %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ flash_error }}
-                    </div>
-                {% endfor %}
-                
-                {% for message in app.flashes('password_error') %}
-                    <div class="auth-error">{{ message|raw }}</div>
-                {% endfor %}
-                
-                {{ form_start(registrationForm, {'attr': {'data-turbo': 'false'}}) }}
-                    {% if form_errors(registrationForm) %}
-                        <div class="auth-error">
-                            {{ form_errors(registrationForm) }}
+                    {% if app.flashes('verify_email_error') is not empty %}
+                        <div class="alert alert-danger">
+                            {{ app.flashes('verify_email_error')|first }}
                         </div>
                     {% endif %}
 
-                    <div class="auth-form-group">
-                        {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'auth-form-label'}}) }}
-                        {{ form_widget(registrationForm.email, {'attr': {'class': 'auth-form-input', 'autocomplete': 'email', 'autofocus': true}}) }}
-                    </div>
-                    
-                    <div class="auth-form-group">
-                        {{ form_label(registrationForm.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'auth-form-label'}}) }}
-                        {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'auth-form-input', 'autocomplete': 'new-password'}}) }}
-                    </div>
-                    
-                    <div class="auth-form-group">
-                        {{ form_label(registrationForm.plainPassword.second, 'Confirmez le mot de passe', {'label_attr': {'class': 'auth-form-label'}}) }}
-                        {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'auth-form-input', 'autocomplete': 'new-password'}}) }}
+                    <div class="form-group">
+                        {{ form_label(registrationForm.email) }}
+                        {{ form_widget(registrationForm.email) }}
+                        {{ form_errors(registrationForm.email) }}
                     </div>
 
-                    <div class="auth-form-group">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.plainPassword.first) }}
+                        {{ form_widget(registrationForm.plainPassword.first) }}
+                        {{ form_errors(registrationForm.plainPassword.first) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(registrationForm.plainPassword.second) }}
+                        {{ form_widget(registrationForm.plainPassword.second) }}
+                        {{ form_errors(registrationForm.plainPassword.second) }}
+                    </div>
+
+                    <div class="form-group">
                         <div class="checkbox">
                             {{ form_widget(registrationForm.agreeTerms) }}
                             <label for="{{ registrationForm.agreeTerms.vars.id }}">
-                                J'accepte les <a href="{{ path('cgu') }}" target="_blank">conditions générales d'utilisation</a>
+                                J'accepte les <a href="{{ path('cgu') }}" target="_blank">conditions générales d'utilisation</a> et la <a href="{{ path('privacy') }}" target="_blank">politique de confidentialité</a>
                             </label>
-                            {{ form_errors(registrationForm.agreeTerms) }}
                         </div>
+                        {{ form_errors(registrationForm.agreeTerms) }}
                     </div>
 
-                    <button class="auth-submit-btn" type="submit">
-                        S'inscrire
-                    </button>
-                {{ form_end(registrationForm) }}
+                    <button type="submit">S'inscrire</button>
 
-                <div class="auth-links">
-                    <a href="{{ path('login') }}" class="auth-link">Déjà un compte ?</a>
-                </div>
+                    <div class="form-footer">
+                        <a href="{{ path('login') }}">Déjà inscrit ? Se connecter</a>
+                    </div>
+                {{ form_end(registrationForm) }}
             </div>
+            <div class="image-side"></div>
         </div>
-        <div class="auth-image-section register-image"></div>
     </div>
-{% endblock %}
+{% endblock %} 

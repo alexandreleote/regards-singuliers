@@ -4,23 +4,23 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class LegalController extends AbstractController
+class LegalController extends AbstractController
 {
-    #[Route('/cgu', name: 'cgu')]
+    #[Route('/mentions-legales/conditions-generales-utilisation', name: 'cgu')]
     public function cgu(): Response
     {
         return $this->render('legal/cgu.html.twig', [
-            'page_title' => 'Conditions Générales d\'Utilisation - regards singuliers',
+            'page_title' => 'Conditions générales d\'utilisation - regards singuliers'
         ]);
     }
 
-    #[Route('/confidentialite', name: 'confidentialite')]
-    public function confidentialite(): Response
+    #[Route('/mentions-legales/politique-confidentialite', name: 'privacy')]
+    public function privacy(): Response
     {
-        return $this->render('legal/confidentialite.html.twig', [
-            'page_title' => 'Politique de Confidentialité - regards singuliers',
+        return $this->render('legal/privacy.html.twig', [
+            'page_title' => 'Politique de confidentialité - regards singuliers'
         ]);
     }
 
