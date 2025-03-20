@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Meow+Script&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
   /* Palette de couleurs minimaliste */
   --color-primary: #000000;
@@ -10,8 +12,8 @@
   --color-error: #d32f2f;
   
   /* Typographie */
-  --font-primary: 'Helvetica Neue', Arial, sans-serif;
-  --font-secondary: 'Helvetica Neue', Arial, sans-serif;
+  --font-text: 'Montserrat', Arial, sans-serif;
+  --font-title: 'Meow Script', Arial, sans-serif;
   --font-size-xs: 0.75rem;   /* 12px */
   --font-size-sm: 0.875rem;  /* 14px */
   --font-size-base: 1rem;    /* 16px */

@@ -36,9 +36,10 @@
 }
 
 .logo h1 {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-2xl);
+  font-family: var(--font-title);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 .logo span {

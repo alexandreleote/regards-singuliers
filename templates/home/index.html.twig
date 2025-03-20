@@ -2,43 +2,23 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
-{% endblock %}
-
 {% block body %}
-    <!-- Carrousel des réalisations -->
-    <div class="slider">
-        <div class="swiper">
-            {% for realisation in latest_realisations %}
-                <div class="swiper-slide">
-                    <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
-                         alt="{{ realisation.title }}"
-                         class="slider-img">
-                    <div class="slider-content">
-                        <h2 class="slider-title">{{ realisation.title }}</h2>
-                        <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
-                           class="slider-link">
-                            En savoir plus
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
+    <!-- Section vidéo d'accueil -->
+    <div class="video-container">
+        <div class="video-overlay"></div>
+        <video class="video-background" autoplay muted loop playsinline>
+            <source src="{{ asset('videos/home-video.mp4') }}" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture de vidéos.
+        </video>
+        <div class="video-content">
+            <h1 class="video-title">regards singuliers</h1>
+            <a href="{{ path('realisations') }}" class="btn btn-primary">
+                Découvrir nos réalisations
+            </a>
         </div>
-        {# <div class="swiper-pagination"></div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div> #}
     </div>
 
     <div class="content">
-        <div class="cta">
-            <a href="{{ path('realisations') }}" 
-               class="btn">
-                Voir toutes nos réalisations
-            </a>
-        </div>
-
         <!-- Section des prestations -->
         <h2 class="section-title">Nos prestations</h2>
         <div class="services">
@@ -56,25 +36,4 @@
             {% endfor %}
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-        new Swiper('.swiper', {
-            loop: true,
-            autoplay: {
-                delay: 5000,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-        });
-    </script>
 {% endblock %}

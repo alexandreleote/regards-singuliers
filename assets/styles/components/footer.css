@@ -32,9 +32,10 @@
 }
 
 .footer-logo p:first-child {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-xl);
+  font-family: var(--font-title);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 .footer-logo p:last-child {
