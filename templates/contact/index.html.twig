@@ -74,26 +74,35 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="nom">Nom</label>
-                                <input type="text" id="nom" name="nom" class="form-control" {{ stimulus_target('contact', 'nom') }} required>
+                            <div class="form-display">
+                                <!-- Nom -->
+                                <div class="form-group form-item">
+                                    <label for="nom">Nom</label>
+                                    <input type="text" id="nom" name="nom" class="form-control" {{ stimulus_target('contact', 'nom') }} required>
+                                </div>
+
+                                <!-- Prénom -->
+                                <div class="form-group form-item">
+                                    <label for="prenom">Prénom</label>
+                                    <input type="text" id="prenom" name="prenom" class="form-control" {{ stimulus_target('contact', 'prenom') }} required>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="prenom">Prénom</label>
-                                <input type="text" id="prenom" name="prenom" class="form-control" {{ stimulus_target('contact', 'prenom') }} required>
+                            <div class="form-display">
+                            <!-- Email -->
+                                <div class="form-group form-item">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
+                                </div>
+
+                                <!-- Téléphone -->
+                                <div class="form-group form-item">
+                                    <label for="telephone">Téléphone</label>
+                                    <input type="tel" id="telephone" name="telephone" class="form-control" {{ stimulus_target('contact', 'telephone') }} required>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="telephone">Téléphone</label>
-                                <input type="tel" id="telephone" name="telephone" class="form-control" {{ stimulus_target('contact', 'telephone') }} required>
-                            </div>
-
+                            <!-- Localisation -->
                             <div class="form-group">
                                 <label for="localisation">Localisation</label>
                                 <input type="text" id="localisation" name="localisation" class="form-control" {{ stimulus_target('contact', 'localisation') }} required>

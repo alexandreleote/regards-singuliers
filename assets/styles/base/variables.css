@@ -28,6 +28,7 @@
   --spacing-md: 1.5rem;      /* 24px */
   --spacing-lg: 2rem;        /* 32px */
   --spacing-xl: 3rem;        /* 48px */
+  --spacing-map: 8rem;       /* 64px */
   
   /* Transitions */
   --transition-fast: 0.2s ease;
