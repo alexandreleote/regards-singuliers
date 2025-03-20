@@ -83,6 +83,44 @@
                         <a href="{{ path('login') }}" class="nav-link">Connexion</a>
                     {% endif %}
                 </div>
+
+                {% if app.user %}
+                <button class="user-menu-btn" aria-label="Menu utilisateur">
+                    <div class="user-menu">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </button>
+
+                <div class="user-nav-mobile">
+                    <ul class="user-nav-list-mobile">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="user-nav-item-mobile">
+                                <a href="{{ path('admin') }}" class="user-nav-link-mobile" target="_blank">Admin</a>
+                            </li>
+                        {% endif %}
+                        <li class="user-nav-item-mobile">
+                            <a href="{{ path('app_profile') }}" class="user-nav-link-mobile">Mon Profil</a>
+                        </li>
+                        <li class="user-nav-item-mobile">
+                            <a href="{{ path('logout') }}" class="user-nav-link-mobile">Déconnexion</a>
+                        </li>
+                    </ul>
+                </div>
+                {% else %}
+                <button class="user-menu-btn" aria-label="Menu connexion">
+                    <div class="user-menu">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                </button>
+
+                <div class="user-nav-mobile">
+                    <ul class="user-nav-list-mobile">
+                        <li class="user-nav-item-mobile">
+                            <a href="{{ path('login') }}" class="user-nav-link-mobile">Connexion</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
             </div>
         </header>
 
