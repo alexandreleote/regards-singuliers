@@ -17,7 +17,8 @@ final class RealisationController extends AbstractController
     public function index(RealisationRepository $realisationRepository): Response
     {
         return $this->render('realisation/index.html.twig', [
-            'page_title' => 'Nos réalisations',
+            'page_title' => 'Nos réalisations - regards singuliers',
+            'meta_description' => 'Nos réalisations - regards singuliers',
             'realisations' => $realisationRepository->findWithImages(),
         ]);
     }
@@ -28,7 +29,8 @@ final class RealisationController extends AbstractController
         RealisationRepository $realisationRepository
     ): Response {
         return $this->render('realisation/show.html.twig', [
-            'page_title' => $realisation->getTitle(),
+            'page_title' => $realisation->getTitle() . ' - regards singuliers',
+            'meta_description' => $realisation->getTitle() . ' - regards singuliers',
             'realisation' => $realisation,
             'other_realisations' => $realisationRepository->findLatest(3),
         ]);
@@ -71,7 +73,8 @@ final class RealisationController extends AbstractController
         }
 
         return $this->render('realisation/create.html.twig', [
-            'page_title' => 'Créer une réalisation',
+            'page_title' => 'Créer une réalisation - regards singuliers',
+            'meta_description' => 'Créer une réalisation - regards singuliers',
             'form' => $form->createView(),
         ]);
     }

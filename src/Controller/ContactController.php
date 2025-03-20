@@ -43,7 +43,8 @@ final class ContactController extends AbstractController
     public function index(): Response
     {
         return $this->render('contact/index.html.twig', [
-            'page_title' => 'regards singuliers - Contact',
+            'page_title' => 'Contact - regards singuliers',
+            'meta_description' => 'Contact - regards singuliers',
             'google_maps_api_key' => $this->getParameter('app.google_maps_api_key'),
         ]);
     }
@@ -170,7 +171,8 @@ final class ContactController extends AbstractController
     public function confirmation(): Response
     {
         return $this->render('contact/confirmation.html.twig', [
-            'page_title' => 'regards singuliers - Confirmation',
+            'page_title' => 'Demande envoyée - regards singuliers',
+            'meta_description' => 'Demande envoyée - regards singuliers',
         ]);
     }
 }

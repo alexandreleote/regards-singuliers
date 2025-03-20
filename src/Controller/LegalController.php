@@ -12,15 +12,17 @@ class LegalController extends AbstractController
     public function cgu(): Response
     {
         return $this->render('legal/cgu.html.twig', [
-            'page_title' => 'Conditions générales d\'utilisation - regards singuliers'
+            'page_title' => 'Conditions générales d\'utilisation - regards singuliers',
+            'meta_description' => 'Conditions générales d\'utilisation - regards singuliers',
         ]);
     }
 
-    #[Route('/mentions-legales/politique-confidentialite', name: 'privacy')]
+    #[Route('/mentions-legales/politique-confidentialite', name: 'confidentialite')]
     public function privacy(): Response
     {
-        return $this->render('legal/privacy.html.twig', [
-            'page_title' => 'Politique de confidentialité - regards singuliers'
+        return $this->render('legal/confidentialite.html.twig', [
+            'page_title' => 'Politique de confidentialité - regards singuliers',
+            'meta_description' => 'Politique de confidentialité - regards singuliers',
         ]);
     }
 
@@ -29,6 +31,7 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/mentions_legales.html.twig', [
             'page_title' => 'Mentions Légales - regards singuliers',
+            'meta_description' => 'Mentions Légales - regards singuliers',
         ]);
     }
 
@@ -37,6 +40,7 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/faq.html.twig', [
             'page_title' => 'FAQ - regards singuliers',
+            'meta_description' => 'FAQ - regards singuliers',
         ]);
     }
 }

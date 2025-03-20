@@ -47,7 +47,8 @@ class CalendlyWebhookController extends AbstractController
     public function confirmation(): Response
     {
         return $this->render('reservation/confirmation.html.twig', [
-            'page_title' => 'Réservation confirmée'
+            'page_title' => 'Réservation confirmée - regards singuliers',
+            'meta_description' => 'Réservation confirmée - regards singuliers', 
         ]);
     }
 } 

@@ -15,7 +15,8 @@ final class ServiceController extends AbstractController
         ServiceRepository $serviceRepository
     ): Response {
         return $this->render('service/index.html.twig', [
-            'page_title' => 'Prestations',
+            'page_title' => 'Prestations - regards singuliers',
+            'meta_description' => 'Prestations - regards singuliers',
             'services' => $serviceRepository->findActive(),
         ]);
     }
@@ -32,7 +33,8 @@ final class ServiceController extends AbstractController
 
         return $this->render('service/show.html.twig', [
             'service' => $service,
-            'page_title' => $service->getTitle(),
+            'page_title' => $service->getTitle() . ' - regards singuliers',
+            'meta_description' => $service->getTitle() . ' - regards singuliers',
             'related_services' => $serviceRepository->findActive(),
         ]);
     }

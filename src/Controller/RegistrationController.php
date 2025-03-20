@@ -26,7 +26,7 @@ class RegistrationController extends AbstractController
     {
     }
 
-    #[Route('/register', name: 'register')]
+    #[Route('/inscription', name: 'register')]
     public function register(
         Request $request, 
         UserAuthenticatorInterface $userAuthenticator, 
@@ -52,7 +52,8 @@ class RegistrationController extends AbstractController
                 $this->addFlash('error', 'Cette adresse email est déjà utilisée. Veuillez vous connecter ou utiliser une autre adresse email.');
                 return $this->render('registration/register.html.twig', [
                     'registrationForm' => $form,
-                    'page_title' => 'Inscription - regards singuliers'
+                    'page_title' => 'Inscription - regards singuliers',
+                    'meta_description' => 'Inscription - regards singuliers',
                 ]);
             }
             
@@ -90,13 +91,15 @@ class RegistrationController extends AbstractController
                     $this->addFlash('error', 'Cette adresse email est déjà utilisée. Veuillez vous connecter ou utiliser une autre adresse email.');
                     return $this->render('registration/register.html.twig', [
                         'registrationForm' => $form,
-                        'page_title' => 'Inscription - regards singuliers'
+                        'page_title' => 'Inscription - regards singuliers',
+                        'meta_description' => 'Inscription - regards singuliers',
                     ]);
                 } catch (\Exception $e) {
                     $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
                     return $this->render('registration/register.html.twig', [
                         'registrationForm' => $form,
-                        'page_title' => 'Inscription - regards singuliers'
+                        'page_title' => 'Inscription - regards singuliers',
+                        'meta_description' => 'Inscription - regards singuliers',
                     ]);
                 }
             } else {
@@ -116,11 +119,12 @@ class RegistrationController extends AbstractController
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form,
-            'page_title' => 'Inscription - regards singuliers'
+            'page_title' => 'Inscription - regards singuliers',
+            'meta_description' => 'Inscription - regards singuliers',
         ]);
     }
 
-    #[Route('/verify/email', name: 'verify_email')]
+    #[Route('/verification/email', name: 'verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');

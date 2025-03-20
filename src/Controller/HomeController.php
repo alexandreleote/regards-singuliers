@@ -16,7 +16,8 @@ final class HomeController extends AbstractController
         ServiceRepository $serviceRepository
     ): Response {
         return $this->render('home/index.html.twig', [
-            'page_title' => 'regards singuliers - Architecte d\'intérieur',
+            'page_title' => 'regards singuliers - Architecture d\'intérieur',
+            'meta_description' => 'regards singuliers - Architecture d\'intérieur',
             'latest_realisations' => $realisationRepository->findLatest(3),
             'services' => $serviceRepository->findActive(),
         ]);
@@ -26,7 +27,8 @@ final class HomeController extends AbstractController
     public function studio(): Response
     {
         return $this->render('studio/index.html.twig', [
-            'page_title' => 'regards singuliers - Le Studio'
+            'page_title' => 'Le Studio - regards singuliers',
+            'meta_description' => 'Le Studio - regards singuliers',
         ]);
     }
 }

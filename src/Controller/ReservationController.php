@@ -43,7 +43,8 @@ class ReservationController extends AbstractController
         }
 
         return $this->render('reservation/date.html.twig', [
-            'page_title' => 'Choisir une date',
+            'page_title' => 'Choisir une date - regards singuliers',
+            'meta_description' => 'Choisir une date - regards singuliers',
             'service' => $service,
             'calendly_url' => $this->getParameter('calendly.url')
         ]);
@@ -123,7 +124,8 @@ class ReservationController extends AbstractController
         $paymentData = $this->reservationService->createPaymentIntent($reservation);
 
         return $this->render('reservation/payment.html.twig', [
-            'page_title' => 'Paiement de l\'acompte',
+            'page_title' => 'Paiement de l\'acompte - regards singuliers',
+            'meta_description' => 'Paiement de l\'acompte - regards singuliers',
             'service' => $service,
             'reservation' => $reservation,
             'deposit_amount' => $paymentData['depositAmount'],
@@ -154,7 +156,8 @@ class ReservationController extends AbstractController
         }
 
         return $this->render('reservation/success.html.twig', [
-            'page_title' => 'Réservation confirmée',
+            'page_title' => 'Réservation confirmée - regards singuliers',
+            'meta_description' => 'Réservation confirmée - regards singuliers',
             'reservation' => $reservation
         ]);
     }
@@ -165,7 +168,8 @@ class ReservationController extends AbstractController
         $reservations = $this->reservationRepository->findByUserWithRelations($this->getUser());
 
         return $this->render('reservation/mes_reservations.html.twig', [
-            'page_title' => 'Mes réservations',
+            'page_title' => 'Mes réservations - regards singuliers',
+            'meta_description' => 'Mes réservations - regards singuliers',
             'reservations' => $reservations,
         ]);
     }
@@ -174,7 +178,8 @@ class ReservationController extends AbstractController
     public function canceled(): Response
     {
         return $this->render('reservation/canceled.html.twig', [
-            'page_title' => 'Paiement annulé',
+            'page_title' => 'Paiement annulé - regards singuliers',
+            'meta_description' => 'Paiement annulé - regards singuliers',
         ]);
     }
 }

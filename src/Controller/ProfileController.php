@@ -23,6 +23,8 @@ class ProfileController extends AbstractController
         return $this->render('profile/index.html.twig', [
             'user' => $user,
             'reservations' => $reservations,
+            'page_title' => 'Mon Profil - regards singuliers',
+            'meta_description' => 'Mon Profil - regards singuliers',
         ]);
     }
 
@@ -31,6 +33,8 @@ class ProfileController extends AbstractController
     {
         return $this->render('profile/edit.html.twig', [
             'user' => $this->getUser(),
+            'page_title' => 'Modifier mon profil - regards singuliers',
+            'meta_description' => 'Modifier mon profil - regards singuliers',
         ]);
     }
 
@@ -43,6 +47,8 @@ class ProfileController extends AbstractController
         
         return $this->render('profile/reservations.html.twig', [
             'reservations' => $reservations,
+            'page_title' => 'Mes réservations - regards singuliers',
+            'meta_description' => 'Mes réservations - regards singuliers',
         ]);
     }
 
@@ -55,6 +61,8 @@ class ProfileController extends AbstractController
         
         return $this->render('profile/discussions.html.twig', [
             'discussions' => $discussions,
+            'page_title' => 'Mes discussions - regards singuliers',
+            'meta_description' => 'Mes discussions - regards singuliers',
         ]);
     }
 } 

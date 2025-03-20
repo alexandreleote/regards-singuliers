@@ -46,7 +46,7 @@
                         <div class="checkbox">
                             {{ form_widget(registrationForm.agreeTerms) }}
                             <label for="{{ registrationForm.agreeTerms.vars.id }}">
-                                J'accepte les <a href="{{ path('cgu') }}" target="_blank">conditions générales d'utilisation</a> et la <a href="{{ path('privacy') }}" target="_blank">politique de confidentialité</a>
+                                J'accepte les <a href="{{ path('cgu') }}" target="_blank">conditions générales d'utilisation</a> et la <a href="{{ path('confidentialite') }}" target="_blank">politique de confidentialité</a>
                             </label>
                         </div>
                         {{ form_errors(registrationForm.agreeTerms) }}
