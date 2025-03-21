@@ -116,7 +116,7 @@ class ReservationController extends AbstractController
             return $this->json([
                 'success' => true,
                 'redirect' => $this->generateUrl('reservation_payment', [
-                    'id' => $service->getId()
+                    'slug' => $service->getSlug()
                 ])
             ]);
 
