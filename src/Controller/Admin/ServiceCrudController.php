@@ -12,9 +12,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ServiceCrudController extends AbstractCrudController
 {
+
+    private SluggerInterface $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Service::class;
@@ -52,11 +61,11 @@ class ServiceCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('edit', 'Modifier le service')
-            ->setPageTitle('new', 'Ajouter un service')
-            ->setPageTitle('index', 'Services')
-            ->setEntityLabelInPlural('Services')
-            ->setEntityLabelInSingular('Service')
+            ->setPageTitle('edit', 'Modifier la prestation')
+            ->setPageTitle('new', 'Ajouter une prestation')
+            ->setPageTitle('index', 'Prestations')
+            ->setEntityLabelInPlural('Prestations')
+            ->setEntityLabelInSingular('Prestation')
             ->setDefaultSort(['name' => 'ASC']);
     }
 
@@ -65,7 +74,7 @@ class ServiceCrudController extends AbstractCrudController
         return $actions
             /* INDEX */
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
-                return $action->setLabel('Ajouter un service');
+                return $action->setLabel('Ajouter une prestation');
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action->setLabel('Supprimer');
@@ -79,7 +88,7 @@ class ServiceCrudController extends AbstractCrudController
                 return $action->setLabel('Sauvegarder et terminer');
             })
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, function (Action $action) {
-                return $action->setLabel('Sauvegarder et ajouter un autre service');
+                return $action->setLabel('Sauvegarder et ajouter une autre prestation');
             })
             /* EDIT */
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
@@ -94,6 +103,8 @@ class ServiceCrudController extends AbstractCrudController
     {
         if ($entityInstance instanceof Service) {
             $description = $entityInstance->getDescription();
+            $slug = strtolower($this->slugger->slug($entityInstance->getTitle()));
+            $entityInstance->setSlug($slug);
             if ($description !== null) {
                 // Nettoyer tout le HTML sauf les balises <strong>
                 $cleanDescription = strip_tags($description, '<strong>');

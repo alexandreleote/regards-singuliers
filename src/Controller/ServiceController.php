@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Service;
+use Doctrine\ORM\Mapping\Entity;
 use App\Repository\ServiceRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 final class ServiceController extends AbstractController
 {
@@ -21,12 +23,16 @@ final class ServiceController extends AbstractController
         ]);
     }
 
-    #[Route('/prestations/{id}', name: 'prestation_show')]
+    #[Route('/prestations/{slug:service}', name: 'prestation_show')]
     public function show(
         Service $service,
         ServiceRepository $serviceRepository
     ): Response {
         // Vérifier que le service est actif
+        if (!$service) {
+            throw $this->createNotFoundException('Cette prestation n\'existe pas.');
+        }
+
         if (!$service->isActive()) {
             throw $this->createNotFoundException('Cette prestation n\'est pas disponible.');
         }
@@ -38,4 +44,5 @@ final class ServiceController extends AbstractController
             'related_services' => $serviceRepository->findActive(),
         ]);
     }
+
 }

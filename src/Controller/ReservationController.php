@@ -35,7 +35,27 @@ class ReservationController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/date/{id}', name: 'reservation_date')]
+    #[Route('/date/{slug:service}', name: 'reservation_date')]
+    public function date(Service $service): Response
+    {
+        
+        if (!$service) {
+            return $this->redirectToRoute('home');
+        }
+
+        if (!$service->isActive()) {
+            throw $this->createNotFoundException('Ce service n\'est pas disponible pour la réservation.');
+        }
+
+        return $this->render('reservation/date.html.twig', [
+            'page_title' => 'Choisir une date - regards singuliers',
+            'meta_description' => 'Choisir une date - regards singuliers',
+            'service' => $service,
+            'calendly_url' => $this->getParameter('calendly.url')
+        ]);
+    }
+
+    /* #[Route('/date/{id}', name: 'reservation_date')]
     public function date(Service $service): Response
     {
         if (!$service->isActive()) {
@@ -48,7 +68,7 @@ class ReservationController extends AbstractController
             'service' => $service,
             'calendly_url' => $this->getParameter('calendly.url')
         ]);
-    }
+    } */
 
     #[Route('/process-date', name: 'reservation_process_date', methods: ['POST'])]
     public function processDate(Request $request): Response
@@ -108,7 +128,7 @@ class ReservationController extends AbstractController
         }
     }
 
-    #[Route('/payment/{id}', name: 'reservation_payment')]
+    #[Route('/payment/{slug:service}', name: 'reservation_payment')]
     public function payment(Service $service): Response
     {
         $reservation = $this->reservationRepository->findOneBy([
@@ -118,7 +138,7 @@ class ReservationController extends AbstractController
         ], ['bookedAt' => 'DESC']);
 
         if (!$reservation) {
-            return $this->redirectToRoute('reservation_date', ['id' => $service->getId()]);
+            return $this->redirectToRoute('reservation_date', ['slug' => $service->getSlug()]);
         }
 
         $paymentData = $this->reservationService->createPaymentIntent($reservation);

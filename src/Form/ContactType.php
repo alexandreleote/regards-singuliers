@@ -3,7 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Contact;
-use Symfony\Component\Form\AbstractType;
+use App\Form\FormExtension\HoneyPotType;
+// use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -12,10 +13,11 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
-class ContactType extends AbstractType
+class ContactType extends HoneyPotType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        parent::buildForm($builder, $options); // On fait appel au builder du parent pour ajouter des champs
         $builder
             ->add('individualOrProfessional', ChoiceType::class, [
                 'choices' => [

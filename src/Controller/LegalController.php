@@ -16,7 +16,7 @@ class LegalController extends AbstractController
             'meta_description' => 'Conditions générales d\'utilisation - regards singuliers',
         ]);
     }
-
+    
     #[Route('/mentions-legales/politique-confidentialite', name: 'confidentialite')]
     public function privacy(): Response
     {

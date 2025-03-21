@@ -27,7 +27,7 @@
                     <div class="service-content">
                         <h3 class="service-title">{{ service.title }}</h3>
                         <p class="service-description">{{ service.description|striptags|length > 150 ? service.description|striptags|slice(0, 150) ~ '...' : service.description|striptags }}</p>
-                        <a href="{{ path('prestation_show', {'id': service.id}) }}" 
+                        <a href="{{ path('prestation_show', {'slug': service.slug}) }}" 
                            class="service-link">
                             En savoir plus
                         </a>
