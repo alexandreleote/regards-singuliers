@@ -2,47 +2,122 @@
 
 {% block title %}Modifier mon profil{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('assets/styles/pages/profile.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold mb-8">Modifier mon profil</h1>
-        
-        <div class="bg-white rounded-lg shadow-md p-6">
-            {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-                <div>
-                    {{ form_label(form.firstname, 'Prénom', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                    {{ form_widget(form.firstname, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
-                    {{ form_errors(form.firstname) }}
+<div class="profile-container">
+    <div class="profile-content">
+        <div class="card animate-fade-in">
+            <div class="profile-header">
+                <h1>Modifier mon profil</h1>
+                <p class="profile-subtitle">Mettez à jour vos informations personnelles</p>
+            </div>
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-error">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {{ form_start(form, {'attr': {'class': 'profile-form'}}) }}
+                <div class="form-grid">
+                    <div class="form-group">
+                        {{ form_label(form.firstName, 'Prénom') }}
+                        {{ form_widget(form.firstName, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.name, 'Nom') }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.email, 'Email') }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.phoneNumber, 'Téléphone') }}
+                        {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.phoneNumber) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.location, 'Localisation') }}
+                        {{ form_widget(form.location, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.location) }}
+                    </div>
                 </div>
 
-                <div>
-                    {{ form_label(form.lastname, 'Nom', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                    {{ form_widget(form.lastname, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
-                    {{ form_errors(form.lastname) }}
+                <div class="form-section">
+                    <h2>Modifier le mot de passe</h2>
+                    <p class="form-section-description">Remplissez les champs ci-dessous uniquement si vous souhaitez modifier votre mot de passe.</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            {{ form_label(form.currentPassword, 'Mot de passe actuel') }}
+                            {{ form_widget(form.currentPassword, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.currentPassword) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.newPassword, 'Nouveau mot de passe') }}
+                            {{ form_widget(form.newPassword, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.newPassword) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.confirmPassword, 'Confirmer le nouveau mot de passe') }}
+                            {{ form_widget(form.confirmPassword, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.confirmPassword) }}
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                    {{ form_widget(form.email, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
-                    {{ form_errors(form.email) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.phone, 'Téléphone', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                    {{ form_widget(form.phone, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
-                    {{ form_errors(form.phone) }}
-                </div>
-
-                <div class="flex justify-end space-x-4">
-                    <a href="{{ path('app_profile') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
-                        Annuler
+                <div class="form-actions">
+                    <a href="{{ path('app_profile') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Retour
                     </a>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
-                        Enregistrer
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Enregistrer les modifications
                     </button>
                 </div>
             {{ form_end(form) }}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation au scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        });
+
+        document.querySelectorAll('.card').forEach((el) => {
+            observer.observe(el);
+        });
+    });
+</script>
 {% endblock %} 

@@ -2,111 +2,118 @@
 
 {% block title %}Mon Profil{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('assets/styles/pages/profile.css') }}">
+{% endblock %}
+
 {% block body %}
-{# Bannière décorative #}
-<div class="relative w-full h-48 overflow-hidden bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400">
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/30 backdrop-blur-sm"></div>
-</div>
-
-<div class="container mx-auto px-4 -mt-24 relative z-10">
-    <div class="max-w-6xl mx-auto">
-        {# Section profil #}
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 backdrop-blur-xl bg-white/90">
-            <div class="flex flex-col md:flex-row md:items-center md:space-x-8 mb-12">
+<div class="profile-container">
+    <div class="profile-content">
+        {# En-tête du profil #}
+        <div class="card animate-fade-in">
+            <div class="profile-header">
                 {# Avatar avec initiales #}
-                <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300 mb-6 md:mb-0">
-                    <span class="text-3xl font-semibold text-white">{{ user.firstName|first|upper }}{{ user.name|first|upper }}</span>
+                <div class="profile-avatar">
+                    {{ user.firstName|first|upper }}{{ user.name|first|upper }}
                 </div>
-                <div class="flex-1">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ user.getFullName() }}</h1>
-                    <p class="text-gray-600 mb-4">{{ user.email }}</p>
+                <div class="profile-info">
+                    <h1>{{ user.firstName }} {{ user.name }}</h1>
+                    <div class="profile-badges">
+                        <span class="badge badge-success">
+                            <i class="fas fa-check-circle"></i>
+                            Compte vérifié
+                        </span>
+                        <span class="badge badge-info">
+                            <i class="far fa-calendar"></i>
+                            Membre depuis {{ user.createdAt|date('d/m/Y') }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            
-            {# Navigation du profil #}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <a href="{{ path('app_profile_edit') }}" 
-                   class="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 p-6 hover:border-blue-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-50 to-blue-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="relative z-10">
-                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-user-edit text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Informations</h3>
-                        <p class="text-gray-600 text-sm">Gérez vos informations personnelles</p>
-                    </div>
-                </a>
+        </div>
 
-                <a href="{{ path('app_profile_reservations') }}" 
-                   class="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 p-6 hover:border-purple-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="absolute inset-0 bg-gradient-to-r from-purple-50 to-purple-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="relative z-10">
-                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-calendar-alt text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Réservations</h3>
-                        <p class="text-gray-600 text-sm">Consultez vos rendez-vous</p>
-                    </div>
-                </a>
-
-                <a href="{{ path('app_profile_discussions') }}" 
-                   class="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 p-6 hover:border-indigo-200 transition-all duration-300 hover:shadow-lg">
-                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-50 to-indigo-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="relative z-10">
-                        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-comments text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Discussions</h3>
-                        <p class="text-gray-600 text-sm">Échangez avec l'architecte</p>
-                    </div>
+        {# Sections du profil #}
+        <div class="profile-grid">
+            {# Section Informations #}
+            <div class="section animate-fade-in">
+                <div class="section-header">
+                    <h2 class="section-title">Informations</h2>
+                    <i class="fas fa-user-circle section-icon"></i>
+                </div>
+                <p class="section-content">Gérez vos informations personnelles</p>
+                <a href="{{ path('app_profile_edit') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    Modifier mes informations
                 </a>
             </div>
 
-            {% if reservations|length > 0 %}
-            {# Section réservations du jour #}
-            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center mr-4">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    Réservations du jour
-                </h2>
-                <div class="grid gap-4 md:grid-cols-2">
+            {# Section Réservations #}
+            <div class="section animate-fade-in">
+                <div class="section-header">
+                    <h2 class="section-title">Réservations</h2>
+                    <i class="fas fa-calendar-alt section-icon"></i>
+                </div>
+                <p class="section-content">Consultez vos rendez-vous</p>
+                <a href="{{ path('app_profile_reservations') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    Voir mes réservations
+                </a>
+                
+                {% if reservations|length > 0 %}
+                <div class="reservation-list">
+                    <h3>Prochains rendez-vous</h3>
                     {% for reservation in reservations %}
-                        {% if reservation.bookedAt|date('Y-m-d') == 'now'|date('Y-m-d') %}
-                            <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                                <div class="flex items-start justify-between">
-                                    <div>
-                                        <h3 class="font-semibold text-gray-800 mb-2">{{ reservation.service.name }}</h3>
-                                        <p class="text-blue-500 text-sm flex items-center">
-                                            <i class="fas fa-clock mr-2"></i>
-                                            {{ reservation.bookedAt|date('H:i') }}
-                                        </p>
-                                    </div>
-                                    <span class="px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                                        Aujourd'hui
-                                    </span>
+                        {% if reservation.bookedAt|date('Y-m-d') >= 'now'|date('Y-m-d') %}
+                            <div class="reservation-item">
+                                <div class="reservation-info">
+                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
                                 </div>
+                                <span class="reservation-status status-upcoming">
+                                    <i class="fas fa-calendar-check"></i>
+                                    À venir
+                                </span>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </div>
+                {% endif %}
             </div>
-            {% endif %}
+
+            {# Section Discussions #}
+            <div class="section animate-fade-in">
+                <div class="section-header">
+                    <h2 class="section-title">Discussions</h2>
+                    <i class="fas fa-comments section-icon"></i>
+                </div>
+                <p class="section-content">Échangez avec l'architecte</p>
+                <a href="{{ path('app_profile_discussions') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    Voir mes discussions
+                </a>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block stylesheets %}
+{% block javascripts %}
 {{ parent() }}
-<style>
-    .from-pink-300 {
-        --tw-gradient-from: #f9a8d4;
-        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-    }
-    .to-indigo-400 {
-        --tw-gradient-to: #818cf8;
-    }
-</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation au scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        });
+
+        document.querySelectorAll('.section').forEach((el) => {
+            observer.observe(el);
+        });
+    });
+</script>
 {% endblock %} 

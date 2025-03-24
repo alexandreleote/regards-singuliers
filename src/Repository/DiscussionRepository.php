@@ -86,9 +86,12 @@ class DiscussionRepository extends ServiceEntityRepository
     public function findByUser(User $user): array
     {
         return $this->createQueryBuilder('d')
-            ->andWhere('d.user = :user')
+            ->leftJoin('d.reservation', 'r')
+            ->leftJoin('d.messages', 'm')
+            ->addSelect('r', 'm')
+            ->andWhere('r.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('d.lastMessageAt', 'DESC')
+            ->orderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }

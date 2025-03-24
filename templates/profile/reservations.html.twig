@@ -2,55 +2,125 @@
 
 {% block title %}Mes Réservations{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-8">Mes Réservations</h1>
-        
-        <div class="space-y-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold mb-4">Réservations actuelles</h2>
-                <div class="space-y-4">
-                    {% for reservation in reservations %}
-                        {% if reservation.bookedAt|date('Y-m-d') == 'now'|date('Y-m-d') %}
-                            <div class="border-l-4 border-blue-500 pl-4 py-2">
-                                <p class="font-medium">{{ reservation.service.name }}</p>
-                                <p class="text-gray-600">{{ reservation.bookedAt|date('H:i') }}</p>
-                                <p class="text-sm text-blue-500">Rappel : Cette réservation est aujourd'hui</p>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+<div class="profile-container">
+    <div class="profile-content">
+        <div class="card animate-fade-in">
+            <div class="profile-header">
+                <h1>Mes Réservations</h1>
+                <p class="profile-subtitle">Consultez et gérez vos rendez-vous</p>
             </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold mb-4">Réservations à venir</h2>
-                <div class="space-y-4">
-                    {% for reservation in reservations %}
-                        {% if reservation.bookedAt|date('Y-m-d') > 'now'|date('Y-m-d') %}
-                            <div class="border-l-4 border-green-500 pl-4 py-2">
-                                <p class="font-medium">{{ reservation.service.name }}</p>
-                                <p class="text-gray-600">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
+            {# Réservations actuelles #}
+            <div class="reservation-section">
+                <h2 class="section-title">
+                    <i class="fas fa-clock"></i>
+                    Réservations actuelles
+                </h2>
+                {% if currentReservations|length > 0 %}
+                    <div class="reservation-list">
+                        {% for reservation in currentReservations %}
+                            <div class="reservation-item">
+                                <div class="reservation-info">
+                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
+                                </div>
+                                <span class="reservation-status status-current">
+                                    <i class="fas fa-check-circle"></i>
+                                    En cours
+                                </span>
                             </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-state">Aucune réservation en cours</p>
+                {% endif %}
             </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold mb-4">Réservations passées</h2>
-                <div class="space-y-4">
-                    {% for reservation in reservations %}
-                        {% if reservation.bookedAt|date('Y-m-d') < 'now'|date('Y-m-d') %}
-                            <div class="border-l-4 border-gray-500 pl-4 py-2">
-                                <p class="font-medium">{{ reservation.service.name }}</p>
-                                <p class="text-gray-600">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
+            {# Réservations à venir #}
+            <div class="reservation-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Réservations à venir
+                </h2>
+                {% if upcomingReservations|length > 0 %}
+                    <div class="reservation-list">
+                        {% for reservation in upcomingReservations %}
+                            <div class="reservation-item">
+                                <div class="reservation-info">
+                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
+                                </div>
+                                <span class="reservation-status status-upcoming">
+                                    <i class="fas fa-calendar-check"></i>
+                                    À venir
+                                </span>
                             </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-state">Aucune réservation à venir</p>
+                {% endif %}
+            </div>
+
+            {# Réservations passées #}
+            <div class="reservation-section">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Réservations passées
+                </h2>
+                {% if pastReservations|length > 0 %}
+                    <div class="reservation-list">
+                        {% for reservation in pastReservations %}
+                            <div class="reservation-item">
+                                <div class="reservation-info">
+                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
+                                </div>
+                                <span class="reservation-status status-past">
+                                    <i class="fas fa-clock"></i>
+                                    Passée
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-state">Aucune réservation passée</p>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ path('app_profile') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour au profil
+                </a>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation au scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        });
+
+        document.querySelectorAll('.card, .reservation-section').forEach((el) => {
+            observer.observe(el);
+        });
+    });
+</script>
 {% endblock %} 
