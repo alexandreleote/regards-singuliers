@@ -19,6 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .logo {
@@ -97,6 +98,7 @@ nav {
   cursor: pointer;
   padding: var(--spacing-xs);
   z-index: 1001;
+  margin-left: auto;
 }
 
 .burger-menu {
@@ -135,6 +137,23 @@ nav {
 
 .nav-item-mobile {
   margin-bottom: var(--spacing-md);
+}
+
+/* Liens de navigation principaux en majuscules */
+.nav-item-mobile a[href^="/studio"],
+.nav-item-mobile a[href^="/realisations"],
+.nav-item-mobile a[href^="/prestations"],
+.nav-item-mobile a[href^="#"],
+.nav-item-mobile a[href^="/contact"] {
+  text-transform: uppercase;
+}
+
+/* Liens d'authentification en minuscules */
+.nav-item-mobile a[href^="/login"],
+.nav-item-mobile a[href^="/profile"],
+.nav-item-mobile a[href^="/admin"],
+.nav-item-mobile a[href^="/logout"] {
+  text-transform: none;
 }
 
 .nav-link-mobile {
@@ -181,6 +200,10 @@ nav {
   .nav-mobile {
     display: block;
   }
+
+  nav {
+    display: none;
+  }
 }
 
 /* Mobile */
@@ -195,6 +218,10 @@ nav {
   
   .logo span {
     font-size: var(--font-size-xs);
+  }
+
+  .burger-menu-btn {
+    margin-left: auto;
   }
 }
 
