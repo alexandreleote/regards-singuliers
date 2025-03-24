@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Meow+Script&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 /* Reset CSS */
 *, *::before, *::after {
     margin: 0;
@@ -11,7 +13,7 @@ html {
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
@@ -86,7 +88,7 @@ body {
 }
 
 .auth-form .form-title h1 {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Meow Script', Arial, sans-serif;
     font-size: 2.5rem;
     color: black;
     margin: 0;
@@ -105,7 +107,7 @@ body {
 }
 
 .auth-form .form-title span {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 0.875rem;
     color: #666;
     display: block;
@@ -115,7 +117,7 @@ body {
 }
 
 .auth-form .form-title p {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 1rem;
     color: #333;
     margin-top: 1.5rem;
@@ -130,7 +132,7 @@ body {
     display: block;
     margin-bottom: 0.75rem;
     color: black;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 0.9375rem;
     font-weight: 500;
 }
@@ -139,7 +141,7 @@ body {
     display: block;
     width: 100%;
     padding: 0.875rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 0.9375rem;
     color: #333;
     background-color: white;
@@ -178,7 +180,7 @@ body {
 
 .auth-form .form-group .checkbox label {
     margin: 0;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 0.875rem;
     color: #333;
     cursor: pointer;
@@ -201,7 +203,7 @@ body {
     display: inline-block;
     width: 100%;
     padding: 1rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 0.9375rem;
     font-weight: 500;
     border: none;
@@ -223,7 +225,7 @@ body {
 }
 
 .auth-form .form-footer a {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', Arial, sans-serif;
     font-size: 0.875rem;
     color: #333;
     text-decoration: none;
