@@ -104,23 +104,3 @@
     </div>
 </div>
 {% endblock %}
-
-{% block javascripts %}
-{{ parent() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Animation au scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in');
-                }
-            });
-        });
-
-        document.querySelectorAll('.card, .reservation-section').forEach((el) => {
-            observer.observe(el);
-        });
-    });
-</script>
-{% endblock %} 

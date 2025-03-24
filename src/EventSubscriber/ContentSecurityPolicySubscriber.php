@@ -11,7 +11,7 @@ class ContentSecurityPolicySubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::RESPONSE => 'onKernelResponse',
+            KernelEvents::RESPONSE => ['onKernelResponse', -10],
         ];
     }
 
@@ -20,17 +20,20 @@ class ContentSecurityPolicySubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
         
         $csp = [
-            "default-src *",
-            "script-src * 'unsafe-inline' 'unsafe-eval'",
-            "style-src * 'unsafe-inline'",
-            "img-src * data: blob:",
-            "font-src * data:",
-            "connect-src *",
-            "frame-src *",
-            "media-src *",
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://calendly.com",
+            "style-src 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+            "img-src 'self' data: blob: https://*.calendly.com",
+            "font-src 'self' data: https://assets.calendly.com https://fonts.gstatic.com https://cdnjs.cloudflare.com",
+            "connect-src 'self' https://*.calendly.com https://calendly.com",
+            "frame-src 'self' https://*.calendly.com https://calendly.com",
+            "media-src 'self'",
             "frame-ancestors 'self'"
         ];
 
+        $response->headers->remove('Content-Security-Policy');
+        $response->headers->remove('Content-Security-Policy-Report-Only');
+        
         $response->headers->set('Content-Security-Policy', implode('; ', $csp));
     }
 } 

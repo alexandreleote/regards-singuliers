@@ -21,6 +21,9 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('auth', './assets/auth.js')
+    .addEntry('honeypot', './assets/honeypot.js')
+    .addEntry('reservation', './assets/reservation/date.js')
 
     // enables the Symfony UX Stimulus bridge
     .enableStimulusBridge('./assets/controllers.json')

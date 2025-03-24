@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('reservation/date') }}
+    {{ encore_entry_link_tags('reservation') }}
 {% endblock %}
 
 {% block body %}
@@ -25,11 +25,8 @@
                 </div>
             </div>
 
-            <div class="calendly-container">
-                <!-- Calendly inline widget begin -->
-                <div class="calendly-inline-widget" data-url="{{ calendly_url }}" style="min-width:320px;height:700px;"></div>
-                <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-                <!-- Calendly inline widget end -->
+            {# Conteneur unique pour Calendly #}
+            <div id="calendly-container" class="calendly-container" data-url="{{ calendly_url }}">
             </div>
         </div>
     </div>
@@ -39,5 +36,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('reservation/date') }}
-{% endblock %} 
+    {{ encore_entry_script_tags('reservation') }}
+{% endblock %}
