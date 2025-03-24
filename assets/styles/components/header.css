@@ -143,7 +143,6 @@ nav {
 .nav-item-mobile a[href^="/studio"],
 .nav-item-mobile a[href^="/realisations"],
 .nav-item-mobile a[href^="/prestations"],
-.nav-item-mobile a[href^="#"],
 .nav-item-mobile a[href^="/contact"] {
   text-transform: uppercase;
 }
@@ -294,6 +293,10 @@ nav {
     display: none;
   }
   
+  .header-login {
+    display: block;
+  }
+
   .user-menu-btn {
     display: block;
   }

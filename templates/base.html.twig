@@ -72,14 +72,15 @@
                     </ul>
                 </div>
                 
-                <div class="header-auth">
                     {% if app.user %}
+                    <div class="header-auth">
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('admin') }}" class="nav-link" target="_blank">Admin</a>
                         {% endif %}
                         <a href="{{ path('app_profile') }}" class="nav-link">Mon Profil</a>
                         <a href="{{ path('logout') }}" class="nav-link">Déconnexion</a>
                     {% else %}
+                    <div class="header-login">
                         <a href="{{ path('login') }}" class="nav-link">Connexion</a>
                     {% endif %}
                 </div>
