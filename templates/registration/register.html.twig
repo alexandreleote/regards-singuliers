@@ -6,7 +6,14 @@
     <div class="auth-container">
         <div class="register-layout">
             <div class="form-side">
-                {{ form_start(registrationForm, {'attr': {'class': 'auth-form'}}) }}
+                {{ form_start(registrationForm, {
+                    'attr': {
+                        'class': 'auth-form',
+                        'data-controller': 'honeypot',
+                        'data-honeypot-hidden-class': 'hidden',
+                        'data-action': 'submit->honeypot#submit'
+                    }
+                }) }}
                     <a href="{{ path('home') }}" class="form-title">
                         <h1>regards singuliers</h1>
                         <span>Architecture d'intérieur</span>
@@ -17,6 +24,14 @@
                             {{ app.flashes('verify_email_error')|first }}
                         </div>
                     {% endif %}
+
+                    <!-- Champs honeypot -->
+                    <div data-honeypot-target="mobilePhone" style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                        <input type="text" name="mobilePhone" value="" aria-hidden="true" tabindex="-1">
+                    </div>
+                    <div data-honeypot-target="workEmail" style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                        <input type="text" name="workEmail" value="" aria-hidden="true" tabindex="-1">
+                    </div>
 
                     <div class="form-group">
                         {{ form_label(registrationForm.email) }}

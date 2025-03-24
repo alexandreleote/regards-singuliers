@@ -8,21 +8,27 @@ use App\EventSubscriber\HoneyPotSubscriber;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\BotIpRepository;
 
 class HoneyPotType extends AbstractType
 {
     private LoggerInterface $honeyPotlogger;
-
     private RequestStack $requestStack;
+    private EntityManagerInterface $entityManager;
+    private BotIpRepository $botIpRepository;
 
     public function __construct(
         LoggerInterface $honeyPotLogger,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        EntityManagerInterface $entityManager,
+        BotIpRepository $botIpRepository
     )
     {
-     
         $this->honeyPotlogger = $honeyPotLogger;
         $this->requestStack = $requestStack;
+        $this->entityManager = $entityManager;
+        $this->botIpRepository = $botIpRepository;
     }
 
     // On définit nos constantes servant à débusquer les bots
@@ -34,7 +40,12 @@ class HoneyPotType extends AbstractType
     {
         $builder->add(self::SPOTTING_HONEY_BOT, TextType::class, $this->setHoneyPotFieldConfiguration())
                 ->add(self::SPOTTING_HONEY_BOT_DOUBLE_CHECK, TextType::class, $this->setHoneyPotFieldConfiguration())
-                ->addEventSubscriber(new HoneyPotSubscriber($this->honeyPotlogger, $this->requestStack));
+                ->addEventSubscriber(new HoneyPotSubscriber(
+                    $this->honeyPotlogger,
+                    $this->requestStack,
+                    $this->entityManager,
+                    $this->botIpRepository
+                ));
     }
 
     // Tableau d'options passés sur les deux champs instanciés ci-dessus
@@ -42,13 +53,15 @@ class HoneyPotType extends AbstractType
     {
         return [
             'attr'     => [
-                'class'        => 'form-sub',
+                'class'        => 'honeypot-field',
                 'autocomplete' => 'off',
-                'tabindex'     => '-1' // On désactive la tabulation afin que l'utilisateur qui n'est pas un bot ne tombe pas sur les champs cachés
+                'tabindex'     => '-1',
+                'style'        => 'opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1; pointer-events: none;',
+                'aria-hidden' => 'true'
             ],
-            'data'     => 'fake data :(', // A supprimer après les tests !
             'mapped'   => false,
-            'required' => false    
+            'required' => false,
+            'label' => false
         ];
     }
 

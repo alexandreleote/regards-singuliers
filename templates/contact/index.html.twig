@@ -38,10 +38,21 @@
 
                     <!-- Colonne de droite (2/3) -->
                     <form {{ stimulus_controller('contact') }} 
+                          {{ stimulus_controller('honeypot') }}
                           data-contact-hidden-class="hidden"
-                          data-action="submit->contact#submit"
+                          data-honeypot-hidden-class="hidden"
+                          data-action="submit->contact#submit submit->honeypot#submit"
                           class="contact-form">
                         <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
+                        
+                        <!-- Champs honeypot -->
+                        <div {{ stimulus_target('honeypot', 'mobilePhone') }} style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                            <input type="text" name="mobilePhone" value="" aria-hidden="true" tabindex="-1">
+                        </div>
+                        <div {{ stimulus_target('honeypot', 'workEmail') }} style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                            <input type="text" name="workEmail" value="" aria-hidden="true" tabindex="-1">
+                        </div>
+                        
                         <div class="form-type">
                             <div class="switch-container">
                                 <input type="radio" id="type-particulier" name="type" value="particulier" 

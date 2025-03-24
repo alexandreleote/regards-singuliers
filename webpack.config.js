@@ -22,6 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('auth', './assets/js/auth.js')
+    .addEntry('honeypot', './assets/honeypot.js')
     .addEntry('reservation/date', './assets/js/reservation/date.js')
     .addEntry('reservation/payment', './assets/js/reservation/payment.js')
     .addEntry('reservation/success', './assets/js/reservation/success.js')
