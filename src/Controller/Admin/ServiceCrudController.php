@@ -106,10 +106,9 @@ class ServiceCrudController extends AbstractCrudController
             $slug = strtolower($this->slugger->slug($entityInstance->getTitle()));
             $entityInstance->setSlug($slug);
             if ($description !== null) {
-                // Nettoyer tout le HTML sauf les balises <strong>
-                $cleanDescription = strip_tags($description, '<strong>');
-                // Supprimer les balises <strong> vides
-                $cleanDescription = preg_replace('/<strong>\s*<\/strong>/', '', $cleanDescription);
+                // Autoriser les balises HTML pour le formatage riche
+                $allowedTags = '<strong><em><i><b><ul><ol><li><p><br><span>';
+                $cleanDescription = strip_tags($description, $allowedTags);
                 $entityInstance->setDescription($cleanDescription);
             }
         }
@@ -122,10 +121,9 @@ class ServiceCrudController extends AbstractCrudController
         if ($entityInstance instanceof Service) {
             $description = $entityInstance->getDescription();
             if ($description !== null) {
-                // Nettoyer tout le HTML sauf les balises <strong>
-                $cleanDescription = strip_tags($description, '<strong>');
-                // Supprimer les balises <strong> vides
-                $cleanDescription = preg_replace('/<strong>\s*<\/strong>/', '', $cleanDescription);
+                // Autoriser les balises HTML pour le formatage riche
+                $allowedTags = '<strong><em><i><b><ul><ol><li><p><br><span>';
+                $cleanDescription = strip_tags($description, $allowedTags);
                 $entityInstance->setDescription($cleanDescription);
             }
         }

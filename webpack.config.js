@@ -1,7 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 
-// Manually configure the runtime environment if not already configured yet.
-// This ".env" file must not be committed to version control.
+// Manually configure the runtime environment if not already set yet.
+// It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
@@ -21,12 +21,6 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('auth', './assets/js/auth.js')
-    .addEntry('honeypot', './assets/honeypot.js')
-    .addEntry('reservation/date', './assets/js/reservation/date.js')
-    .addEntry('reservation/payment', './assets/js/reservation/payment.js')
-    .addEntry('reservation/success', './assets/js/reservation/success.js')
-    .addEntry('reservation/canceled', './assets/js/reservation/canceled.js')
 
     // enables the Symfony UX Stimulus bridge
     .enableStimulusBridge('./assets/controllers.json')
@@ -50,10 +44,16 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
 
-    // enable PostCSS loader (enabled by default in Encore)
-    .enablePostCssLoader()
+    // configure Babel
+    .configureBabel((config) => {
+        config.plugins.push('@babel/plugin-proposal-class-properties');
+    })
+    .configureBabelPresetEnv((config) => {
+        config.useBuiltIns = 'usage';
+        config.corejs = '3.23';
+    })
 
-    // enable Sass/SCSS support
+    // enables Sass/SCSS support
     .enableSassLoader()
 
     // uncomment if you use TypeScript
@@ -70,4 +70,4 @@ Encore
     //.autoProvidejQuery()
 ;
 
-module.exports = Encore.getWebpackConfig();
+module.exports = Encore.getWebpackConfig(); 

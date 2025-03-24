@@ -17,6 +17,7 @@
 @import './pages/realisations.css';
 @import './pages/faq.css';
 @import './pages/legal.css';
+@import './pages/profile.css';
 
 /* Admin */
 @import './admin/admin.css';

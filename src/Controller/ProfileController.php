@@ -104,10 +104,28 @@ class ProfileController extends AbstractController
     {
         $user = $this->getUser();
         
-        $reservations = $reservationRepository->findByUser($user);
+        $allReservations = $reservationRepository->findByUser($user);
+        
+        $currentReservations = [];
+        $upcomingReservations = [];
+        $pastReservations = [];
+        
+        $now = new \DateTime();
+        
+        foreach ($allReservations as $reservation) {
+            if ($reservation->getBookedAt() < $now) {
+                $pastReservations[] = $reservation;
+            } elseif ($reservation->getBookedAt() > $now) {
+                $upcomingReservations[] = $reservation;
+            } else {
+                $currentReservations[] = $reservation;
+            }
+        }
         
         return $this->render('profile/reservations.html.twig', [
-            'reservations' => $reservations,
+            'currentReservations' => $currentReservations,
+            'upcomingReservations' => $upcomingReservations,
+            'pastReservations' => $pastReservations,
             'page_title' => 'Mes réservations - regards singuliers',
             'meta_description' => 'Mes réservations - regards singuliers',
         ]);
