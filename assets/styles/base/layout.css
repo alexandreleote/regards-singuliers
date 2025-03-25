@@ -5,6 +5,12 @@
   box-sizing: border-box;
 }
 
+/* Sélection */
+*::selection {
+  background-color: var(--color-primary);
+  color: var(--color-border);
+}
+ 
 html {
   font-size: 16px;
   height: 100%;
@@ -144,6 +150,8 @@ main {
   color: var(--color-primary);
   cursor: pointer;
   transition: all var(--transition-fast);
+  align-items: center;
+  justify-content: center;
 }
 
 .btn:hover {

@@ -37,7 +37,7 @@
                     <i class="fas fa-user-circle section-icon"></i>
                 </div>
                 <p class="section-content">Gérez vos informations personnelles</p>
-                <a href="{{ path('app_profile_edit') }}" class="btn btn-secondary">
+                <a href="{{ path('app_profile_edit') }}" class="btn btn-primary">
                     Modifier mes informations
                 </a>
             </div>
@@ -49,11 +49,11 @@
                     <i class="fas fa-calendar-alt section-icon"></i>
                 </div>
                 <p class="section-content">Consultez vos rendez-vous</p>
-                <a href="{{ path('app_profile_reservations') }}" class="btn btn-secondary">
+                <a href="{{ path('app_profile_reservations') }}" class="btn btn-primary">
                     Voir mes réservations
                 </a>
                 
-                {% if reservations|length > 0 %}
+                {# {% if reservations|length > 0 %}
                 <div class="reservation-list">
                     <h3>Prochains rendez-vous</h3>
                     {% for reservation in reservations %}
@@ -71,7 +71,7 @@
                         {% endif %}
                     {% endfor %}
                 </div>
-                {% endif %}
+                {% endif %} #}
             </div>
 
             {# Section Discussions #}
@@ -81,7 +81,7 @@
                     <i class="fas fa-comments section-icon"></i>
                 </div>
                 <p class="section-content">Échangez avec l'architecte</p>
-                <a href="{{ path('app_profile_discussions') }}" class="btn btn-secondary">
+                <a href="{{ path('app_profile_discussions') }}" class="btn btn-primary">
                     Voir mes discussions
                 </a>
             </div>
