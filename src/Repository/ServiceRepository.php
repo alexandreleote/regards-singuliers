@@ -24,7 +24,7 @@ class ServiceRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.isActive = :active')
             ->setParameter('active', true)
-            ->orderBy('s.name', 'ASC')
+            ->orderBy('s.reference', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -35,9 +35,9 @@ class ServiceRepository extends ServiceEntityRepository
     public function searchByKeyword(string $keyword): array
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.name LIKE :keyword OR s.description LIKE :keyword')
+            ->andWhere('s.reference LIKE :keyword OR s.description LIKE :keyword')
             ->setParameter('keyword', '%' . $keyword . '%')
-            ->orderBy('s.name', 'ASC')
+            ->orderBy('s.reference', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -64,7 +64,7 @@ class ServiceRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.reservations', 'r')
             ->addSelect('r')
-            ->orderBy('s.name', 'ASC')
+            ->orderBy('s.reference', 'ASC')
             ->getQuery()
             ->getResult();
     }

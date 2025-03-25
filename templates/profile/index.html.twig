@@ -60,7 +60,7 @@
                         {% if reservation.bookedAt|date('Y-m-d') >= 'now'|date('Y-m-d') %}
                             <div class="reservation-item">
                                 <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
                                     <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
                                 </div>
                                 <span class="reservation-status status-upcoming">

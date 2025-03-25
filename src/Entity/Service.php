@@ -23,7 +23,7 @@ class Service
     private bool $isActive = true;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $reference = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -72,14 +72,14 @@ class Service
         return $this;
     }
 
-    public function getName(): ?string
+    public function getReference(): ?string
     {
-        return $this->name;
+        return $this->reference;
     }
 
-    public function setName(string $name): static
+    public function setReference(string $reference): static
     {
-        $this->name = $name;
+        $this->reference = $reference;
         return $this;
     }
 

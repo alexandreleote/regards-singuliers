@@ -25,7 +25,9 @@ class RegistrationFormType extends HoneyPotType
         $builder
             ->add('email', EmailType::class, [
                 'attr' => [
-                    'class' => 'form-control'
+                    'class' => 'form-control',
+                    'aria-label' => 'Votre adresse email',
+                    'placeholder' => 'Votre adresse@email.fr'
                 ],
                 'constraints' => [
                     new NotBlank([
@@ -39,6 +41,9 @@ class RegistrationFormType extends HoneyPotType
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
+                'attr' => [
+                    'aria-label' => 'Accepter les termes d\'utilisation'
+                ],
                 'label' => 'Acceptez les termes',
                 'constraints' => [
                     new IsTrue([
@@ -51,7 +56,8 @@ class RegistrationFormType extends HoneyPotType
                 'first_options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
-                        'class' => 'form-control'
+                        'class' => 'form-control',
+                        'aria-label' => 'Votre mot de passe'
                     ],
                     'constraints' => [
                         new NotBlank([
@@ -77,7 +83,8 @@ class RegistrationFormType extends HoneyPotType
                 'second_options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
-                        'class' => 'form-control'
+                        'class' => 'form-control',
+                        'aria-label' => 'Confirmer votre mot de passe'
                     ],
                     'label' => 'Confirmer le mot de passe',
                 ],

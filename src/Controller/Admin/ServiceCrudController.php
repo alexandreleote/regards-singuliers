@@ -32,11 +32,11 @@ class ServiceCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('name', 'Nom du service')
+            TextField::new('reference', 'Référence de la prestation')
                 ->setRequired(true),
-            TextField::new('title', 'Titre')
+            TextField::new('title', 'Intitulé de la prestation')
                 ->setRequired(true),
-            TextEditorField::new('description', 'Description')
+            TextEditorField::new('description', 'Description de la prestation')
                 ->setRequired(true)
                 ->setFormTypeOption('attr', [
                     'class' => 'text-editor',

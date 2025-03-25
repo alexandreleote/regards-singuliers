@@ -16,18 +16,19 @@ class ServiceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'Nom du service',
+            ->add('reference', TextType::class, [
+                'label' => 'Intitulé de la prestation - Référence Architecte',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Entrez le nom du service'
+                    'aria-label' => 'Intitulé de la prestation',
+                    'placeholder' => 'Entrez l\'intitulé de la prestation'
                 ]
             ])
             ->add('title', TextType::class, [
-                'label' => 'Titre',
+                'label' => 'Intitulé de la prestation',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Entrez le titre du service'
+                    'placeholder' => 'Entrez l\'intitulé de la prestation'
                 ]
             ])
             ->add('description', TextareaType::class, [

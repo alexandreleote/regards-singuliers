@@ -19,14 +19,23 @@ class RealisationType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'class' => 'form-control',
+                    'aria-label' => 'Titre du projet réalisé'
+                ],
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'class' => 'form-control',
+                    'aria-label' => 'Description du projet réalisé'
+                ],
             ])
             ->add('mainImage', FileType::class, [
                 'label' => 'Image principale',
+                'attr' => [
+                    'aria-label' => 'Image principale du projet'
+                ],
                 'mapped' => false,
                 'required' => true,
                 'constraints' => [
@@ -43,6 +52,9 @@ class RealisationType extends AbstractType
             ])
             ->add('imageFiles', FileType::class, [
                 'label' => 'Images additionnelles',
+                'attr' => [
+                    'aria-label' => 'Images supplémentaires du projet sous forme de galerie d\'images.'
+                ],
                 'mapped' => false,
                 'required' => false,
                 'multiple' => true,

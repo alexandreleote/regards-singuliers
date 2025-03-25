@@ -27,7 +27,7 @@
                         {% for reservation in currentReservations %}
                             <div class="reservation-item">
                                 <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
                                     <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
                                 </div>
                                 <span class="reservation-status status-current">
@@ -53,7 +53,7 @@
                         {% for reservation in upcomingReservations %}
                             <div class="reservation-item">
                                 <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
                                     <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
                                 </div>
                                 <span class="reservation-status status-upcoming">
@@ -79,7 +79,7 @@
                         {% for reservation in pastReservations %}
                             <div class="reservation-item">
                                 <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.name }}</p>
+                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
                                     <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
                                 </div>
                                 <span class="reservation-status status-past">

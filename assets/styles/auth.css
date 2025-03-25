@@ -84,6 +84,7 @@ body {
 .auth-form .form-title {
     text-align: left;
     margin-bottom: 6rem;
+    text-transform: lowercase;
     text-decoration: none;
 }
 
@@ -93,7 +94,6 @@ body {
     color: black;
     margin: 0;
     font-weight: 300;
-    text-transform: lowercase;
     line-height: 0.8;
     letter-spacing: -0.5px;
 }
