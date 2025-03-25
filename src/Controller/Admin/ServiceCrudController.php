@@ -66,7 +66,7 @@ class ServiceCrudController extends AbstractCrudController
             ->setPageTitle('index', 'Prestations')
             ->setEntityLabelInPlural('Prestations')
             ->setEntityLabelInSingular('Prestation')
-            ->setDefaultSort(['name' => 'ASC']);
+            ->setDefaultSort(['reference' => 'ASC']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -90,6 +90,7 @@ class ServiceCrudController extends AbstractCrudController
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, function (Action $action) {
                 return $action->setLabel('Sauvegarder et ajouter une autre prestation');
             })
+
             /* EDIT */
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
                 return $action->setLabel('Sauvegarder et terminer');

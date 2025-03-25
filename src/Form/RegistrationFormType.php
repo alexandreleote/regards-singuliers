@@ -57,7 +57,8 @@ class RegistrationFormType extends HoneyPotType
                     'attr' => [
                         'autocomplete' => 'new-password',
                         'class' => 'form-control',
-                        'aria-label' => 'Votre mot de passe'
+                        'aria-label' => 'Votre mot de passe',
+                        'placeholder' => 'Mot de passe'
                     ],
                     'constraints' => [
                         new NotBlank([
@@ -84,7 +85,8 @@ class RegistrationFormType extends HoneyPotType
                     'attr' => [
                         'autocomplete' => 'new-password',
                         'class' => 'form-control',
-                        'aria-label' => 'Confirmer votre mot de passe'
+                        'aria-label' => 'Confirmer votre mot de passe',
+                        'placeholder' => 'Confirmer mot de passe'
                     ],
                     'label' => 'Confirmer le mot de passe',
                 ],
