@@ -21,11 +21,11 @@ class ContentSecurityPolicySubscriber implements EventSubscriberInterface
         
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://calendly.com https://js.stripe.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://calendly.com https://js.stripe.com https://maps.googleapis.com https://maps.gstatic.com",
             "style-src 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://fonts.googleapis.com https://cdnjs.cloudflare.com",
-            "img-src 'self' data: blob: https://*.calendly.com",
-            "font-src 'self' data: https://assets.calendly.com https://fonts.gstatic.com https://cdnjs.cloudflare.com",
-            "connect-src 'self' https://*.calendly.com https://calendly.com",
+            "img-src 'self' data: blob: https://*.calendly.com https://maps.gstatic.com https://maps.googleapis.com",
+            "font-src 'self' data: https://assets.calendly.com https://fonts.gstatic.com https://maps.googleapis.com https://cdnjs.cloudflare.com",
+            "connect-src 'self' https://*.calendly.com https://calendly.com https://maps.googleapis.com https://maps.gstatic.com",
             "frame-src 'self' https://*.calendly.com https://calendly.com https://js.stripe.com",
             "media-src 'self'",
             "frame-ancestors 'self'"

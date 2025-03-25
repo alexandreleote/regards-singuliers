@@ -24,7 +24,10 @@ class ContactType extends HoneyPotType
                     'Individuel' => 'individuel',
                     'Professionnel' => 'professionnel',
                 ],
-                'label' => 'Vous êtes un',
+                'label' => 'Vous êtes :',
+                'attr'=> [
+                    'aria-label' => 'Votre catégorie : particulier ou professionnel',
+                ],
             ])
             ->add('civility', ChoiceType::class, [
                 'choices' => [
@@ -32,27 +35,57 @@ class ContactType extends HoneyPotType
                     'Monsieur' => 'Monsieur',
                 ],
                 'label' => 'Civilité',
-            ])
-            ->add('name', TextType::class, [
-                'label' => 'Nom',
+                'attr' => [
+                    'aria-label' => 'Votre civilité'
+                ],
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
+                'attr' => [
+                    'aria-label' => 'Votre prénom',
+                    'placeholder' => 'Votre prénom'
+                ],
+            ])
+            ->add('name', TextType::class, [
+                'label' => 'Nom',
+                'attr' => [
+                    'aria-label' => 'Votre nom de famille',
+                    'placeholder' => 'Votre nom de famille'
+                ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
+                'attr' => [
+                    'aria-label' => 'Votre adresse email',
+                    'placeholder' => 'Votre adresse@email.fr'
+                ],
             ])
             ->add('phoneNumber', TextType::class, [
                 'label' => 'Téléphone',
+                'attr' => [
+                    'aria-label' => 'Votre numéro de téléphone',
+                    'placeholder' => 'Votre numéro de téléphone'
+                ],
             ])
             ->add('entreprise', TextType::class, [
                 'label' => 'Entreprise',
+                'attr' => [
+                    'aria-label' => 'Nom de votre entreprise',
+                    'placeholder' => 'Votre entreprise'
+                ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
+                'attr' => [
+                    'aria-label' => 'Description détaillée de votre projet (style souhaité, budget, contraintes particulières...)',
+                    'placeholder' => 'Décrivez votre projet en quelques mots (style souhaité, budget, contraintes particulières...)'
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Envoyer',
+                'attr' => [
+                    'aria-label' => 'Envoyer le formulaire de contact',
+                ],
             ])
         ;
     }
