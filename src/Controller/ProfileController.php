@@ -30,7 +30,7 @@ class ProfileController extends AbstractController
             'user' => $user,
             'reservations' => $reservations,
             'page_title' => 'Mon Profil - regards singuliers',
-            'meta_description' => 'Mon Profil - regards singuliers',
+            'meta_description' => 'Accédez à votre profil sur regards singuliers pour gérer vos informations personnelles, suivre l\'avancement de vos projets et interagir avec notre équipe.',
         ]);
     }
 
@@ -49,7 +49,7 @@ class ProfileController extends AbstractController
                     return $this->render('profile/edit.html.twig', [
                         'form' => $form->createView(),
                         'user' => $user,
-                        'meta_description' => 'Modifiez vos informations personnelles et votre mot de passe',
+                        'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
                         'page_title' => 'Modifier mon profil - '.$user
                     ]);
                 }
@@ -59,8 +59,8 @@ class ProfileController extends AbstractController
                     return $this->render('profile/edit.html.twig', [
                         'form' => $form->createView(),
                         'user' => $user,
-                        'meta_description' => 'Modifiez vos informations personnelles et votre mot de passe',
-                        'page_title' => 'Modifier mon profil'
+                        'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
+                        'page_title' => 'Modifier mon profil - '.$user
                     ]);
                 }
 
@@ -81,8 +81,8 @@ class ProfileController extends AbstractController
                 return $this->render('profile/edit.html.twig', [
                     'form' => $form->createView(),
                     'user' => $user,
-                    'meta_description' => 'Modifiez vos informations personnelles et votre mot de passe',
-                    'page_title' => 'Modifier mon profil'
+                    'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
+                    'page_title' => 'Modifier mon profil - '.$user
                 ]);
             }
 
@@ -94,8 +94,8 @@ class ProfileController extends AbstractController
         return $this->render('profile/edit.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
-            'meta_description' => 'Modifiez vos informations personnelles et votre mot de passe',
-            'page_title' => 'Modifier mon profil'
+            'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
+            'page_title' => 'Modifier mon profil - '.$user
         ]);
     }
 
@@ -127,11 +127,11 @@ class ProfileController extends AbstractController
             'upcomingReservations' => $upcomingReservations,
             'pastReservations' => $pastReservations,
             'page_title' => 'Mes réservations - regards singuliers',
-            'meta_description' => 'Mes réservations - regards singuliers',
+            'meta_description' => 'Consultez et gérez vos réservations sur regards singuliers, suivez l\'avancement de vos projets et planifiez vos prochaines étapes avec notre équipe.',
         ]);
     }
 
-    #[Route('/discussions', name: 'app_profile_discussions')]
+    #[Route('/discussion', name: 'app_profile_discussions')]
     public function discussions(DiscussionRepository $discussionRepository): Response
     {
         $user = $this->getUser();
@@ -140,8 +140,8 @@ class ProfileController extends AbstractController
         
         return $this->render('profile/discussions.html.twig', [
             'discussions' => $discussions,
-            'page_title' => 'Mes discussions - regards singuliers',
-            'meta_description' => 'Mes discussions - regards singuliers',
+            'page_title' => 'Messagerie - regards singuliers',
+            'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur sur regards singuliers via notre système de messagerie sécurisé pour discuter de vos projets et poser vos questions.',
         ]);
     }
 } 

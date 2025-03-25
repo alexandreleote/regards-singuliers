@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
                 return $this->render('registration/register.html.twig', [
                     'registrationForm' => $form,
                     'page_title' => 'Inscription - regards singuliers',
-                    'meta_description' => 'Inscription - regards singuliers',
+                    'meta_description' => 'Créez cptre compte client et simplifiez le suivi de votre projet de décoration. Accédez à l\'espace personnel qui vous permet de communiquer directement avec notre architecte.',
                 ]);
             }
             

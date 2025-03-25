@@ -18,7 +18,7 @@ final class RealisationController extends AbstractController
     {
         return $this->render('realisation/index.html.twig', [
             'page_title' => 'Nos réalisations - regards singuliers',
-            'meta_description' => 'Nos réalisations - regards singuliers',
+            'meta_description' => 'Découvrez l\'univers créatif de notrer studio d\'architecture d\'intérieur. Un porftolio exclusif de projets sur-mesure, alliant élégance, fonctionnalité et innovation pour transformer vos espaces de vie.',
             'realisations' => $realisationRepository->findWithImages(),
         ]);
     }

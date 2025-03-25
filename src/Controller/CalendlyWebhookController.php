@@ -48,7 +48,7 @@ class CalendlyWebhookController extends AbstractController
     {
         return $this->render('reservation/confirmation.html.twig', [
             'page_title' => 'Réservation confirmée - regards singuliers',
-            'meta_description' => 'Réservation confirmée - regards singuliers', 
+            'meta_description' => 'Votre projet prend forme ! Confirmation de votre rendez-vous avec notre architecte d\'intérieur. Tous les détails de votre future transformation sont désormais enregistrés.', 
         ]);
     }
 } 

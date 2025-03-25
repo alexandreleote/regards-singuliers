@@ -44,7 +44,7 @@ final class ContactController extends AbstractController
     {
         return $this->render('contact/index.html.twig', [
             'page_title' => 'Contact - regards singuliers',
-            'meta_description' => 'Contact - regards singuliers',
+            'meta_description' => 'Contactez le studio regards singuliers pour toute demande d\'information, de devis ou pour discuter de vos projets d\'aménagement de votre intérieur. Nous sommes à votre écoute !',
             'google_maps_api_key' => $this->getParameter('app.google_maps_api_key'),
         ]);
     }
@@ -172,7 +172,7 @@ final class ContactController extends AbstractController
     {
         return $this->render('contact/confirmation.html.twig', [
             'page_title' => 'Demande envoyée - regards singuliers',
-            'meta_description' => 'Demande envoyée - regards singuliers',
+            'meta_description' => 'Votre demande a été envoyée avec succès à regards singuliers. Nous reviendrons vers vous dans les plus brefs délais pour répondre à votre requête.',
         ]);
     }
 }

@@ -21,7 +21,7 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'page_title' => 'Connexion - regards singuliers',
-            'meta_description' => 'Connexion - regards singuliers',
+            'meta_description' => 'Suivez l\'avancement de votre projet, consultez nos échanges et retrouvez tous vos documents personnalisés. Votre espace privé dédié à la conception de votre intérieur.',
             'error' => $error,
         ]);
     }

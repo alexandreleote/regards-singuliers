@@ -13,7 +13,7 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/cgu.html.twig', [
             'page_title' => 'Conditions générales d\'utilisation - regards singuliers',
-            'meta_description' => 'Conditions générales d\'utilisation - regards singuliers',
+            'meta_description' => 'Consultez les conditions générales d\'utilisation de regards singuliers, régissant l\'accès et l\'utilisation de notre site et de nos services d\'architecture d\'intérieur.',
         ]);
     }
     
@@ -22,7 +22,7 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/confidentialite.html.twig', [
             'page_title' => 'Politique de confidentialité - regards singuliers',
-            'meta_description' => 'Politique de confidentialité - regards singuliers',
+            'meta_description' => 'Prenez connaissance de la politique de confidentialité de regards singuliers, détaillant la collecte, l\'utilisation et la protection de vos données personnelles sur notre site et nos services.',
         ]);
     }
 
@@ -31,7 +31,7 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/mentions_legales.html.twig', [
             'page_title' => 'Mentions Légales - regards singuliers',
-            'meta_description' => 'Mentions Légales - regards singuliers',
+            'meta_description' => 'Accédeza aux mentions légales de regards singuliers, fournissant des informations sur l\'éditeur du site, les conditions d\'utilisation et les aspects juridiques liés à nos services.',
         ]);
     }
 
@@ -40,7 +40,7 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/faq.html.twig', [
             'page_title' => 'FAQ - regards singuliers',
-            'meta_description' => 'FAQ - regards singuliers',
+            'meta_description' => 'Trouvez les réponses à vos questions fréquentes concernant les services, le processus et les modalités de collaboration avec regards singuliers.',
         ]);
     }
 }

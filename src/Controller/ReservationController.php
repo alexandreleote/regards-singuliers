@@ -49,26 +49,11 @@ class ReservationController extends AbstractController
 
         return $this->render('reservation/date.html.twig', [
             'page_title' => 'Choisir une date - regards singuliers',
-            'meta_description' => 'Choisir une date - regards singuliers',
+            'meta_description' => 'Sélectionnez votre date de rendez-vous avec notre architecte d\'intérieur. Un moment unique pour donner vie à votre projet de décoration.',
             'service' => $service,
             'calendly_url' => $this->getParameter('calendly.url')
         ]);
     }
-
-    /* #[Route('/date/{id}', name: 'reservation_date')]
-    public function date(Service $service): Response
-    {
-        if (!$service->isActive()) {
-            throw $this->createNotFoundException('Ce service n\'est pas disponible pour la réservation.');
-        }
-
-        return $this->render('reservation/date.html.twig', [
-            'page_title' => 'Choisir une date - regards singuliers',
-            'meta_description' => 'Choisir une date - regards singuliers',
-            'service' => $service,
-            'calendly_url' => $this->getParameter('calendly.url')
-        ]);
-    } */
 
     #[Route('/process-date', name: 'reservation_process_date', methods: ['POST'])]
     public function processDate(Request $request): Response
@@ -145,7 +130,7 @@ class ReservationController extends AbstractController
 
         return $this->render('reservation/payment.html.twig', [
             'page_title' => 'Paiement de l\'acompte - regards singuliers',
-            'meta_description' => 'Paiement de l\'acompte - regards singuliers',
+            'meta_description' => 'Finalisez votre projet avec le paiement de l\'acompte. Une étape proche de la transformation de votre intérieur.',
             'service' => $service,
             'reservation' => $reservation,
             'deposit_amount' => $paymentData['depositAmount'],
@@ -177,20 +162,8 @@ class ReservationController extends AbstractController
 
         return $this->render('reservation/success.html.twig', [
             'page_title' => 'Réservation confirmée - regards singuliers',
-            'meta_description' => 'Réservation confirmée - regards singuliers',
+            'meta_description' => 'Votre réservation est confirmée. Première étape vers la métamorphose de votre espace de vie.',
             'reservation' => $reservation
-        ]);
-    }
-
-    #[Route('/mes-reservations', name: 'mes_reservations')]
-    public function myReservations(): Response
-    {
-        $reservations = $this->reservationRepository->findByUserWithRelations($this->getUser());
-
-        return $this->render('reservation/mes_reservations.html.twig', [
-            'page_title' => 'Mes réservations - regards singuliers',
-            'meta_description' => 'Mes réservations - regards singuliers',
-            'reservations' => $reservations,
         ]);
     }
 
@@ -199,7 +172,7 @@ class ReservationController extends AbstractController
     {
         return $this->render('reservation/canceled.html.twig', [
             'page_title' => 'Paiement annulé - regards singuliers',
-            'meta_description' => 'Paiement annulé - regards singuliers',
+            'meta_description' => 'Paiement interrompu. Votre projet reste notre priorité, nous sommes là pour vous accompagner.',
         ]);
     }
 }

@@ -18,7 +18,7 @@ final class ServiceController extends AbstractController
     ): Response {
         return $this->render('service/index.html.twig', [
             'page_title' => 'Prestations - regards singuliers',
-            'meta_description' => 'Prestations - regards singuliers',
+            'meta_description' => 'Transformation complète ou relooking décoratif : explorez nos prestations d\'architecture d\'intérieur sur-mesure. Conseil, conception et accompagnement pour un projet unique et personnalisé.',
             'services' => $serviceRepository->findActive(),
         ]);
     }
