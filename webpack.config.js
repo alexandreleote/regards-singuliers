@@ -23,7 +23,11 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('auth', './assets/auth.js')
     .addEntry('honeypot', './assets/honeypot.js')
-    .addEntry('reservation', './assets/reservation/date.js')
+    .addEntry('reservation', './assets/js/reservation/date.js')
+    .addEntry('reservation/date', './assets/js/reservation/date.js')
+    .addEntry('reservation/payment', './assets/js/reservation/payment.js')
+    .addEntry('reservation/success', './assets/js/reservation/success.js')
+    .addEntry('reservation/canceled', './assets/js/reservation/canceled.js')
 
     // enables the Symfony UX Stimulus bridge
     .enableStimulusBridge('./assets/controllers.json')

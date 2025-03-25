@@ -1,5 +1,5 @@
 // Import des styles
-import '../styles/app.css';
+import '../../styles/app.css';
 
 // Code spécifique à la page de réservation
 document.addEventListener('DOMContentLoaded', function() {
