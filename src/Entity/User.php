@@ -62,9 +62,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $region = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $location = null;
-
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -276,18 +273,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRegion(?string $region): static
     {
         $this->region = $region;
-
-        return $this;
-    }
-
-    public function getLocation(): ?string
-    {
-        return $this->location;
-    }
-
-    public function setLocation(?string $location): static
-    {
-        $this->location = $location;
 
         return $this;
     }

@@ -68,13 +68,53 @@ class ProfileEditType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('location', TextType::class, [
-                'label' => 'Localisation',
+            ->add('streetNumber', TextType::class, [
+                'label' => 'Numéro',
+                'required' => false,
+                'constraints' => [
+                    new Length([
+                        'max' => 5,
+                        'maxMessage' => 'Votre numéro ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
+            ])
+            ->add('streetName', TextType::class, [
+                'label' => 'Adresse',
+                'required' => false,
+                'constraints' => [
+                    new Length([
+                        'max' => 50,
+                        'maxMessage' => 'Votre adresse ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
+            ])
+            ->add('city', TextType::class, [
+                'label' => 'Ville',
                 'required' => false,
                 'constraints' => [
                     new Length([
                         'max' => 255,
-                        'maxMessage' => 'Votre localisation ne peut pas dépasser {{ limit }} caractères',
+                        'maxMessage' => 'Votre ville ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
+            ])
+            ->add('zip', TextType::class, [
+                'label' => 'Code Postal',
+                'required' => false,
+                'constraints' => [
+                    new Length([
+                        'max' => 15,
+                        'maxMessage' => 'Votre code postal ne peut pas dépasser {{ limit }} caractères',
+                    ]),
+                ],
+            ])
+            ->add('region', TextType::class, [
+                'label' => 'Région',
+                'required' => false,
+                'constraints' => [
+                    new Length([
+                        'max' => 50,
+                        'maxMessage' => 'Votre région ne peut pas dépasser {{ limit }} caractères',
                     ]),
                 ],
             ])

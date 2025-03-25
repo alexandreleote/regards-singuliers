@@ -68,7 +68,7 @@ class DashboardController extends AbstractDashboardController
                 'icon' => 'fa fa-plus'
             ],
             [
-                'title' => 'Nouveau service',
+                'title' => 'Nouvelle prestation',
                 'url' => $this->adminUrlGenerator
                     ->setController(ServiceCrudController::class)
                     ->setAction('new')
@@ -106,7 +106,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         
         yield MenuItem::section('Contenu');
-        yield MenuItem::linkToCrud('Services', 'fa fa-briefcase', Service::class);
+        yield MenuItem::linkToCrud('Prestations', 'fa fa-briefcase', Service::class);
         yield MenuItem::linkToCrud('Réalisations', 'fa fa-image', Realisation::class);
         
         yield MenuItem::section('Communication');

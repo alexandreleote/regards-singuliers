@@ -34,7 +34,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/edit', name: 'app_profile_edit')]
+    #[Route('/modification', name: 'app_profile_edit')]
     public function edit(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator): Response
     {
         $user = $this->getUser();
@@ -50,7 +50,7 @@ class ProfileController extends AbstractController
                         'form' => $form->createView(),
                         'user' => $user,
                         'meta_description' => 'Modifiez vos informations personnelles et votre mot de passe',
-                        'page_title' => 'Modifier mon profil'
+                        'page_title' => 'Modifier mon profil - '.$user
                     ]);
                 }
 
