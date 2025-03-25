@@ -50,7 +50,7 @@ class ProfileController extends AbstractController
                         'form' => $form->createView(),
                         'user' => $user,
                         'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
-                        'page_title' => 'Modifier mon profil - '.$user
+                        'page_title' => 'Modifier mon profil - '.$user->getFullName()
                     ]);
                 }
 
@@ -60,7 +60,7 @@ class ProfileController extends AbstractController
                         'form' => $form->createView(),
                         'user' => $user,
                         'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
-                        'page_title' => 'Modifier mon profil - '.$user
+                        'page_title' => 'Modifier mon profil - '.$user->getFullName()
                     ]);
                 }
 
@@ -82,7 +82,7 @@ class ProfileController extends AbstractController
                     'form' => $form->createView(),
                     'user' => $user,
                     'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
-                    'page_title' => 'Modifier mon profil - '.$user
+                    'page_title' => 'Modifier mon profil - '.$user->getFullName()
                 ]);
             }
 
@@ -95,7 +95,7 @@ class ProfileController extends AbstractController
             'form' => $form->createView(),
             'user' => $user,
             'meta_description' => 'Mettez à jour vos informations personnelles sur regards singuliers pour garder vos coordonnées à jour et faciliter la gestion de vos projets.',
-            'page_title' => 'Modifier mon profil - '.$user
+            'page_title' => 'Modifier mon profil - '.$user->getFullName()
         ]);
     }
 
