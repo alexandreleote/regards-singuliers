@@ -25,6 +25,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
 
+    App\Service\AnonymizatrionService: ~
 
     App\Service\CalendlyService:
         arguments:

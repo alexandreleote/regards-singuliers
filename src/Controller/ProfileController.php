@@ -4,22 +4,23 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ProfileEditType;
-use App\Repository\ReservationRepository;
 use App\Repository\DiscussionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\ReservationRepository;
+use App\Service\AnonymizationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/profile')]
 #[IsGranted('ROLE_USER')]
 class ProfileController extends AbstractController
 {
-    #[Route('', name: 'app_profile')]
+    #[Route('', name: 'profile')]
     public function index(ReservationRepository $reservationRepository): Response
     {
         $user = $this->getUser();
@@ -34,7 +35,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/modification', name: 'app_profile_edit')]
+    #[Route('/modification', name: 'profile_edit')]
     public function edit(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator): Response
     {
         /** @var User $user */
@@ -89,7 +90,7 @@ class ProfileController extends AbstractController
 
             $entityManager->flush();
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('profile');
         }
 
         return $this->render('profile/edit.html.twig', [
@@ -100,7 +101,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/reservations', name: 'app_profile_reservations')]
+    #[Route('/reservations', name: 'profile_reservations')]
     public function reservations(ReservationRepository $reservationRepository): Response
     {
         $user = $this->getUser();
@@ -132,7 +133,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/discussion', name: 'app_profile_discussions')]
+    #[Route('/discussion', name: 'profile_discussions')]
     public function discussions(DiscussionRepository $discussionRepository): Response
     {
         $user = $this->getUser();
@@ -144,5 +145,21 @@ class ProfileController extends AbstractController
             'page_title' => 'Messagerie - regards singuliers',
             'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur sur regards singuliers via notre système de messagerie sécurisé pour discuter de vos projets et poser vos questions.',
         ]);
+    }
+
+    #[Route('/supprimer-mon-compte', name: 'profile_delete')]
+    public function deleteAccount(AnonymizationService $anonymizationService): Response
+    {
+        $user = $this->getUser();
+
+        if(!$user) {
+            return new Response('Vous devez être connecté pour supprimer votre compte.', Response::HTTP_UNAUTHORIZED); 
+        }
+
+        $anonymizationService->anonymiseUserData($user);
+
+        return new Response('Votre compte a été supprimé et vos données on été anonymisées.');
+
+        return $this->redirectToRoute('home');
     }
 } 

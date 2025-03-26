@@ -2,14 +2,13 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block stylesheets %}
-{{ parent() }}
-<link rel="stylesheet" href="{{ asset('assets/styles/pages/profile.css') }}">
-{% endblock %}
-
 {% block body %}
 <div class="profile-container">
     <div class="profile-content">
+        <a href="{{ path('profile') }}">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+        </a>
         <div class="card animate-fade-in">
             <div class="profile-header">
                 <h1>Modifier mon profil</h1>
@@ -111,13 +110,13 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ path('app_profile') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
-                        Retour
-                    </a>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         Enregistrer les modifications
+                    </button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-trash"></i>
+                        Supprimer le compte
                     </button>
                 </div>
             {{ form_end(form) }}
@@ -126,7 +125,7 @@
 </div>
 {% endblock %}
 
-{% block javascripts %}
+{# {% block javascripts %}
 {{ parent() }}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -144,4 +143,4 @@
         });
     });
 </script>
-{% endblock %} 
+{% endblock %}  #}

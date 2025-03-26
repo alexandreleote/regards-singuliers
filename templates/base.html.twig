@@ -64,7 +64,7 @@
                             {% if is_granted('ROLE_ADMIN') %}
                                 <li class="nav-item-mobile"><a href="{{ path('admin') }}" class="nav-link-mobile" target="_blank">Admin</a></li>
                             {% endif %}
-                            <li class="nav-item-mobile"><a href="{{ path('app_profile') }}" class="nav-link-mobile">Mon Profil</a></li>
+                            <li class="nav-item-mobile"><a href="{{ path('profile') }}" class="nav-link-mobile">Mon Profil</a></li>
                             <li class="nav-item-mobile"><a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a></li>
                         {% else %}
                             <li class="nav-item-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
@@ -77,7 +77,7 @@
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('admin') }}" class="nav-link" target="_blank">Admin</a>
                         {% endif %}
-                        <a href="{{ path('app_profile') }}" class="nav-link">Mon Profil</a>
+                        <a href="{{ path('profile') }}" class="nav-link">Mon Profil</a>
                         <a href="{{ path('logout') }}" class="nav-link">Déconnexion</a>
                     {% else %}
                     <div class="header-login">
@@ -100,7 +100,7 @@
                             </li>
                         {% endif %}
                         <li class="user-nav-item-mobile">
-                            <a href="{{ path('app_profile') }}" class="user-nav-link-mobile">Mon Profil</a>
+                            <a href="{{ path('profile') }}" class="user-nav-link-mobile">Mon Profil</a>
                         </li>
                         <li class="user-nav-item-mobile">
                             <a href="{{ path('logout') }}" class="user-nav-link-mobile">Déconnexion</a>

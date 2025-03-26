@@ -163,7 +163,7 @@ class UserCrudController extends AbstractCrudController
         }
 
         // Rediriger vers la page de profil de l'utilisateur
-        return $this->redirectToRoute('app_profile', [
+        return $this->redirectToRoute('profile', [
             'id' => $user->getId()
         ]);
     }
