@@ -183,7 +183,7 @@ class ProfileController extends AbstractController
                 return $this->redirectToRoute('profile_delete');
             }
 
-            try {
+            /* try { */
                 // Déconnecter l'utilisateur d'abord
                 $security->logout(false);
                 $request->getSession()->invalidate();
@@ -192,16 +192,16 @@ class ProfileController extends AbstractController
                 $anonymisationService->anonymiseUserData($user);
                 
                 // Ajouter le message flash
-                $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+                /* $this->addFlash('success', 'Votre compte a été supprimé avec succès.'); */
                 
                 // Rediriger vers la page d'accueil
                 return $this->redirectToRoute('home');
                 
-            } catch (\Exception $e) {
+            /* } catch (\Exception $e) {
                 $this->logger->error('Erreur lors de la suppression du compte: ' . $e->getMessage());
                 $this->addFlash('error', 'Une erreur est survenue lors de la suppression du compte.');
                 return $this->redirectToRoute('profile_delete');
-            }
+            } */
         }
 
         return $this->render('profile/delete.html.twig', [
