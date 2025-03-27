@@ -58,6 +58,12 @@ class ResetPasswordFormType extends AbstractType
                 'invalid_message' => 'Les mots de passe doivent correspondre.',
                 'mapped' => false,
             ])
+            ->add('_csrf_token', \Symfony\Component\Form\Extension\Core\Type\HiddenType::class, [
+                'mapped' => false,
+                'attr' => [
+                    'data-controller' => 'csrf-protection'
+                ]
+            ])
         ;
     }
 

@@ -14,6 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Service\SendEmailService;
 
 class SecurityController extends AbstractController
 {
@@ -41,52 +42,47 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/mot-de-passe-oublie', name: 'forgotten_password')]
-    public function forgottenPassword(Request $request, UserRepository $userRepository, JWTService $jwt, SendEmailService $mail): Response
+    public function forgottenPassword(Request $request, UserRepository $userRepository, SendEmailService $mail): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
 
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            // Le formulaire est envoyé ET valide
-            // On cherche l'utilisateur en base de données
+            // Vérification du token CSRF
+            if (!$this->isCsrfTokenValid('reset_password_request', $request->request->get('_csrf_token'))) {
+                $this->addFlash('danger', 'Le token de sécurité est invalide.');
+                return $this->redirectToRoute('login');
+            }
 
-            // On récupère l'adresse mail de l'utilisateur depuis le formulaire pour vérifier en base de données
             $user = $userRepository->findOneByEmail($form->get('email')->getData());
 
-            // Vérification de l'existence de l'utilisateur
             if($user) {
-                // On génère un Token
+                // Génération d'un token unique
+                $token = bin2hex(random_bytes(32));
+                $expiresAt = new \DateTimeImmutable('+1 hour');
 
-                $header = [
-                    'typ' => 'JWT',
-                    'alg' => 'HS256'
-                ];
-                
-                $payload = [
-                    'user_id' => $user->getId()
-                ];
+                $user->setResetToken($token);
+                $user->setResetTokenExpiresAt($expiresAt);
 
-                $token = $jwt->generate($header, $payload,$this->getParameter('app.jwtsecret'));
+                $entityManager->flush();
 
                 // On génère l'URL vers reset_password
-                $url = $this->generateUrl('reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL); // On veut avoir le chemin complet qui est généré dans notre mail de reset
+                $url = $this->generateUrl('reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
                 $mail->send('no-reply@regards-singuliers.com',
-                $user->getEmail(),
-                'Récupération de mot de passe sur le site regards singuliers',
-                'password_reset',
-                compact('user', 'url') // ['user' => $user, 'url' => $url]
+                    $user->getEmail(),
+                    'Récupération de mot de passe sur le site regards singuliers',
+                    'password_reset',
+                    compact('user', 'url')
                 );
 
                 $this->addFlash('success', 'Email envoyé avec succès');
                 return $this->redirectToRoute('login');
             }
 
-            // Si l'utilisateur n'existe pas
             $this->addFlash('danger', 'Un problème est survenu');
             return $this->redirectToRoute('login');
-
         }
         
         return $this->render('security/reset_password_request.html.twig',  [
@@ -100,42 +96,47 @@ class SecurityController extends AbstractController
     public function resetPassword(
         $token, 
         UserRepository $userRepository, 
-        JWTService $jwt, 
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager 
     ): Response
     {
-        if($jwt->isValid($token) && ! $jwt->isExpired($token) && $jwt->check($token, $this->getParameter('app.jwtsecret'))){
-            $payload = $jwt->getPayload($token);
+        $user = $userRepository->findOneByResetToken($token);
 
-            $user = $userRepository->find($payload['user_id']);
-        
-            if($user){
-                $form = $this->createForm(ResetPasswordFormType::class);
+        if($user && $user->isResetTokenValid()){
+            $form = $this->createForm(ResetPasswordFormType::class);
 
-                $form->handleRequest($request);
+            $form->handleRequest($request);
 
-                if($form->isSubmitted() && $form->isValid()){
-                    $user->setPassword(
-                        $passwordHasher->hashPassword($user, $form->get('password')->getData())
-                    );
-
-                    $entityManager->flush();
-                    
-                    $this->addFlash('success', 'Mot de passe changé avec succès');
+            if($form->isSubmitted() && $form->isValid()){
+                // Vérification du token CSRF
+                if (!$this->isCsrfTokenValid('reset_password', $request->request->get('_csrf_token'))) {
+                    $this->addFlash('danger', 'Le token de sécurité est invalide.');
                     return $this->redirectToRoute('login');
                 }
 
-                return $this->render('security/reset_password.html.twig', [
-                    'passForm' => $form->createView(),
-                    'meta_description' => '',
-                    'page_title' => 'Récupération de votre mot de passe'
-                ]);
+                $user->setPassword(
+                    $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData())
+                );
+
+                // Réinitialisation du token
+                $user->setResetToken(null);
+                $user->setResetTokenExpiresAt(null);
+
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'Mot de passe changé avec succès');
+                return $this->redirectToRoute('login');
             }
+
+            return $this->render('security/reset_password.html.twig', [
+                'passForm' => $form->createView(),
+                'meta_description' => '',
+                'page_title' => 'Récupération de votre mot de passe'
+            ]);
         }
 
-        $this->addFlash('danger', 'le token est invalide ou a expiré');
+        $this->addFlash('danger', 'Le token est invalide ou a expiré');
         return $this->redirectToRoute('login');
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 
 class ProfileEditType extends AbstractType
 {
@@ -69,11 +70,12 @@ class ProfileEditType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('phoneNumber', TextType::class, [
+            ->add('phoneNumber', TelType::class, [
                 'label' => 'Téléphone',
                 'attr'=> [
                     'aria-label' => 'Votre numéro de téléphone',
-                    'placeholder' => 'Ex : 06 12 34 56 78'
+                    'placeholder' => 'Ex : 06 12 34 56 78',
+                    'pattern' => '[+()0-9 ]*',
                 ],
                 'required' => false,
                 'constraints' => [
@@ -88,10 +90,6 @@ class ProfileEditType extends AbstractType
                         'message' => 'Veuillez saisir un numéro de téléphone valide'
                     ])
                 ],
-                'attr' => [
-                    'pattern' => '[+()0-9 ]*',
-                    // Ajout d'un attribut HTML5 pour la validation côté client
-                ]
             ])
             ->add('streetNumber', TextType::class, [
                 'label' => 'Numéro',

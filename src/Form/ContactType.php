@@ -7,6 +7,7 @@ use App\Form\FormExtension\HoneyPotType;
 // use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -60,7 +61,7 @@ class ContactType extends HoneyPotType
                     'placeholder' => 'Votre adresse@email.fr'
                 ],
             ])
-            ->add('phoneNumber', TextType::class, [
+            ->add('phoneNumber', TelType::class, [
                 'label' => 'Téléphone',
                 'attr' => [
                     'aria-label' => 'Votre numéro de téléphone',
