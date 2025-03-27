@@ -57,6 +57,19 @@ class RegistrationController extends AbstractController
                 ]);
             }
             
+            // Vérifier si l'IP est bannie
+            $errors = $form->getConfig()->getType()->getInnerType()->validateRegistration($user);
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $this->addFlash('error', $error);
+                }
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form,
+                    'page_title' => 'Inscription - regards singuliers',
+                    'meta_description' => 'Inscription - regards singuliers',
+                ]);
+            }
+            
             if ($form->isValid()) {
                 try {
                     /** @var string $plainPassword */

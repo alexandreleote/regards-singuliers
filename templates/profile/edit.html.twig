@@ -5,7 +5,7 @@
 {% block body %}
 <div class="profile-container">
     <div class="profile-content">
-        <a href="{{ path('profile') }}">
+        <a href="{{ path('profile') }}" class="back-link">
             <i class="fas fa-arrow-left"></i>
             Retour
         </a>
@@ -28,67 +28,76 @@
             {% endfor %}
 
             {{ form_start(form, {'attr': {'class': 'profile-form'}}) }}
-                <div class="form-grid">
-                    <div class="form-group">
-                        {{ form_label(form.firstName, 'Prénom') }}
-                        {{ form_widget(form.firstName, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.firstName) }}
+                <div class="form-section">
+                    <h2>Informations personnelles</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form_label(form.firstName, 'Prénom') }}
+                            {{ form_widget(form.firstName, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.firstName) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.name, 'Nom') }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        {{ form_label(form.name, 'Nom') }}
-                        {{ form_widget(form.name, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.name) }}
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form_label(form.email, 'Email') }}
+                            {{ form_widget(form.email, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.phoneNumber, 'Téléphone') }}
+                            {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.phoneNumber) }}
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        {{ form_label(form.email, 'Email') }}
-                        {{ form_widget(form.email, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.email) }}
+                    <div class="form-row">
+                        <div class="form-group form-group-small">
+                            {{ form_label(form.streetNumber, 'Numéro') }}
+                            {{ form_widget(form.streetNumber, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.streetNumber) }}
+                        </div>
+
+                        <div class="form-group form-group-large">
+                            {{ form_label(form.streetName, 'Adresse') }}
+                            {{ form_widget(form.streetName, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.streetName) }}
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        {{ form_label(form.phoneNumber, 'Téléphone') }}
-                        {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.phoneNumber) }}
-                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form_label(form.city, 'Ville') }}
+                            {{ form_widget(form.city, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.city) }}
+                        </div>
 
-                    <div class="form-group">
-                        {{ form_label(form.streetNumber, 'Numéro') }}
-                        {{ form_widget(form.streetNumber, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.streetNumber) }}
-                    </div>
+                        <div class="form-group">
+                            {{ form_label(form.zip, 'Code Postal') }}
+                            {{ form_widget(form.zip, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.zip) }}
+                        </div>
 
-                    <div class="form-group">
-                        {{ form_label(form.streetName, 'Adresse') }}
-                        {{ form_widget(form.streetName, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.streetName) }}
-                    </div>
-
-                    <div class="form-group">
-                        {{ form_label(form.city, 'Ville') }}
-                        {{ form_widget(form.city, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.city) }}
-                    </div>
-
-                    <div class="form-group">
-                        {{ form_label(form.zip, 'Code Postal') }}
-                        {{ form_widget(form.zip, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.zip) }}
-                    </div>
-                    
-                    <div class="form-group">
-                        {{ form_label(form.region, 'Région') }}
-                        {{ form_widget(form.region, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(form.region) }}
+                        <div class="form-group">
+                            {{ form_label(form.region, 'Région') }}
+                            {{ form_widget(form.region, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_errors(form.region) }}
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-profile-section">
+                <div class="form-section password-section">
                     <h2>Modifier le mot de passe</h2>
                     <p class="form-profile-section-description">Remplissez les champs ci-dessous uniquement si vous souhaitez modifier votre mot de passe.</p>
                     
-                    <div class="form-grid">
+                    <div class="form-stack">
                         <div class="form-group">
                             {{ form_label(form.currentPassword, 'Mot de passe actuel') }}
                             {{ form_widget(form.currentPassword, {'attr': {'class': 'form-input'}}) }}
@@ -110,19 +119,148 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i>
-                        Enregistrer les modifications
-                    </button>
-                    <button type="submit" class="btn">
-                        <i class="fas fa-trash"></i>
-                        Supprimer le compte
-                    </button>
+                    <div class="primary-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Enregistrer les modifications
+                        </button>
+                    </div>
                 </div>
             {{ form_end(form) }}
         </div>
     </div>
 </div>
+
+<div class="profile-container">
+    <div class="profile-content">
+        <div class="card animate-fade-in">
+            <div class="danger-zone">
+                <h2>Suppression du compte</h2>
+                <p>Attention : la suppression de votre compte est une action irréversible. Toutes vos données personnelles seront anonymisées.</p>
+                <a href="{{ path('profile_delete') }}" class="btn btn-danger">
+                    <i class="fas fa-trash"></i>
+                    Supprimer mon compte
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .form-section h2 {
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+        font-size: 1.25rem;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        flex: 1;
+    }
+
+    .form-group-small {
+        flex: 0 0 100px;
+    }
+
+    .form-group-large {
+        flex: 1;
+    }
+
+    .form-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .password-section {
+        background-color: #fff;
+        border: 1px solid #e9ecef;
+    }
+
+    .form-actions {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .danger-zone {
+        margin-top: 2rem;
+        padding: 2rem;
+        background-color: #fff3f3;
+        border: 1px solid #ffcdd2;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .danger-zone h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .danger-zone p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+        color: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .btn-danger:active {
+        background-color: #bd2130;
+        border-color: #b21f2d;
+        color: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+</style>
 {% endblock %}
 
 {# {% block javascripts %}

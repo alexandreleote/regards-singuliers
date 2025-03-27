@@ -77,6 +77,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
     /**
      * @var Collection<int, Reservation>
      */
@@ -303,7 +306,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBannedAt(?\DateTimeImmutable $bannedAt): static
     {
         $this->bannedAt = $bannedAt;
-
         return $this;
     }
 
@@ -346,6 +348,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->resetToken !== null && 
                $this->resetTokenExpiresAt !== null && 
                $this->resetTokenExpiresAt > new \DateTimeImmutable();
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
     }
 
     /**

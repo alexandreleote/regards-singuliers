@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Service\AnonymizationService;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -17,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
@@ -30,10 +32,14 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 class UserCrudController extends AbstractCrudController
 {
     private EntityManagerInterface $entityManager;
+    private AnonymizationService $anonymizationService;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        AnonymizationService $anonymizationService
+    ) {
         $this->entityManager = $entityManager;
+        $this->anonymizationService = $anonymizationService;
     }
 
     public static function getEntityFqcn(): string
@@ -71,6 +77,8 @@ class UserCrudController extends AbstractCrudController
             DateTimeField::new('bannedAt', 'Date de bannissement')
                 ->setFormat('dd/MM/yyyy HH:mm')
                 ->hideOnForm(),
+            AssociationField::new('reservations', 'Réservations')->hideOnForm(),
+            AssociationField::new('messages', 'Messages')->hideOnForm(),
         ];
 
         if ($pageName === Crud::PAGE_INDEX) {
@@ -93,6 +101,7 @@ class UserCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'Détails de l\'utilisateur')
             ->setEntityLabelInPlural('Utilisateurs')
             ->setEntityLabelInSingular('Utilisateur')
+            ->setSearchFields(['email', 'name', 'firstName'])
             ->setDefaultSort(['createdAt' => 'DESC']);
     }
 
@@ -308,5 +317,28 @@ class UserCrudController extends AbstractCrudController
         $this->addFlash('success', 'L\'utilisateur a été débanni avec succès.');
 
         return $this->redirect($adminContext->getReferrer());
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User) {
+            // Si l'utilisateur est banni définitivement (bannedAt est défini)
+            if ($entityInstance->getBannedAt() !== null) {
+                $this->anonymizationService->anonymiseUserData($entityInstance);
+            }
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User) {
+            // Vérifier si l'utilisateur vient d'être banni définitivement
+            $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
+            if ($originalData['bannedAt'] === null && $entityInstance->getBannedAt() !== null) {
+                $this->anonymizationService->anonymiseUserData($entityInstance);
+            }
+        }
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

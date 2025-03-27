@@ -65,4 +65,8 @@ class HoneyPotType extends AbstractType
         ];
     }
 
+    protected function getRequestStack(): RequestStack
+    {
+        return $this->requestStack;
+    }
 }

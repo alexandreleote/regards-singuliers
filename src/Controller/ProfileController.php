@@ -15,11 +15,22 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Form\DeleteAccountFormType;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Psr\Log\LoggerInterface;
 
 #[Route('/profile')]
 #[IsGranted('ROLE_USER')]
 class ProfileController extends AbstractController
 {
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     #[Route('', name: 'profile')]
     public function index(ReservationRepository $reservationRepository): Response
     {
@@ -148,18 +159,55 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/supprimer-mon-compte', name: 'profile_delete')]
-    public function deleteAccount(AnonymizationService $anonymizationService): Response
-    {
+    public function deleteAccount(
+        Request $request,
+        Security $security,
+        AnonymizationService $anonymisationService,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
-
-        if(!$user) {
-            return new Response('Vous devez être connecté pour supprimer votre compte.', Response::HTTP_UNAUTHORIZED); 
+        if (!$user) {
+            throw new AccessDeniedException('Vous devez être connecté pour supprimer votre compte.');
         }
 
-        $anonymizationService->anonymiseUserData($user);
+        $form = $this->createForm(DeleteAccountFormType::class);
+        $form->handleRequest($request);
 
-        return new Response('Votre compte a été supprimé et vos données on été anonymisées.');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('password')->getData();
+            
+            // Vérifier le mot de passe
+            if (!$passwordHasher->isPasswordValid($user, $password)) {
+                $this->addFlash('error', 'Mot de passe incorrect');
+                return $this->redirectToRoute('profile_delete');
+            }
 
-        return $this->redirectToRoute('home');
+            try {
+                // Déconnecter l'utilisateur d'abord
+                $security->logout(false);
+                $request->getSession()->invalidate();
+                
+                // Anonymiser les données de l'utilisateur
+                $anonymisationService->anonymiseUserData($user);
+                
+                // Ajouter le message flash
+                $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+                
+                // Rediriger vers la page d'accueil
+                return $this->redirectToRoute('home');
+                
+            } catch (\Exception $e) {
+                $this->logger->error('Erreur lors de la suppression du compte: ' . $e->getMessage());
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression du compte.');
+                return $this->redirectToRoute('profile_delete');
+            }
+        }
+
+        return $this->render('profile/delete.html.twig', [
+            'deleteForm' => $form->createView(),
+            'meta_description' => 'Supprimez votre compte et toutes vos données associées de manière sécurisée.',
+            'page_title' => 'Supprimer mon compte - regards singuliers'
+        ]);
     }
-} 
+}

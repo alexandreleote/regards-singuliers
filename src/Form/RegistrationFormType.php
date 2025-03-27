@@ -4,7 +4,10 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Form\FormExtension\HoneyPotType;
-// use Symfony\Component\Form\AbstractType;
+use App\Service\AnonymizationService;
+use App\Repository\BotIpRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -16,9 +19,20 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class RegistrationFormType extends HoneyPotType
 {
+    public function __construct(
+        LoggerInterface $honeyPotLogger,
+        RequestStack $requestStack,
+        EntityManagerInterface $entityManager,
+        BotIpRepository $botIpRepository,
+        private AnonymizationService $anonymizationService
+    ) {
+        parent::__construct($honeyPotLogger, $requestStack, $entityManager, $botIpRepository);
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
@@ -101,5 +115,18 @@ class RegistrationFormType extends HoneyPotType
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);
+    }
+
+    public function validateRegistration(User $user): array
+    {
+        $errors = [];
+        
+        // Vérifier si l'IP est bannie
+        $request = $this->getRequestStack()->getCurrentRequest();
+        if ($request && $this->anonymizationService->isIpBanned($request->getClientIp())) {
+            $errors[] = 'Cette adresse IP est associée à un compte banni. L\'inscription n\'est pas possible.';
+        }
+
+        return $errors;
     }
 }

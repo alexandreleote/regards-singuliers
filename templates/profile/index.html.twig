@@ -52,26 +52,6 @@
                 <a href="{{ path('profile_reservations') }}" class="btn btn-primary">
                     Voir mes réservations
                 </a>
-                
-                {# {% if reservations|length > 0 %}
-                <div class="reservation-list">
-                    <h3>Prochains rendez-vous</h3>
-                    {% for reservation in reservations %}
-                        {% if reservation.bookedAt|date('Y-m-d') >= 'now'|date('Y-m-d') %}
-                            <div class="reservation-item">
-                                <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
-                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
-                                </div>
-                                <span class="reservation-status status-upcoming">
-                                    <i class="fas fa-calendar-check"></i>
-                                    À venir
-                                </span>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                {% endif %} #}
             </div>
 
             {# Section Discussions #}
