@@ -14,10 +14,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use App\Service\SendEmailService;
+use App\Security\EmailVerifier;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(private EmailVerifier $emailVerifier)
+    {
+    }
+
     #[Route(path: '/connexion', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -42,7 +47,11 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/mot-de-passe-oublie', name: 'forgotten_password')]
-    public function forgottenPassword(Request $request, UserRepository $userRepository, SendEmailService $mail): Response
+    public function forgottenPassword(
+        Request $request, 
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    ): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
 
@@ -70,12 +79,17 @@ class SecurityController extends AbstractController
                 // On génère l'URL vers reset_password
                 $url = $this->generateUrl('reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
-                $mail->send('no-reply@regards-singuliers.com',
-                    $user->getEmail(),
-                    'Récupération de mot de passe sur le site regards singuliers',
-                    'password_reset',
-                    compact('user', 'url')
-                );
+                $email = (new TemplatedEmail())
+                    ->from('no-reply@regards-singuliers.com')
+                    ->to($user->getEmail())
+                    ->subject('Récupération de mot de passe sur le site regards singuliers')
+                    ->htmlTemplate('email/password_reset.html.twig')
+                    ->context([
+                        'user' => $user,
+                        'url' => $url
+                    ]);
+
+                $this->emailVerifier->sendEmailConfirmation('reset_password', $user, $email);
 
                 $this->addFlash('success', 'Email envoyé avec succès');
                 return $this->redirectToRoute('login');
