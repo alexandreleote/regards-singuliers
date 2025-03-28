@@ -164,8 +164,9 @@ class ProfileController extends AbstractController
         Security $security,
         AnonymizationService $anonymisationService,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
     ): Response {
+
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             throw new AccessDeniedException('Vous devez être connecté pour supprimer votre compte.');
@@ -183,7 +184,7 @@ class ProfileController extends AbstractController
                 return $this->redirectToRoute('profile_delete');
             }
 
-            /* try { */
+            try {
                 // Déconnecter l'utilisateur d'abord
                 $security->logout(false);
                 $request->getSession()->invalidate();
@@ -197,11 +198,11 @@ class ProfileController extends AbstractController
                 // Rediriger vers la page d'accueil
                 return $this->redirectToRoute('home');
                 
-            /* } catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $this->logger->error('Erreur lors de la suppression du compte: ' . $e->getMessage());
                 $this->addFlash('error', 'Une erreur est survenue lors de la suppression du compte.');
                 return $this->redirectToRoute('profile_delete');
-            } */
+            }
         }
 
         return $this->render('profile/delete.html.twig', [

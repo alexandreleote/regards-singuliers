@@ -72,9 +72,12 @@ class AnonymizationService
                 ->setDeletedAt(new \DateTimeImmutable())
                 ->setPassword($this->passwordHasher->hashPassword($user, bin2hex(random_bytes(16))));
 
-            // Stockage de l'IP si disponible
-            if ($ip = $this->requestStack->getCurrentRequest()?->getClientIp()) {
-                $user->setLastIpHashed(password_hash($ip, PASSWORD_BCRYPT));
+            // Si l'utilisateur a été banni auparavant
+            if ($user->getLastIpHashed() !== null ) {
+                // Stockage de l'IP si disponible
+                if ($ip = $this->requestStack->getCurrentRequest()?->getClientIp()) {
+                    $user->setLastIpHashed(password_hash($ip, PASSWORD_BCRYPT));
+                }
             }
 
             // Persister et flusher les modifications

@@ -10,20 +10,31 @@
             <div class="profile-header">
                 {# Avatar avec initiales #}
                 <div class="profile-avatar">
-                    {{ user.firstName|first|upper }}{{ user.name|first|upper }}
+                    {% if user.firstName is not null and user.name is not null %}
+                        {{ user.firstName|first|upper }}{{ user.name|first|upper }}
+                    {% else %}
+                        <i class="fas fa-user"></i>
+                    {% endif %}
                 </div>
                 <div class="profile-info">
                     <h1>{{ user.firstName }} {{ user.name }}</h1>
                     <div class="profile-badges">
-                        <span class="badge badge-success">
-                            <i class="fas fa-check-circle"></i>
-                            Compte vérifié
-                        </span>
+                        {% if user.isVerified == true %}
+                            <span class="badge badge-success">
+                                <i class="fas fa-check-circle"></i>
+                                Compte vérifié
+                            </span>
+                        {% endif %}
                         <span class="badge badge-info">
                             <i class="far fa-calendar"></i>
                             Membre depuis {{ user.createdAt|date('d/m/Y') }}
                         </span>
                     </div>
+                    {% if not user.isPersonalInformationComplete() %}
+                        <div style="margin-top:2rem;">
+                            Merci de bien vouloir renseigner vos informations personnelles
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

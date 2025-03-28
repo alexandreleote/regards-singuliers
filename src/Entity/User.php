@@ -286,6 +286,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function isPersonalInformationComplete(): bool
+    {
+        // Vérifier si tous les champs obligatoires sont renseignés
+        return !empty($this->firstName) 
+        && !empty($this->name) 
+        && !empty($this->phoneNumber) 
+        && !empty($this->streetNumber) 
+        && !empty($this->streetName) 
+        && !empty($this->city)
+        && !empty($this->zip)
+        && !empty($this->region);
+    } 
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
