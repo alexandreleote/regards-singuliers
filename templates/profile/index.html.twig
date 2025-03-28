@@ -66,16 +66,29 @@
             </div>
 
             {# Section Discussions #}
-            <div class="section animate-fade-in">
-                <div class="section-header">
-                    <h2 class="section-title">Discussions</h2>
-                    <i class="fas fa-comments section-icon"></i>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="section animate-fade-in">
+                    <div class="section-header">
+                        <h2 class="section-title">Discussions</h2>
+                        <i class="fas fa-comments section-icon"></i>
+                    </div>
+                    <p class="section-content">Échangez avec vos clients</p>
+                    <a href="{{ path('profile_discussions') }}" class="btn btn-primary">
+                        Accéder aux discussions
+                    </a>
                 </div>
-                <p class="section-content">Échangez avec l'architecte</p>
-                <a href="{{ path('profile_discussions') }}" class="btn btn-primary">
-                    Voir mes discussions
-                </a>
-            </div>
+            {% else %}
+                <div class="section animate-fade-in">
+                    <div class="section-header">
+                        <h2 class="section-title">Discussion</h2>
+                        <i class="fas fa-comments section-icon"></i>
+                    </div>
+                    <p class="section-content">Échangez avec l'architecte</p>
+                    <a href="{{ path('profile_discussions') }}" class="btn btn-primary">
+                        Accéder à la discussion
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

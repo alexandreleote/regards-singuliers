@@ -1,104 +1,173 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Discussions{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
-    <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex items-center space-x-4 mb-8">
-                <a href="{{ path('profile') }}" 
-                   class="text-gray-600 hover:text-gray-800 transition-colors duration-200 bg-white p-2 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <h1 class="text-3xl font-light text-gray-800">Mes Discussions</h1>
-            </div>
-            
-            <div class="bg-white rounded-2xl shadow-lg p-8 transform hover:scale-[1.02] transition-all duration-300">
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-xl font-light text-gray-800">Conversations</h2>
-                    <i class="fas fa-comments text-2xl text-blue-400"></i>
-                </div>
-                
-                <div class="space-y-6">
-                    {% for discussion in discussions %}
-                        <div class="bg-gray-50 rounded-xl p-6 transform hover:scale-[1.02] transition-all duration-200">
-                            <div class="flex justify-between items-start">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <i class="fas fa-user-tie text-blue-500 text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-medium text-gray-800">Discussion avec l'administrateur</h3>
-                                        <p class="text-sm text-gray-600 mt-1">
-                                            Dernier message : {{ discussion.lastMessageAt|date('d/m/Y H:i') }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <a href="{{ path('app_discussion_show', {'id': discussion.id}) }}" 
-                                   class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-xl text-sm transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center space-x-2">
-                                    <span>Voir la conversation</span>
-                                    <i class="fas fa-arrow-right"></i>
+    <section class="discussion-container">
+        {% if is_granted('ROLE_ADMIN') %}
+            {% if discussions is defined and discussions|length > 0 %}
+                <div class="discussions-list">
+                    <h2>Discussions actives</h2>
+                    <ul>
+                        {% for discussion in discussions %}
+                            <li class="discussion-item {% if discussion.id == currentDiscussion.id %}active{% endif %}">
+                                <a href="{{ path('profile_discussions', {'discussionId': discussion.id}) }}">
+                                    Discussion avec {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
+                                    <span class="discussion-date">{{ discussion.createdAt|date('d/m/Y') }}</span>
                                 </a>
-                            </div>
-                            
-                            {% if discussion.unreadCount > 0 %}
-                                <div class="mt-4 flex items-center space-x-2">
-                                    <span class="inline-flex items-center bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">
-                                        <i class="fas fa-envelope mr-2"></i>
-                                        {{ discussion.unreadCount }} message(s) non lu(s)
-                                    </span>
-                                </div>
-                            {% endif %}
-                        </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if app.user.reservations|length > 0 or (is_granted('ROLE_ADMIN') and discussions|length > 0) %}
+            <article>
+                <h1>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        Discussion avec {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
                     {% else %}
-                        <div class="text-center py-12">
-                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-comments text-gray-400 text-2xl"></i>
+                        Votre discussion avec l'architecte
+                    {% endif %}
+                </h1>
+
+                <div class="messages-container" id="messagesContainer">
+                    {% for message in messages %}
+                        <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}">
+                            <div class="message-content">{{ message.content }}</div>
+                            <div class="message-time">
+                                {{ message.sentAt|date('d/m/Y H:i') }}
+                                {% if message.user.id == app.user.id %}
+                                    <span class="message-status">
+                                        {% if message.isRead %}
+                                            ✓✓
+                                        {% else %}
+                                            ✓
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
                             </div>
-                            <p class="text-gray-600 text-lg">Vous n'avez pas encore de discussions.</p>
-                            <p class="text-gray-500 text-sm mt-2">Commencez une conversation avec l'administrateur</p>
                         </div>
                     {% endfor %}
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 
-{% block stylesheets %}
-{{ parent() }}
-<style>
-    .hover\:scale-\[1\.02\]:hover {
-        transform: scale(1.02);
-    }
-    .transform {
-        transition-property: transform;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 300ms;
-    }
-</style>
+                <form id="messageForm" class="message-form">
+                    {% if currentDiscussion is defined %}
+                        <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
+                    {% endif %}
+                    <textarea 
+                        name="content" 
+                        class="message-input" 
+                        placeholder="Écrivez votre message..."
+                        required
+                    ></textarea>
+                    <button type="submit" class="send-button">
+                        Envoyer
+                    </button>
+                </form>
+            </article>
+        {% else %}
+            <article>
+                <p>Vous n'avez pas encore réservé de prestations.</p>
+                <p>Prenez connaissance de nos <a href="{{ path('prestations') }}">services</a></p>
+            </article>
+        {% endif %}
+    </section>
 {% endblock %}
 
 {% block javascripts %}
-{{ parent() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Animation au scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('opacity-100', 'translate-y-0');
-                    entry.target.classList.remove('opacity-0', 'translate-y-4');
-                }
-            });
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageForm = document.getElementById('messageForm');
+            const messagesContainer = document.getElementById('messagesContainer');
+            const discussionId = messageForm ? messageForm.querySelector('input[name="discussionId"]')?.value : null;
+
+            // Faire défiler jusqu'aux derniers messages
+            function scrollToBottom() {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            scrollToBottom();
+
+            // Gérer l'envoi du message
+            if (messageForm) {
+                messageForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(messageForm);
+
+                    fetch('{{ path("send_message") }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            const messageElement = document.createElement('div');
+                            messageElement.className = 'message message-user';
+                            messageElement.innerHTML = `
+                                <div class="message-content">${data.message.content}</div>
+                                <div class="message-time">
+                                    ${data.message.sentAt}
+                                    <span class="message-status">✓</span>
+                                </div>
+                            `;
+                            messagesContainer.appendChild(messageElement);
+                            scrollToBottom();
+                            messageForm.reset();
+                        } else {
+                            throw new Error(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de l\'envoi du message');
+                    });
+                });
+            }
+
+            // Vérifier les nouveaux messages toutes les 10 secondes
+            if (discussionId) {
+                setInterval(function() {
+                    const url = new URL('{{ path("check_new_messages") }}', window.location.origin);
+                    url.searchParams.append('discussionId', discussionId);
+
+                    fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.newMessages) {
+                            data.messages.forEach(message => {
+                                const messageElement = document.createElement('div');
+                                messageElement.className = 'message message-admin';
+                                messageElement.innerHTML = `
+                                    <div class="message-content">${message.content}</div>
+                                    <div class="message-time">${message.sentAt}</div>
+                                `;
+                                messagesContainer.appendChild(messageElement);
+                            });
+                            scrollToBottom();
+                        }
+                    })
+                    .catch(error => console.error('Erreur lors de la vérification des nouveaux messages:', error));
+                }, 10000);
+            }
         });
-        
-        document.querySelectorAll('.transform').forEach((el) => {
-            el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-500');
-            observer.observe(el);
-        });
-    });
-</script>
-{% endblock %} 
+    </script>
+{% endblock %}

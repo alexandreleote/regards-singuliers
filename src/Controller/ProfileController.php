@@ -144,20 +144,6 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/discussion', name: 'profile_discussions')]
-    public function discussions(DiscussionRepository $discussionRepository): Response
-    {
-        $user = $this->getUser();
-        
-        $discussions = $discussionRepository->findByUser($user);
-        
-        return $this->render('profile/discussions.html.twig', [
-            'discussions' => $discussions,
-            'page_title' => 'Messagerie - regards singuliers',
-            'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur sur regards singuliers via notre système de messagerie sécurisé pour discuter de vos projets et poser vos questions.',
-        ]);
-    }
-
     #[Route('/supprimer-mon-compte', name: 'profile_delete')]
     public function deleteAccount(
         Request $request,
