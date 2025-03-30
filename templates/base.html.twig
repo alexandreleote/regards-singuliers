@@ -3,9 +3,11 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
-        <meta name="description" content="{{ meta_description }}">
-        <title>{% block title %}{{ page_title }}{% endblock %}</title>
+        {% if app.user %}
+            <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
+        {% endif %}
+        <meta name="description" content="{{ meta_description|default('Architecte d\'intérieur à Bordeaux - Aménagement, rénovation et décoration d\'intérieur pour particuliers et professionnels.') }}">
+        <title>{% block title %}{{ page_title|default('regards singuliers - Architecture d\'intérieur') }}{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         
         {# Font Awesome #}
@@ -17,6 +19,11 @@
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            <script>
+                // Variables globales pour l'état de connexion et l'ID de la discussion
+                const isUserConnected = {{ app.user ? 'true' : 'false' }};
+                const currentDiscussionId = {{ currentDiscussionId|default('null') }};
+            </script>
         {% endblock %}
 
         <!-- Google Fonts -->

@@ -62,6 +62,23 @@ class MessageRepository extends ServiceEntityRepository
     }
 
     /**
+     * Trouve les messages non lus d'une discussion pour un utilisateur spécifique
+     */
+    public function findUnreadByDiscussionForUser(Discussion $discussion, User $user): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.discussion = :discussion')
+            ->andWhere('m.isRead = :isRead')
+            ->andWhere('m.user != :user')
+            ->setParameter('discussion', $discussion)
+            ->setParameter('isRead', false)
+            ->setParameter('user', $user)
+            ->orderBy('m.sentAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Compte les messages non lus pour un utilisateur
      */
     public function countUnreadForUser(User $user): int

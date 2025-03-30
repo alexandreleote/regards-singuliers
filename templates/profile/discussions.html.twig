@@ -3,6 +3,8 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
+    <div class="toast-container" id="toastContainer"></div>
+    
     <section class="discussion-container">
         {% if is_granted('ROLE_ADMIN') %}
             {% if discussions is defined and discussions|length > 0 %}
@@ -12,7 +14,13 @@
                         {% for discussion in discussions %}
                             <li class="discussion-item {% if discussion.id == currentDiscussion.id %}active{% endif %}">
                                 <a href="{{ path('profile_discussions', {'discussionId': discussion.id}) }}">
-                                    Discussion avec {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
+                                    {% if 'ROLE_DELETED' in discussion.reservation.user.roles %}
+                                        profil anonymisé
+                                    {% elseif not discussion.reservation.user.personalInformationComplete %}
+                                        {{ discussion.reservation.user.email }}
+                                    {% else %}
+                                        {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
+                                    {% endif %}
                                     <span class="discussion-date">{{ discussion.createdAt|date('d/m/Y') }}</span>
                                 </a>
                             </li>
@@ -26,7 +34,25 @@
             <article>
                 <h1>
                     {% if is_granted('ROLE_ADMIN') %}
-                        Discussion avec {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
+                        {% if 'ROLE_DELETED' in currentDiscussion.reservation.user.roles %}
+                            profil anonymisé
+                        {% elseif not currentDiscussion.reservation.user.personalInformationComplete %}
+                            {{ currentDiscussion.reservation.user.email }}
+                        {% else %}
+                            {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
+                        {% endif %}
+                        <button 
+                            id="toggleLockBtn" 
+                            class="btn btn-secondary" 
+                            data-discussion-id="{{ currentDiscussion.id }}"
+                            data-is-locked="{{ currentDiscussion.isLocked ? 'true' : 'false' }}"
+                        >
+                            {% if currentDiscussion.isLocked %}
+                                <i class="fas fa-lock"></i> Déverrouiller
+                            {% else %}
+                                <i class="fas fa-unlock"></i> Verrouiller
+                            {% endif %}
+                        </button>
                     {% else %}
                         Votre discussion avec l'architecte
                     {% endif %}
@@ -38,31 +64,23 @@
                             <div class="message-content">{{ message.content }}</div>
                             <div class="message-time">
                                 {{ message.sentAt|date('d/m/Y H:i') }}
-                                {% if message.user.id == app.user.id %}
-                                    <span class="message-status">
-                                        {% if message.isRead %}
-                                            ✓✓
-                                        {% else %}
-                                            ✓
-                                        {% endif %}
-                                    </span>
-                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
                 </div>
 
-                <form id="messageForm" class="message-form">
+                <form id="messageForm" class="message-form" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
                     {% if currentDiscussion is defined %}
                         <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
                     {% endif %}
                     <textarea 
                         name="content" 
                         class="message-input" 
-                        placeholder="Écrivez votre message..."
+                        placeholder="{% if currentDiscussion.isLocked %}Cette discussion est verrouillée{% else %}Écrivez votre message...{% endif %}"
                         required
+                        {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}
                     ></textarea>
-                    <button type="submit" class="send-button">
+                    <button type="submit" class="send-button" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
                         Envoyer
                     </button>
                 </form>
@@ -74,100 +92,4 @@
             </article>
         {% endif %}
     </section>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const messageForm = document.getElementById('messageForm');
-            const messagesContainer = document.getElementById('messagesContainer');
-            const discussionId = messageForm ? messageForm.querySelector('input[name="discussionId"]')?.value : null;
-
-            // Faire défiler jusqu'aux derniers messages
-            function scrollToBottom() {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-            scrollToBottom();
-
-            // Gérer l'envoi du message
-            if (messageForm) {
-                messageForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(messageForm);
-
-                    fetch('{{ path("send_message") }}', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erreur réseau');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            const messageElement = document.createElement('div');
-                            messageElement.className = 'message message-user';
-                            messageElement.innerHTML = `
-                                <div class="message-content">${data.message.content}</div>
-                                <div class="message-time">
-                                    ${data.message.sentAt}
-                                    <span class="message-status">✓</span>
-                                </div>
-                            `;
-                            messagesContainer.appendChild(messageElement);
-                            scrollToBottom();
-                            messageForm.reset();
-                        } else {
-                            throw new Error(data.error || 'Une erreur est survenue');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        alert('Une erreur est survenue lors de l\'envoi du message');
-                    });
-                });
-            }
-
-            // Vérifier les nouveaux messages toutes les 10 secondes
-            if (discussionId) {
-                setInterval(function() {
-                    const url = new URL('{{ path("check_new_messages") }}', window.location.origin);
-                    url.searchParams.append('discussionId', discussionId);
-
-                    fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erreur réseau');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.newMessages) {
-                            data.messages.forEach(message => {
-                                const messageElement = document.createElement('div');
-                                messageElement.className = 'message message-admin';
-                                messageElement.innerHTML = `
-                                    <div class="message-content">${message.content}</div>
-                                    <div class="message-time">${message.sentAt}</div>
-                                `;
-                                messagesContainer.appendChild(messageElement);
-                            });
-                            scrollToBottom();
-                        }
-                    })
-                    .catch(error => console.error('Erreur lors de la vérification des nouveaux messages:', error));
-                }, 10000);
-            }
-        });
-    </script>
 {% endblock %}

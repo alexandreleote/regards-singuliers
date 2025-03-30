@@ -15,6 +15,15 @@ import './js/faq.js';
 import './js/studio.js';
 import './js/map.js';
 import './js/menu-burger.js';
-import './js/phoneNumberToggle.js'
+import './js/phoneNumberToggle.js';
+import './js/notifications.js';
+import { initializeDiscussions } from './js/discussions.js';
+
+// Initialiser les discussions si on est sur la page des discussions
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('messageForm')) {
+        initializeDiscussions();
+    }
+});
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

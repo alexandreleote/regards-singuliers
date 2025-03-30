@@ -20,6 +20,7 @@ final class DiscussionController extends AbstractController
 {
     #[Route('', name: 'profile_discussions')]
     public function discussions(
+        Request $request,
         DiscussionRepository $discussionRepository, 
         MessageRepository $messageRepository,
         UserRepository $userRepository,
@@ -28,7 +29,7 @@ final class DiscussionController extends AbstractController
         /** @var User|null $user */
         $user = $this->getUser();
         if (!$user) {
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('login');
         }
 
         // Si l'utilisateur est un admin, on récupère toutes les discussions non archivées
@@ -42,12 +43,38 @@ final class DiscussionController extends AbstractController
                 ]);
             }
             
-            // Pour l'admin, on prend la première discussion active par défaut
-            $currentDiscussion = $discussions[0];
+            // Récupérer la discussion sélectionnée ou la première par défaut
+            $discussionId = $request->query->get('discussionId');
+            $currentDiscussion = null;
+            
+            if ($discussionId) {
+                $currentDiscussion = $discussionRepository->find($discussionId);
+            }
+            
+            if (!$currentDiscussion) {
+                $currentDiscussion = $discussions[0];
+            }
+
+            // Récupérer les messages et marquer les messages non lus comme lus
+            $messages = $messageRepository->findBy(['discussion' => $currentDiscussion], ['sentAt' => 'ASC']);
+            $hasUnreadMessages = false;
+
+            foreach ($messages as $message) {
+                if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
+                    $message->setIsRead(true);
+                    $hasUnreadMessages = true;
+                }
+            }
+
+            if ($hasUnreadMessages) {
+                $em->flush();
+            }
+
             return $this->render('profile/discussions.html.twig', [
-                'messages' => $messageRepository->findBy(['discussion' => $currentDiscussion], ['sentAt' => 'ASC']),
+                'messages' => $messages,
                 'discussions' => $discussions,
                 'currentDiscussion' => $currentDiscussion,
+                'hasUnreadMessages' => $hasUnreadMessages,
                 'page_title' => 'Messagerie - regards singuliers',
                 'meta_description' => 'Gérez toutes les discussions avec vos clients.',
             ]);
@@ -91,10 +118,26 @@ final class DiscussionController extends AbstractController
             $em->persist($welcomeMessage);
             $em->flush();
         }
+
+        // Récupérer les messages et marquer les messages non lus comme lus
+        $messages = $messageRepository->findBy(['discussion' => $discussion], ['sentAt' => 'ASC']);
+        $hasUnreadMessages = false;
+
+        foreach ($messages as $message) {
+            if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
+                $message->setIsRead(true);
+                $hasUnreadMessages = true;
+            }
+        }
+
+        if ($hasUnreadMessages) {
+            $em->flush();
+        }
         
         return $this->render('profile/discussions.html.twig', [
-            'messages' => $messageRepository->findBy(['discussion' => $discussion], ['sentAt' => 'ASC']),
+            'messages' => $messages,
             'currentDiscussion' => $discussion,
+            'hasUnreadMessages' => $hasUnreadMessages,
             'page_title' => 'Messagerie - regards singuliers',
             'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur.',
         ]);
@@ -123,10 +166,20 @@ final class DiscussionController extends AbstractController
         } else {
             // Pour un utilisateur normal, on utilise sa dernière réservation
             $discussion = $discussionRepository->findOneBy(['reservation' => $user->getReservations()->last()]);
+            
+            // Vérifier que la discussion appartient bien à l'utilisateur
+            if ($discussion && $discussion->getReservation()->getUser()->getId() !== $user->getId()) {
+                return new JsonResponse(['error' => 'Vous n\'avez pas accès à cette discussion'], Response::HTTP_FORBIDDEN);
+            }
         }
 
         if (!$discussion) {
             return new JsonResponse(['error' => 'Discussion non trouvée'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Vérifier si la discussion est verrouillée
+        if ($discussion->isLocked()) {
+            return new JsonResponse(['error' => 'Cette discussion est verrouillée'], Response::HTTP_FORBIDDEN);
         }
 
         try {
@@ -162,26 +215,40 @@ final class DiscussionController extends AbstractController
         DiscussionRepository $discussionRepository,
         EntityManagerInterface $em
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        /** @var User $user */
-        $user = $this->getUser();
-        $discussionId = $request->query->get('discussionId');
-
-        // Pour l'admin, on utilise l'ID de discussion fourni
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            $discussion = $discussionRepository->find($discussionId);
-        } else {
-            // Pour un utilisateur normal, on utilise sa dernière réservation
-            $discussion = $discussionRepository->findOneBy(['reservation' => $user->getReservations()->last()]);
-        }
-        
-        if (!$discussion) {
-            return new JsonResponse(['error' => 'Discussion non trouvée'], Response::HTTP_NOT_FOUND);
-        }
-
         try {
-            $newMessages = $messageRepository->findNewMessages($discussion, $user);
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            
+            /** @var User $user */
+            $user = $this->getUser();
+            $discussionId = $request->query->get('discussionId');
+
+            // Si aucun ID de discussion n'est fourni, on vérifie tous les messages non lus
+            if (!$discussionId) {
+                $unreadCount = $messageRepository->countUnreadForUser($user);
+                return new JsonResponse([
+                    'newMessages' => $unreadCount > 0,
+                    'unreadCount' => $unreadCount
+                ]);
+            }
+
+            // Pour l'admin, on utilise l'ID de discussion fourni
+            if (in_array('ROLE_ADMIN', $user->getRoles())) {
+                $discussion = $discussionRepository->find($discussionId);
+            } else {
+                // Pour un utilisateur normal, on utilise sa dernière réservation
+                $discussion = $discussionRepository->findOneBy(['reservation' => $user->getReservations()->last()]);
+                
+                // Vérifier que la discussion appartient bien à l'utilisateur
+                if ($discussion && $discussion->getReservation()->getUser()->getId() !== $user->getId()) {
+                    return new JsonResponse(['error' => 'Vous n\'avez pas accès à cette discussion'], Response::HTTP_FORBIDDEN);
+                }
+            }
+            
+            if (!$discussion) {
+                return new JsonResponse(['error' => 'Discussion non trouvée'], Response::HTTP_NOT_FOUND);
+            }
+
+            $newMessages = $messageRepository->findUnreadByDiscussionForUser($discussion, $user);
             $messages = [];
             
             foreach ($newMessages as $message) {
@@ -192,7 +259,7 @@ final class DiscussionController extends AbstractController
                 ];
             }
 
-            if (!empty($newMessages)) {
+            if (!empty($messages)) {
                 $em->flush();
             }
 
@@ -206,5 +273,24 @@ final class DiscussionController extends AbstractController
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+    }
+
+    #[Route('/toggle-lock/{id}', name: 'toggle_discussion_lock', methods: ['POST'])]
+    public function toggleLock(
+        Discussion $discussion,
+        EntityManagerInterface $em,
+        Request $request
+    ): JsonResponse {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new JsonResponse(['error' => 'Accès refusé'], Response::HTTP_FORBIDDEN);
+        }
+
+        $discussion->setIsLocked(!$discussion->isLocked());
+        $em->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'isLocked' => $discussion->isLocked()
+        ]);
     }
 }
