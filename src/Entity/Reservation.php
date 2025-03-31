@@ -54,6 +54,9 @@ class Reservation
     #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'reservation')]
     private Collection $payments;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $appointment_datetime = null;
+
     public function __construct()
     {
         $this->bookedAt = new \DateTimeImmutable(); // Définit automatiquement la date de réservation
@@ -215,6 +218,18 @@ class Reservation
                 $payment->setReservation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAppointmentDatetime(): ?\DateTimeInterface
+    {
+        return $this->appointment_datetime;
+    }
+
+    public function setAppointmentDatetime(\DateTimeInterface $appointment_datetime): static
+    {
+        $this->appointment_datetime = $appointment_datetime;
 
         return $this;
     }

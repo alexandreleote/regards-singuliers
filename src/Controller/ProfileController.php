@@ -112,33 +112,21 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/reservations', name: 'profile_reservations')]
-    public function reservations(ReservationRepository $reservationRepository): Response
+    #[Route('/reservations/{filter}', name: 'profile_reservations', defaults: ['filter' => 'upcoming'])]
+    public function reservations(ReservationRepository $reservationRepository, string $filter = 'upcoming'): Response
     {
-        $user = $this->getUser();
-        
-        $allReservations = $reservationRepository->findByUser($user);
-        
-        $currentReservations = [];
-        $upcomingReservations = [];
-        $pastReservations = [];
-        
-        $now = new \DateTime();
-        
-        foreach ($allReservations as $reservation) {
-            if ($reservation->getBookedAt() < $now) {
-                $pastReservations[] = $reservation;
-            } elseif ($reservation->getBookedAt() > $now) {
-                $upcomingReservations[] = $reservation;
-            } else {
-                $currentReservations[] = $reservation;
-            }
+        // Vérifier que le filtre est valide
+        if (!in_array($filter, ['past', 'today', 'upcoming'])) {
+            $filter = 'upcoming';
         }
         
+        $user = $this->getUser();
+        $reservations = $reservationRepository->findByUserAndAppointmentDate($user, $filter);
+        
         return $this->render('profile/reservations.html.twig', [
-            'currentReservations' => $currentReservations,
-            'upcomingReservations' => $upcomingReservations,
-            'pastReservations' => $pastReservations,
+            'user' => $user,
+            'reservations' => $reservations,
+            'filter' => $filter,
             'page_title' => 'Mes réservations - regards singuliers',
             'meta_description' => 'Consultez et gérez vos réservations sur regards singuliers, suivez l\'avancement de vos projets et planifiez vos prochaines étapes avec notre équipe.',
         ]);

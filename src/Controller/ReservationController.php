@@ -6,6 +6,7 @@ use App\Entity\Service;
 use App\Service\ReservationService;
 use App\Repository\ReservationRepository;
 use App\Repository\ServiceRepository;
+use App\Service\CalendlyService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,17 +23,20 @@ class ReservationController extends AbstractController
     private $reservationRepository;
     private $serviceRepository;
     private $entityManager;
+    private $calendlyService;
 
     public function __construct(
         ReservationService $reservationService,
         ReservationRepository $reservationRepository,
         ServiceRepository $serviceRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        CalendlyService $calendlyService
     ) {
         $this->reservationService = $reservationService;
         $this->reservationRepository = $reservationRepository;
         $this->serviceRepository = $serviceRepository;
         $this->entityManager = $entityManager;
+        $this->calendlyService = $calendlyService;
     }
 
     #[Route('/date/{slug:service}', name: 'reservation_date')]
@@ -71,12 +75,8 @@ class ReservationController extends AbstractController
             }
 
             // Valider les données requises
-            if (!isset($data['serviceId'])) {
-                throw new \Exception('ID du service manquant');
-            }
-
-            if (!isset($data['event']['event_id']) || !isset($data['event']['invitee_id'])) {
-                throw new \Exception('Données de l\'événement Calendly manquantes');
+            if (!isset($data['serviceId'], $data['event']['event_id'], $data['event']['invitee_id'])) {
+                throw new \Exception('Données manquantes');
             }
 
             $service = $this->serviceRepository->find($data['serviceId']);
@@ -90,6 +90,12 @@ class ReservationController extends AbstractController
             // Sauvegarder les IDs Calendly
             $reservation->setCalendlyEventId($data['event']['event_id']);
             $reservation->setCalendlyInviteeId($data['event']['invitee_id']);
+
+            // Définir la date du rendez-vous
+            if (isset($data['event']['start_time'])) {
+                $startTime = new \DateTime($data['event']['start_time']);
+                $reservation->setAppointmentDatetime($startTime);
+            }
             
             // Définir le statut initial
             $reservation->setStatus('en attente');
@@ -112,6 +118,7 @@ class ReservationController extends AbstractController
             ], 400);
         }
     }
+
 
     #[Route('/payment/{slug:service}', name: 'reservation_payment')]
     public function payment(Service $service): Response

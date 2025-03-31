@@ -4,92 +4,98 @@
 
 {% block body %}
     <div class="toast-container" id="toastContainer"></div>
-    
-    <section class="discussion-container">
-        {% if is_granted('ROLE_ADMIN') %}
-            {% if discussions is defined and discussions|length > 0 %}
-                <div class="discussions-list">
-                    <h2>Discussions actives</h2>
-                    <ul>
-                        {% for discussion in discussions %}
-                            <li class="discussion-item {% if discussion.id == currentDiscussion.id %}active{% endif %}">
-                                <a href="{{ path('profile_discussions', {'discussionId': discussion.id}) }}">
-                                    {% if 'ROLE_DELETED' in discussion.reservation.user.roles %}
-                                        profil anonymisé
-                                    {% elseif not discussion.reservation.user.personalInformationComplete %}
-                                        {{ discussion.reservation.user.email }}
-                                    {% else %}
-                                        {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
-                                    {% endif %}
-                                    <span class="discussion-date">{{ discussion.createdAt|date('d/m/Y') }}</span>
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+    <section class="profile-content">
+        <a href="{{ path('profile') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+        </a>
+        <article class="discussion-container">
+            {% if is_granted('ROLE_ADMIN') %}
+                {% if discussions is defined and discussions|length > 0 %}
+                    <div class="discussions-list">
+                        <h2>Discussions actives</h2>
+                        <ul>
+                            {% for discussion in discussions %}
+                                <li class="discussion-item {% if discussion.id == currentDiscussion.id %}active{% endif %}">
+                                    <a href="{{ path('profile_discussions', {'discussionId': discussion.id}) }}">
+                                        {% if 'ROLE_DELETED' in discussion.reservation.user.roles %}
+                                            profil anonymisé
+                                        {% elseif not discussion.reservation.user.personalInformationComplete %}
+                                            {{ discussion.reservation.user.email }}
+                                        {% else %}
+                                            {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
+                                        {% endif %}
+                                        <span class="discussion-date">{{ discussion.createdAt|date('d/m/Y') }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
             {% endif %}
-        {% endif %}
 
-        {% if app.user.reservations|length > 0 or (is_granted('ROLE_ADMIN') and discussions|length > 0) %}
-            <article>
-                <h1>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        {% if 'ROLE_DELETED' in currentDiscussion.reservation.user.roles %}
-                            profil anonymisé
-                        {% elseif not currentDiscussion.reservation.user.personalInformationComplete %}
-                            {{ currentDiscussion.reservation.user.email }}
-                        {% else %}
-                            {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
-                        {% endif %}
-                        <button 
-                            id="toggleLockBtn" 
-                            class="btn btn-secondary" 
-                            data-discussion-id="{{ currentDiscussion.id }}"
-                            data-is-locked="{{ currentDiscussion.isLocked ? 'true' : 'false' }}"
-                        >
-                            {% if currentDiscussion.isLocked %}
-                                <i class="fas fa-lock"></i> Déverrouiller
+            {% if app.user.reservations|length > 0 or (is_granted('ROLE_ADMIN') and discussions|length > 0) %}
+                <article>
+                    <h1>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {% if 'ROLE_DELETED' in currentDiscussion.reservation.user.roles %}
+                                profil anonymisé
+                            {% elseif not currentDiscussion.reservation.user.personalInformationComplete %}
+                                {{ currentDiscussion.reservation.user.email }}
                             {% else %}
-                                <i class="fas fa-unlock"></i> Verrouiller
+                                {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
                             {% endif %}
-                        </button>
-                    {% else %}
-                        Votre discussion avec l'architecte
-                    {% endif %}
-                </h1>
+                            <button 
+                                id="toggleLockBtn" 
+                                class="btn btn-secondary" 
+                                data-discussion-id="{{ currentDiscussion.id }}"
+                                data-is-locked="{{ currentDiscussion.isLocked ? 'true' : 'false' }}"
+                            >
+                                {% if currentDiscussion.isLocked %}
+                                    <i class="fas fa-lock"></i> Déverrouiller
+                                {% else %}
+                                    <i class="fas fa-unlock"></i> Verrouiller
+                                {% endif %}
+                            </button>
+                        {% else %}
+                            Votre discussion avec l'architecte
+                        {% endif %}
+                    </h1>
 
-                <div class="messages-container" id="messagesContainer">
-                    {% for message in messages %}
-                        <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}">
-                            <div class="message-content">{{ message.content }}</div>
-                            <div class="message-time">
-                                {{ message.sentAt|date('d/m/Y H:i') }}
+                    <div class="messages-container" id="messagesContainer">
+                        {% for message in messages %}
+                            <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}">
+                                <div class="message-content">{{ message.content }}</div>
+                                <div class="message-time">
+                                    {{ message.sentAt|date('d/m/Y H:i') }}
+                                </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
 
-                <form id="messageForm" class="message-form" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
-                    {% if currentDiscussion is defined %}
-                        <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
-                    {% endif %}
-                    <textarea 
-                        name="content" 
-                        class="message-input" 
-                        placeholder="{% if currentDiscussion.isLocked %}Cette discussion est verrouillée{% else %}Écrivez votre message...{% endif %}"
-                        required
-                        {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}
-                    ></textarea>
-                    <button type="submit" class="send-button" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
-                        Envoyer
-                    </button>
-                </form>
-            </article>
-        {% else %}
-            <article>
-                <p>Vous n'avez pas encore réservé de prestations.</p>
-                <p>Prenez connaissance de nos <a href="{{ path('prestations') }}">services</a></p>
-            </article>
-        {% endif %}
+                    <form id="messageForm" class="message-form" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
+                        {% if currentDiscussion is defined %}
+                            <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
+                        {% endif %}
+                        <textarea 
+                            name="content" 
+                            class="message-input" 
+                            placeholder="{% if currentDiscussion.isLocked %}Cette discussion est verrouillée{% else %}Écrivez votre message...{% endif %}"
+                            required
+                            {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}
+                        ></textarea>
+                        <button type="submit" class="send-button" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
+                            Envoyer
+                        </button>
+                    </form>
+                </article>
+            {% else %}
+                <article>
+                    <p>Vous n'avez pas encore réservé de prestations.</p>
+                    <p>Prenez connaissance de nos <a href="{{ path('prestations') }}">services</a></p>
+                </article>
+            {% endif %}
+        </article>
     </section>
+
 {% endblock %}

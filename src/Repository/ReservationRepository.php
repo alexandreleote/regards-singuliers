@@ -18,98 +18,54 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-    /**
-     * Trouve les réservations d'un utilisateur avec leurs relations
-     */
-    public function findByUserWithRelations(User $user): array
+    public function findByUserAndAppointmentDate(User $user, string $filter): array
     {
-        return $this->createQueryBuilder('r')
-            ->leftJoin('r.service', 's')
-            ->leftJoin('r.discussions', 'd')
-            ->leftJoin('r.payments', 'p')
-            ->addSelect('s', 'd', 'p')
+        $qb = $this->createQueryBuilder('r')
             ->andWhere('r.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('r.bookedAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->andWhere('r.status != :status')
+            ->setParameter('status', 'annulée');
+            
+        $now = new \DateTime();
+        
+        switch ($filter) {
+            case 'past':
+                $qb->andWhere('r.appointment_datetime < :today')
+                   ->setParameter('today', $now->format('Y-m-d 00:00:00'));
+                break;
+            case 'today':
+                $qb->andWhere('r.appointment_datetime >= :todayStart')
+                   ->andWhere('r.appointment_datetime <= :todayEnd')
+                   ->setParameter('todayStart', $now->format('Y-m-d 00:00:00'))
+                   ->setParameter('todayEnd', $now->format('Y-m-d 23:59:59'));
+                break;
+            case 'upcoming':
+                $qb->andWhere('r.appointment_datetime > :now')
+                   ->setParameter('now', $now);
+                break;
+        }
+        
+        return $qb->orderBy('r.appointment_datetime', $filter === 'past' ? 'DESC' : 'ASC')
+                 ->getQuery()
+                 ->getResult();
     }
 
-    /**
-     * Trouve les réservations pour un service spécifique
-     */
-    public function findByService(Service $service): array
+    public function findByCalendlyEventId(string $eventId): ?Reservation
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.service = :service')
-            ->setParameter('service', $service)
-            ->orderBy('r.bookedAt', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Trouve les réservations par statut
-     */
-    public function findByStatus(string $status): array
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.status = :status')
-            ->setParameter('status', $status)
-            ->orderBy('r.bookedAt', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Trouve les réservations entre deux dates
-     */
-    public function findBetweenDates(\DateTimeInterface $start, \DateTimeInterface $end): array
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.bookedAt BETWEEN :start AND :end')
-            ->setParameter('start', $start)
-            ->setParameter('end', $end)
-            ->orderBy('r.bookedAt', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Trouve les réservations avec paiement en attente
-     */
-    public function findPendingPayments(): array
-    {
-        return $this->createQueryBuilder('r')
-            ->leftJoin('r.payments', 'p')
-            ->andWhere('r.status = :status')
-            ->setParameter('status', 'en attente')
-            ->andWhere('r.stripePaymentIntentId IS NOT NULL')
-            ->orderBy('r.bookedAt', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Trouve une réservation par son ID Stripe Payment Intent
-     */
-    public function findByStripePaymentIntentId(string $paymentIntentId): ?Reservation
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.stripePaymentIntentId = :paymentIntentId')
-            ->setParameter('paymentIntentId', $paymentIntentId)
+            ->andWhere('r.calendlyEventId = :eventId')
+            ->setParameter('eventId', $eventId)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
-    public function findByUser(User $user): array
+    public function findByCalendlyInviteeId(string $inviteeId): ?Reservation
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('r.bookedAt', 'DESC')
+            ->andWhere('r.calendlyInviteeId = :inviteeId')
+            ->setParameter('inviteeId', $inviteeId)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 
     //    /**

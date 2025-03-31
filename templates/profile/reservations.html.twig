@@ -8,37 +8,52 @@
 {% endblock %}
 
 {% block body %}
-<div class="profile-container">
-    <div class="profile-content">
-        <div class="card animate-fade-in">
+<section class="profile-container">
+    <article class="profile-content">
+        <a href="{{ path('profile') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+        </a>
+        <section class="card animate-fade-in">
             <div class="profile-header">
                 <h1>Mes Réservations</h1>
                 <p class="profile-subtitle">Consultez et gérez vos rendez-vous</p>
+            </div>
+
+            {# Calendrier Calendly #}
+            <div class="reservation-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-plus"></i>
+                    Prendre un rendez-vous
+                </h2>
+                <div id="calendly-container" 
+                     data-url="{{ calendly_url }}"
+                     class="calendly-container">
+                </div>
+                <div id="error-message" class="alert alert-danger" style="display: none;"></div>
             </div>
 
             {# Réservations actuelles #}
             <div class="reservation-section">
                 <h2 class="section-title">
                     <i class="fas fa-clock"></i>
-                    Réservations actuelles
+                    Votre rendez-vous du jour
                 </h2>
-                {% if currentReservations|length > 0 %}
-                    <div class="reservation-list">
-                        {% for reservation in currentReservations %}
-                            <div class="reservation-item">
-                                <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
-                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
-                                </div>
-                                <span class="reservation-status status-current">
-                                    <i class="fas fa-check-circle"></i>
-                                    En cours
+                {% set todayReservations = reservations|filter(r => r.appointmentDatetime|date('Y-m-d') == "now"|date('Y-m-d')) %}
+                {% if todayReservations is not empty %}
+                    {% for reservation in todayReservations %}
+                        <div class="reservation-card">
+                            <div class="reservation-info">
+                                <h3>{{ reservation.service.title }}</h3>
+                                <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
+                                <span class="status-badge status-{{ reservation.status }}">
+                                    {{ reservation.status }}
                                 </span>
                             </div>
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 {% else %}
-                    <p class="empty-state">Aucune réservation en cours</p>
+                    <p>Vous n'avez pas de rendez-vous aujourd'hui.</p>
                 {% endif %}
             </div>
 
@@ -48,23 +63,21 @@
                     <i class="fas fa-calendar-alt"></i>
                     Réservations à venir
                 </h2>
-                {% if upcomingReservations|length > 0 %}
-                    <div class="reservation-list">
-                        {% for reservation in upcomingReservations %}
-                            <div class="reservation-item">
-                                <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
-                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
-                                </div>
-                                <span class="reservation-status status-upcoming">
-                                    <i class="fas fa-calendar-check"></i>
-                                    À venir
+                {% set upcomingReservations = reservations|filter(r => r.appointmentDatetime|date('Y-m-d') > "now"|date('Y-m-d')) %}
+                {% if upcomingReservations is not empty %}
+                    {% for reservation in upcomingReservations %}
+                        <div class="reservation-card">
+                            <div class="reservation-info">
+                                <h3>{{ reservation.service.title }}</h3>
+                                <p>{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</p>
+                                <span class="status-badge status-{{ reservation.status }}">
+                                    {{ reservation.status }}
                                 </span>
                             </div>
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 {% else %}
-                    <p class="empty-state">Aucune réservation à venir</p>
+                    <p>Vous n'avez pas de réservations à venir.</p>
                 {% endif %}
             </div>
 
@@ -74,33 +87,24 @@
                     <i class="fas fa-history"></i>
                     Réservations passées
                 </h2>
-                {% if pastReservations|length > 0 %}
-                    <div class="reservation-list">
-                        {% for reservation in pastReservations %}
-                            <div class="reservation-item">
-                                <div class="reservation-info">
-                                    <p class="reservation-title">{{ reservation.service.reference }}</p>
-                                    <p class="reservation-date">{{ reservation.bookedAt|date('d/m/Y H:i') }}</p>
-                                </div>
-                                <span class="reservation-status status-past">
-                                    <i class="fas fa-clock"></i>
-                                    Passée
+                {% set pastReservations = reservations|filter(r => r.appointmentDatetime|date('Y-m-d') < "now"|date('Y-m-d')) %}
+                {% if pastReservations is not empty %}
+                    {% for reservation in pastReservations %}
+                        <div class="reservation-card">
+                            <div class="reservation-info">
+                                <h3>{{ reservation.service.title }}</h3>
+                                <p>{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</p>
+                                <span class="status-badge status-{{ reservation.status }}">
+                                    {{ reservation.status }}
                                 </span>
                             </div>
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 {% else %}
-                    <p class="empty-state">Aucune réservation passée</p>
+                    <p>Vous n'avez pas de réservations passées.</p>
                 {% endif %}
             </div>
-
-            <div class="form-actions">
-                <a href="{{ path('profile') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i>
-                    Retour au profil
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+        </section>
+    </article>
+</section>
 {% endblock %}

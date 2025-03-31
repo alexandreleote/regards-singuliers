@@ -50,4 +50,34 @@ class CalendlyService
             throw new \RuntimeException('Erreur lors de la création de l\'événement Calendly');
         }
     }
-} 
+
+    public function getEventDetails(string $eventId): array
+    {
+        try {
+            $response = $this->client->request('GET', "https://api.calendly.com/scheduled_events/{$eventId}", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type' => 'application/json',
+                ]
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new \RuntimeException('Erreur lors de la récupération des détails de l\'évènement Calendly');
+            }
+
+            $data = $response->toArray();
+            
+            // Vérifier si la réponse contient les données nécessaires
+            if (!isset($data['resource'])) {
+                throw new \RuntimeException('Format de réponse Calendly invalide');
+            }
+
+            return $data;
+
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            error_log('Erreur Calendly: ' . $e->getMessage());
+            throw new \RuntimeException('Erreur lors de la récupération des détails de l\'évènement Calendly: ' . $e->getMessage());
+        }
+    }
+}
