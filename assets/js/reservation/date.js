@@ -52,6 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
     async function handleDateSelection(event) {
         if (event.data.event === 'calendly.event_scheduled') {
             const eventData = event.data.payload;
+            /*console.log('eventData:', eventData);
+            console.log('event exists:', !!eventData?.event);
+            console.log('scheduled_time exists:', !!eventData?.event?.scheduled_time);
+            console.log('event uri exists:', !!eventData?.event?.uri);
+            console.log('invitee exists:', !!eventData?.invitee);
+            console.log('invitee uri exists:', !!eventData?.invitee?.uri); */
             
             try {
                 // Vérifier que nous avons toutes les données nécessaires
@@ -59,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('Données de l\'événement Calendly incomplètes');
                 }
 
+                // Récupérer la date et l'heure de l'événement
+                const eventDate = eventData.event.scheduled_time;
+                
                 // Créer la réservation via l'API
                 const response = await fetch('/reservation/process-date', {
                     method: 'POST',
@@ -74,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     })
                 });
+                
 
                 const data = await response.json();
 

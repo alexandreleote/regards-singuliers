@@ -2,11 +2,6 @@
 
 {% block title %}Mes Réservations{% endblock %}
 
-{% block stylesheets %}
-{{ parent() }}
-<link rel="stylesheet" href="{{ asset('css/profile.css') }}">
-{% endblock %}
-
 {% block body %}
 <section class="profile-container">
     <article class="profile-content">
@@ -18,19 +13,6 @@
             <div class="profile-header">
                 <h1>Mes Réservations</h1>
                 <p class="profile-subtitle">Consultez et gérez vos rendez-vous</p>
-            </div>
-
-            {# Calendrier Calendly #}
-            <div class="reservation-section">
-                <h2 class="section-title">
-                    <i class="fas fa-calendar-plus"></i>
-                    Prendre un rendez-vous
-                </h2>
-                <div id="calendly-container" 
-                     data-url="{{ calendly_url }}"
-                     class="calendly-container">
-                </div>
-                <div id="error-message" class="alert alert-danger" style="display: none;"></div>
             </div>
 
             {# Réservations actuelles #}
@@ -54,6 +36,7 @@
                     {% endfor %}
                 {% else %}
                     <p>Vous n'avez pas de rendez-vous aujourd'hui.</p>
+                    <a href="{{path('prestations')}}" class="btn btn-primary">Prendre rendez-vous</a>
                 {% endif %}
             </div>
 

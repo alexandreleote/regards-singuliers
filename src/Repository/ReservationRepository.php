@@ -68,6 +68,15 @@ class ReservationRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findByStripePaymentIntentId(string $paymentIntentId): ?Reservation
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.stripePaymentIntentId = :paymentIntentId')
+            ->setParameter('paymentIntentId', $paymentIntentId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Reservation[] Returns an array of Reservation objects
     //     */

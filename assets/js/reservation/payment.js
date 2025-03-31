@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clientSecret: clientSecret,
         appearance: {
             theme: 'stripe',
-            variables: {
+            /* variables: {
                 colorPrimary: '#2563eb',
                 colorBackground: '#ffffff',
                 colorText: '#1f2937',
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fontFamily: 'system-ui, -apple-system, sans-serif',
                 spacingUnit: '4px',
                 borderRadius: '8px'
-            }
+            } */
         }
     });
 

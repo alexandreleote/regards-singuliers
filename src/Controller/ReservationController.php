@@ -42,7 +42,6 @@ class ReservationController extends AbstractController
     #[Route('/date/{slug:service}', name: 'reservation_date')]
     public function date(Service $service): Response
     {
-        
         if (!$service) {
             return $this->redirectToRoute('home');
         }
@@ -55,7 +54,8 @@ class ReservationController extends AbstractController
             'page_title' => 'Choisir une date - regards singuliers',
             'meta_description' => 'Sélectionnez votre date de rendez-vous avec notre architecte d\'intérieur. Un moment unique pour donner vie à votre projet de décoration.',
             'service' => $service,
-            'calendly_url' => $this->getParameter('calendly.url')
+            'calendly_url' => $this->getParameter('calendly.url'),
+            'calendly_api_key' => $_ENV['CALENDLY_API_KEY']
         ]);
     }
 
@@ -64,6 +64,7 @@ class ReservationController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
+           
             if (!$data) {
                 throw new \Exception('Données JSON invalides');
             }
@@ -91,9 +92,12 @@ class ReservationController extends AbstractController
             $reservation->setCalendlyEventId($data['event']['event_id']);
             $reservation->setCalendlyInviteeId($data['event']['invitee_id']);
 
-            // Définir la date du rendez-vous
-            if (isset($data['event']['start_time'])) {
-                $startTime = new \DateTime($data['event']['start_time']);
+            // Récupérer les détails de l'événement via l'API Calendly
+            $eventId = str_replace('https://api.calendly.com/scheduled_events/', '', $data['event']['event_id']);
+            $response = $this->calendlyService->getEventDetails($eventId);
+            
+            if ($response && isset($response['resource']['start_time'])) {
+                $startTime = new \DateTimeImmutable($response['resource']['start_time']);
                 $reservation->setAppointmentDatetime($startTime);
             }
             
@@ -118,7 +122,6 @@ class ReservationController extends AbstractController
             ], 400);
         }
     }
-
 
     #[Route('/payment/{slug:service}', name: 'reservation_payment')]
     public function payment(Service $service): Response
