@@ -27,7 +27,7 @@
                         <div class="reservation-card">
                             <a href="{{ path('profile_reservation_detail', {'id': reservation.id} )}}" class="reservation-info">
                                 <h3>{{ reservation.service.title }}</h3>
-                                <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
+                                <p>RDV prévu le : {{ reservation.appointmentDatetime|date('d/m/Y - H:i') }}</p>
                                 {# <span class="status-badge status-{{ reservation.status }}">
                                     {{ reservation.status }}
                                 </span> #}
@@ -59,7 +59,7 @@
                         <div class="reservation-card">
                             <a href="{{ path('profile_reservation_detail', {'id': reservation.id} )}}" class="reservation-info">
                                 <h3>{{ reservation.service.title }}</h3>
-                                <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
+                                <p>RDV prévu le : {{ reservation.appointmentDatetime|date('d/m/Y - H:i') }}</p>
                                 {# <span class="status-badge status-{{ reservation.status }}">
                                     {{ reservation.status }}
                                 </span> #}
@@ -90,7 +90,7 @@
                         <div class="reservation-card">
                             <a href="{{ path('profile_reservation_detail', {'id': reservation.id} )}}" class="reservation-info">
                                 <h3>{{ reservation.service.title }}</h3>
-                                <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
+                                <p>RDV ayant eu lieu le : {{ reservation.appointmentDatetime|date('d/m/Y - H:i') }}</p>
                                 {# <span class="status-badge status-{{ reservation.status }}">
                                     {{ reservation.status }}
                                 </span> #}

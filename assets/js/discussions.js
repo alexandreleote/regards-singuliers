@@ -17,7 +17,7 @@ export function initializeDiscussions() {
         toggleLockBtn.addEventListener('click', function() {
             const discussionId = this.dataset.discussionId;
             
-            fetch(`/discussion/${discussionId}/toggle-lock`, {
+            fetch(`/discussion/toggle-lock/${discussionId}`, {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -71,7 +71,7 @@ export function initializeDiscussions() {
             e.preventDefault();
             const formData = new FormData(messageForm);
 
-            fetch('/discussion/send-message', {
+            fetch('/discussion/send', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -168,4 +168,4 @@ export function initializeDiscussions() {
             clearInterval(checkMessagesInterval);
         });
     }
-} 
+}

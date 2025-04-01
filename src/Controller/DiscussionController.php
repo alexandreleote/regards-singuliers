@@ -32,42 +32,42 @@ final class DiscussionController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        // Si l'utilisateur est un admin, on récupère toutes les discussions non archivées
+        // Initialiser les variables par défaut
+        $discussions = [];
+        $messages = [];
+        $currentDiscussion = null;
+        $hasUnreadMessages = false;
+
+        // Si l'utilisateur est un admin, on récupère toutes les discussions où il est destinataire
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Récupérer toutes les discussions non archivées où l'admin est destinataire
             $discussions = $discussionRepository->findBy(['isArchived' => false], ['createdAt' => 'DESC']);
-            if (empty($discussions)) {
-                return $this->render('profile/discussions.html.twig', [
-                    'messages' => [],
-                    'page_title' => 'Messagerie - regards singuliers',
-                    'meta_description' => 'Gérez toutes les discussions avec vos clients.',
-                ]);
-            }
             
-            // Récupérer la discussion sélectionnée ou la première par défaut
-            $discussionId = $request->query->get('discussionId');
-            $currentDiscussion = null;
-            
-            if ($discussionId) {
-                $currentDiscussion = $discussionRepository->find($discussionId);
-            }
-            
-            if (!$currentDiscussion) {
-                $currentDiscussion = $discussions[0];
-            }
-
-            // Récupérer les messages et marquer les messages non lus comme lus
-            $messages = $messageRepository->findBy(['discussion' => $currentDiscussion], ['sentAt' => 'ASC']);
-            $hasUnreadMessages = false;
-
-            foreach ($messages as $message) {
-                if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
-                    $message->setIsRead(true);
-                    $hasUnreadMessages = true;
+            if (!empty($discussions)) {
+                // Récupérer la discussion sélectionnée ou la première par défaut
+                $discussionId = $request->query->get('discussionId');
+                
+                if ($discussionId) {
+                    $currentDiscussion = $discussionRepository->find($discussionId);
                 }
-            }
+                
+                if (!$currentDiscussion) {
+                    $currentDiscussion = $discussions[0];
+                }
 
-            if ($hasUnreadMessages) {
-                $em->flush();
+                // Récupérer les messages et marquer les messages non lus comme lus
+                $messages = $messageRepository->findBy(['discussion' => $currentDiscussion], ['sentAt' => 'ASC']);
+
+                foreach ($messages as $message) {
+                    if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
+                        $message->setIsRead(true);
+                        $hasUnreadMessages = true;
+                    }
+                }
+
+                if ($hasUnreadMessages) {
+                    $em->flush();
+                }
             }
 
             return $this->render('profile/discussions.html.twig', [
@@ -85,6 +85,9 @@ final class DiscussionController extends AbstractController
         if (!$lastReservation) {
             return $this->render('profile/discussions.html.twig', [
                 'messages' => [],
+                'discussions' => [],
+                'currentDiscussion' => null,
+                'hasUnreadMessages' => false,
                 'page_title' => 'Messagerie - regards singuliers',
                 'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur.',
             ]);
@@ -93,13 +96,6 @@ final class DiscussionController extends AbstractController
         // Récupérer ou créer la discussion
         $discussion = $discussionRepository->findOneBy(['reservation' => $lastReservation]);
         if (!$discussion) {
-            // Récupérer l'admin
-            /** @var User|null $admin */
-            $admin = $userRepository->findOneBy(['email' => 'admin@regards-singuliers.fr']);
-            if (!$admin) {
-                throw new \Exception('L\'administrateur n\'a pas été trouvé');
-            }
-
             $discussion = new Discussion();
             $discussion->setReservation($lastReservation);
             $discussion->setCreatedAt(new \DateTimeImmutable());
@@ -107,21 +103,12 @@ final class DiscussionController extends AbstractController
             $discussion->setFilesEnabled(true);
             $discussion->setIsArchived(false);
             
-            $welcomeMessage = new Message();
-            $welcomeMessage->setContent('Bonjour ! Je suis ravie de commencer cette collaboration avec vous. N\'hésitez pas à me poser toutes vos questions concernant votre projet.');
-            $welcomeMessage->setUser($admin);
-            $welcomeMessage->setDiscussion($discussion);
-            $welcomeMessage->setSentAt(new \DateTimeImmutable());
-            $welcomeMessage->setIsRead(false);
-
             $em->persist($discussion);
-            $em->persist($welcomeMessage);
             $em->flush();
         }
 
         // Récupérer les messages et marquer les messages non lus comme lus
         $messages = $messageRepository->findBy(['discussion' => $discussion], ['sentAt' => 'ASC']);
-        $hasUnreadMessages = false;
 
         foreach ($messages as $message) {
             if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
@@ -136,6 +123,7 @@ final class DiscussionController extends AbstractController
         
         return $this->render('profile/discussions.html.twig', [
             'messages' => $messages,
+            'discussions' => [],
             'currentDiscussion' => $discussion,
             'hasUnreadMessages' => $hasUnreadMessages,
             'page_title' => 'Messagerie - regards singuliers',
