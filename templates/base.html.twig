@@ -123,7 +123,7 @@
         <main class="page-fullheight"> 
             <div class="container page-content">
                 {% block body %}
-                    {% if app.flashes|length > 0 %}
+                    {# {% if app.flashes|length > 0 %}
                         <div class="section">
                             {% for type, messages in app.flashes %}
                                 {% for message in messages %}
@@ -133,7 +133,7 @@
                                 {% endfor %}
                             {% endfor %}
                         </div>
-                    {% endif %}
+                    {% endif %} #}
                 {% endblock %}
             </div>
         </main>

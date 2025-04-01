@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Réservations{% endblock %}
+{% block title %}{{ page_title}}{% endblock %}
 
 {% block body %}
 <section class="profile-container">
@@ -25,12 +25,19 @@
                 {% if todayReservations is not empty %}
                     {% for reservation in todayReservations %}
                         <div class="reservation-card">
-                            <div class="reservation-info">
+                            <a href="{{ path('profile_reservation_detail', {'id': reservation.id} )}}" class="reservation-info">
                                 <h3>{{ reservation.service.title }}</h3>
                                 <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
-                                <span class="status-badge status-{{ reservation.status }}">
+                                {# <span class="status-badge status-{{ reservation.status }}">
                                     {{ reservation.status }}
-                                </span>
+                                </span> #}
+                            </a>
+                             <div class="reservation-actions">
+                                {% if reservation.status in ['en attente', 'confirmé'] %}
+                                    <a href="{{ path('profile_reservation_detail', {'id': reservation.id}) }}" class="btn btn-outline-danger">
+                                        <i class="fas fa-times-circle"></i> Annuler
+                                    </a>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -50,12 +57,19 @@
                 {% if upcomingReservations is not empty %}
                     {% for reservation in upcomingReservations %}
                         <div class="reservation-card">
-                            <div class="reservation-info">
+                            <a href="{{ path('profile_reservation_detail', {'id': reservation.id} )}}" class="reservation-info">
                                 <h3>{{ reservation.service.title }}</h3>
-                                <p>{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</p>
-                                <span class="status-badge status-{{ reservation.status }}">
+                                <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
+                                {# <span class="status-badge status-{{ reservation.status }}">
                                     {{ reservation.status }}
-                                </span>
+                                </span> #}
+                            </a>
+                             <div class="reservation-actions">
+                                {% if reservation.status in ['en attente', 'confirmé'] %}
+                                    <a href="{{ path('profile_reservation_detail', {'id': reservation.id}) }}" class="btn btn-outline-danger">
+                                        <i class="fas fa-times-circle"></i> Annuler
+                                    </a>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -74,12 +88,19 @@
                 {% if pastReservations is not empty %}
                     {% for reservation in pastReservations %}
                         <div class="reservation-card">
-                            <div class="reservation-info">
+                            <a href="{{ path('profile_reservation_detail', {'id': reservation.id} )}}" class="reservation-info">
                                 <h3>{{ reservation.service.title }}</h3>
-                                <p>{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</p>
-                                <span class="status-badge status-{{ reservation.status }}">
+                                <p>{{ reservation.appointmentDatetime|date('H:i') }}</p>
+                                {# <span class="status-badge status-{{ reservation.status }}">
                                     {{ reservation.status }}
-                                </span>
+                                </span> #}
+                            </a>
+                             <div class="reservation-actions">
+                                {% if reservation.status in ['en attente', 'confirmé'] %}
+                                    <a href="{{ path('profile_reservation_detail', {'id': reservation.id}) }}" class="btn btn-outline-danger">
+                                        <i class="fas fa-times-circle"></i> Annuler
+                                    </a>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}

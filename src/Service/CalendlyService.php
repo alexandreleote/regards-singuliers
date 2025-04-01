@@ -80,4 +80,37 @@ class CalendlyService
             throw new \RuntimeException('Erreur lors de la récupération des détails de l\'évènement Calendly: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Annule un événement Calendly
+     */
+    public function cancelEvent(string $eventId): bool
+    {
+        try {
+            // Récupérer d'abord les informations sur l'événement pour obtenir l'URI de l'invité
+            $eventDetails = $this->getEventDetails($eventId);
+            
+            if (!$eventDetails || !isset($eventDetails['resource']['uri'])) {
+                throw new \Exception('Impossible de récupérer les détails de l\'événement Calendly');
+            }
+            
+            // Construire l'URL pour annuler
+            $cancelUrl = 'https://api.calendly.com/scheduled_events/' . $eventId . '/cancellation';
+            
+            // Envoyer la requête d'annulation
+            $response = $this->client->request('POST', $cancelUrl, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => [
+                    'reason' => 'Annulation par l\'utilisateur'
+                ]
+            ]);
+            
+            return $response->getStatusCode() === 201 || $response->getStatusCode() === 204;
+        } catch (\Exception $e) {
+            throw new \Exception('Erreur lors de l\'annulation sur Calendly: ' . $e->getMessage());
+        }
+    }
 }

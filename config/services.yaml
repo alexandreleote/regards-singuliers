@@ -27,6 +27,10 @@ services:
 
     App\Service\AnonymizatrionService: ~
 
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+
     App\Service\CalendlyService:
         arguments:
             $client: '@http_client'
