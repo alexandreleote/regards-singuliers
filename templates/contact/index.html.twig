@@ -4,7 +4,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|default('') }}&callback=initMap&libraries=marker&loading=async" defer></script>
 {% endblock %}
 
 {% block body %}

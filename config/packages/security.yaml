@@ -26,6 +26,9 @@ security:
                 path: logout
                 # where to redirect after logout
                 target: home
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
             
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

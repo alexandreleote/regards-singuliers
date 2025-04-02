@@ -13,8 +13,8 @@ export default class extends Controller {
         // Désactiver complètement les interactions
         this.disableHoneypotFields();
         
-        // Ajouter des écouteurs d'événements pour la validation
-        this.setupValidation();
+        // Ajouter l'écouteur d'événement pour la soumission
+        this.element.addEventListener('submit', this.submit.bind(this));
     }
 
     hideHoneypotFields() {
@@ -45,26 +45,12 @@ export default class extends Controller {
         this.workEmailTarget.style.userSelect = 'none';
     }
 
-    setupValidation() {
-        // Écouter les changements sur les champs honeypot
-        this.mobilePhoneTarget.addEventListener('input', this.validateHoneypot.bind(this));
-        this.workEmailTarget.addEventListener('input', this.validateHoneypot.bind(this));
-        
-        // Écouter les changements de focus
-        this.mobilePhoneTarget.addEventListener('focus', this.handleFocus.bind(this));
-        this.workEmailTarget.addEventListener('focus', this.handleFocus.bind(this));
-    }
-
-    validateHoneypot(event) {
-        // Si un champ honeypot est modifié, bloquer le formulaire
+    submit(event) {
+        // Vérifier si les champs honeypot sont remplis
         if (this.mobilePhoneTarget.value !== '' || this.workEmailTarget.value !== '') {
+            event.preventDefault();
             this.blockForm();
         }
-    }
-
-    handleFocus(event) {
-        // Si un champ honeypot reçoit le focus, bloquer le formulaire
-        this.blockForm();
     }
 
     blockForm() {
@@ -77,13 +63,5 @@ export default class extends Controller {
         
         // Afficher un message
         alert('Votre demande a été acceptée - ou pas.');
-    }
-
-    submit(event) {
-        // Vérifier si les champs honeypot sont remplis
-        if (this.mobilePhoneTarget.value !== '' || this.workEmailTarget.value !== '') {
-            event.preventDefault();
-            this.blockForm();
-        }
     }
 } 

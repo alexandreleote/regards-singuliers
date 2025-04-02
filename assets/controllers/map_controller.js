@@ -10,53 +10,133 @@ export default class extends Controller {
             if (!document.querySelector('script[src*="maps.googleapis.com"]')) {
                 window.initMap = () => {
                     const map = new google.maps.Map(document.getElementById('map'), {
-                        center: { lat: 47.8582, lng: -2.6651 }, 
-                        zoom: 15,
+                        center: { lat: 48.0686, lng: -2.9630 }, // Coordonnées de Pontivy
+                        zoom: 8,
                         styles: [
                             {
-                                featureType: 'all',
-                                elementType: 'all',
-                                stylers: [
-                                    { saturation: -100 }
+                                "featureType": "water",
+                                "elementType": "geometry",
+                                "stylers": [
+                                    {
+                                        "color": "#a3ccff"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "landscape",
+                                "elementType": "geometry",
+                                "stylers": [
+                                    {
+                                        "color": "#f5f5f5"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "road",
+                                "elementType": "geometry",
+                                "stylers": [
+                                    {
+                                        "visibility": "simplified"
+                                    },
+                                    {
+                                        "color": "#ffffff"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "poi",
+                                "stylers": [
+                                    {
+                                        "visibility": "off"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "administrative.province",
+                                "elementType": "geometry.stroke",
+                                "stylers": [
+                                    {
+                                        "color": "#c4c4c4"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "administrative.country",
+                                "elementType": "geometry.stroke",
+                                "stylers": [
+                                    {
+                                        "color": "#a0a0a0"
+                                    },
+                                    {
+                                        "weight": 1.5
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "administrative.locality",
+                                "elementType": "labels.text",
+                                "stylers": [
+                                    {
+                                        "visibility": "on"
+                                    },
+                                    {
+                                        "weight": 0.5
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "road",
+                                "elementType": "labels",
+                                "stylers": [
+                                    {
+                                        "visibility": "off"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "transit",
+                                "stylers": [
+                                    {
+                                        "visibility": "off"
+                                    }
+                                ]
+                            },
+                            {
+                                "featureType": "administrative",
+                                "elementType": "labels",
+                                "stylers": [
+                                    {
+                                        "visibility": "on"
+                                    }
                                 ]
                             }
-                        ]
+                        ],
+                        draggable: false,
+                        zoomControl: false,
+                        scrollwheel: false,
+                        disableDoubleClickZoom: true,
+                        streetViewControl: false,
+                        mapTypeControl: false,
+                        fullscreenControl: false,
+                        gestureHandling: 'none',
+                        keyboardShortcuts: false
                     });
 
-                    // Créer un marker avec AdvancedMarkerElement
-                    const marker = new google.maps.marker.AdvancedMarkerElement({
-                        map,
-                        position: { lat: 47.8582, lng: -2.6651 },
-                        title: 'regards singuliers',
-                        // Optionnel : personnaliser l'apparence du marker
-                        content: this.createMarkerContent()
+                    // Créer un marqueur standard (pin)
+                    new google.maps.Marker({
+                        position: { lat: 48.0686, lng: -2.9630 }, // Coordonnées de Pontivy
+                        map: map,
+                        title: 'regards singuliers'
                     });
                 };
 
                 const script = document.createElement('script');
-                // Ajouter le library 'marker' pour les AdvancedMarkerElement
-                script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKeyValue}&callback=initMap&libraries=marker`;
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKeyValue}&callback=initMap&libraries=places&loading=async`;
                 script.async = true;
                 script.defer = true;
                 document.head.appendChild(script);
             }
         }
-    }
-
-    // Méthode optionnelle pour personnaliser le marker
-    createMarkerContent() {
-        const markerElement = document.createElement('div');
-        markerElement.innerHTML = `
-            <div style="
-                background-color: #FF0000; 
-                width: 20px; 
-                height: 20px; 
-                border-radius: 50%; 
-                border: 2px solid white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            "></div>
-        `;
-        return markerElement;
     }
 
     disconnect() {

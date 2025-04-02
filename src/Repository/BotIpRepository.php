@@ -21,7 +21,8 @@ class BotIpRepository extends ServiceEntityRepository
      */
     public function isIpBanned(string $ip): bool
     {
-        return $this->count(['ip' => $ip]) > 0;
+        $hashedIp = password_hash($ip, PASSWORD_BCRYPT);
+        return $this->count(['ip' => $hashedIp]) > 0;
     }
 
     /**

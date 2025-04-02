@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
+use App\Entity\BotIp;
 
 final class ContactController extends AbstractController
 {
@@ -73,6 +74,30 @@ final class ContactController extends AbstractController
                 throw new InvalidCsrfTokenException('Token CSRF invalide');
             }
 
+            // Vérification des champs honeypot
+            if (!empty($data['mobilePhone']) || !empty($data['workEmail'])) {
+                // Enregistrer l'IP du bot (hashée)
+                $botIp = new BotIp();
+                $botIp->setIp(hash('sha256', $request->getClientIp()));
+                $botIp->setUserAgent($request->headers->get('User-Agent'));
+                $botIp->setFormType('contact_form');
+
+                $this->entityManager->persist($botIp);
+                $this->entityManager->flush();
+
+                $this->logger->info('Tentative de bot détectée', [
+                    'ip' => $request->getClientIp(),
+                    'user_agent' => $request->headers->get('User-Agent'),
+                    'mobile_phone' => $data['mobilePhone'],
+                    'work_email' => $data['workEmail']
+                ]);
+
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => 'Votre demande a été acceptée - ou pas.'
+                ], JsonResponse::HTTP_FORBIDDEN);
+            }
+
             // Validation de base pour tous les types
             $baseConstraints = [
                 'type' => [
@@ -118,6 +143,9 @@ final class ContactController extends AbstractController
                     new Assert\Length(['min' => 2, 'max' => 100])
                 ];
             }
+
+            // Supprimer les champs honeypot des données avant la validation
+            unset($data['mobilePhone'], $data['workEmail']);
 
             $violations = $this->validator->validate($data, new Assert\Collection($baseConstraints));
 
