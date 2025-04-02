@@ -36,9 +36,9 @@
                     </div>
 
                     <!-- Colonne de droite (2/3) -->
-                    <form {{ stimulus_controller('contact') }} 
+                    <form {{ stimulus_controller('contact') }}
+                          {{ stimulus_target('contact', 'form') }}
                           {{ stimulus_controller('honeypot') }}
-                          data-contact-hidden-class="hidden"
                           data-honeypot-hidden-class="hidden"
                           data-action="submit->contact#submit submit->honeypot#submit"
                           class="contact-form">
@@ -124,7 +124,8 @@
                             <div class="form-group">
                                 <label for="entreprise">Entreprise</label>
                                 <input type="text" id="entreprise" name="entreprise" class="form-control" 
-                                       {{ stimulus_target('contact', 'entreprise') }}>
+                                       {{ stimulus_target('contact', 'entreprise') }}
+                                       aria-required="false">
                             </div>
                         </div>
 
@@ -132,7 +133,8 @@
                         <div class="form-section">
                             <div class="form-group">
                                 <label for="description">Description du projet</label>
-                                <textarea id="description" name="description" class="form-control" rows="5" {{ stimulus_target('contact', 'description') }} required></textarea>
+                                <textarea id="description" name="description" class="form-control" rows="5" 
+                                          {{ stimulus_target('contact', 'description') }} required></textarea>
                             </div>
 
                             <button type="submit" class="submit-btn">Envoyer</button>

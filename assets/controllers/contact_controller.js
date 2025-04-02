@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     // Définition des targets (éléments du DOM ciblés) pour le contrôleur
-    static targets = ['form', 'type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'message'];
+    static targets = ['form', 'type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'description'];
       
     // Valeurs personnalisées du contrôleur (ici une classe CSS pour masquer des éléments)
     static values = {
@@ -17,7 +17,7 @@ export default class extends Controller {
         this.telephoneTarget.placeholder = 'Votre numéro de téléphone';
         this.localisationTarget.placeholder = 'Votre ville';
         this.entrepriseTarget.placeholder = 'Nom de votre entreprise';
-        this.messageTarget.placeholder = 'Votre message';
+        this.descriptionTarget.placeholder = 'Décrivez votre projet';
 
         // Initialiser les aria-labels pour l'accessibilité
         this.prenomTarget.setAttribute('aria-label', 'Votre prénom');
@@ -26,27 +26,23 @@ export default class extends Controller {
         this.telephoneTarget.setAttribute('aria-label', 'Votre numéro de téléphone');
         this.localisationTarget.setAttribute('aria-label', 'Votre ville');
         this.entrepriseTarget.setAttribute('aria-label', 'Nom de votre entreprise');
-        this.messageTarget.setAttribute('aria-label', 'Votre message');
+        this.descriptionTarget.setAttribute('aria-label', 'Description de votre projet');
 
         // Initialiser les gestionnaires d'événements
-        this.setupPhoneInput(); // Validation et formatage du numéro de téléphone
-        this.setupLocationAutocomplete(); // Autocomplétion pour la localisation
+        this.setupPhoneInput();
+        this.setupLocationAutocomplete();
 
-        // Gestion de l'éatat initial du formaulaire (particulier/professionnel)
+        // Gestion de l'état initial du formulaire (particulier/professionnel)
         const isProfessionnel = this.typeTargets.find(target => target.checked)?.value === 'professionnel';
         this.toggleProfessionnelSection(isProfessionnel);
 
-        this.formTarget.addEventListener('submit', this.handleSubmit.bind(this));
+        this.formTarget.addEventListener('submit', this.submit.bind(this));
     }
 
     // Gérer le changement de la nature du contact (particulier ou professionnel)
     change(event) {
-        const type = event.target.value;
-        if (type === 'professionnel') {
-            this.sectionTarget.classList.remove(this.hiddenClass);
-        } else {
-            this.sectionTarget.classList.add(this.hiddenClass);
-        }
+        const isProfessionnel = event.target.value === 'professionnel';
+        this.toggleProfessionnelSection(isProfessionnel);
     }
 
     // Affiche/masque la section entreprise selon le type de contact
@@ -54,10 +50,12 @@ export default class extends Controller {
         if (isProfessionnel) {
             this.sectionTarget.classList.remove('hidden');
             this.entrepriseTarget.required = true;
+            this.entrepriseTarget.setAttribute('aria-required', 'true');
         } else {
             this.sectionTarget.classList.add('hidden');
             this.entrepriseTarget.required = false;
-            this.entrepriseTarget.value = ''; // Réinitialiser la valeur
+            this.entrepriseTarget.removeAttribute('aria-required');
+            this.entrepriseTarget.value = '';
         }
     }
 
@@ -94,7 +92,12 @@ export default class extends Controller {
             this.localisationTarget.addEventListener('input', (e) => {
                 // Recherche différée pour éviter trop d'appels API
                 clearTimeout(timeout);
-                timeout = setTimeout(() => this.searchLocation(e.target.value), 300);
+                timeout = setTimeout(() => {
+                    const query = e.target.value;
+                    if (query.length >= 3) {
+                        this.searchLocation(query);
+                    }
+                }, 300);
             });
         }
     }
@@ -104,8 +107,16 @@ export default class extends Controller {
         if (!query || query.length < 3) return;
 
         try {
-            // Appel à l'API d'adresse pour obtenir des suggestions
-            const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+            const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5&type=municipality`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors',
+                credentials: 'omit'
+            });
+            
             if (!response.ok) {
                 throw new Error('Erreur lors de la recherche de localisation');
             }
@@ -129,13 +140,11 @@ export default class extends Controller {
                     const postcode = feature.properties.postcode;
                     const context = feature.properties.context;
                     
-                    // Création des éléments de suggestion
                     li.innerHTML = `
                         <strong>${city}</strong>
                         <span class="text-muted">${postcode} - ${context}</span>
                     `;
                     
-                    // Gestion du clic sur une suggestion
                     li.addEventListener('click', () => {
                         this.localisationTarget.value = `${city}, ${postcode} - ${context}`;
                         suggestions.remove();
@@ -178,7 +187,7 @@ export default class extends Controller {
     }
 
     // Gestion de la soumission du formulaire
-    async handleSubmit(event) {
+    async submit(event) {
         event.preventDefault();
         this.clearErrors();
         
@@ -216,7 +225,7 @@ export default class extends Controller {
             const token = event.target.querySelector('input[name="_token"]').value;
 
             // Envoi des données au serveur
-            const response = await fetch('/contact/submit', {
+            const response = await fetch('http://127.0.0.1:8000/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -226,25 +235,31 @@ export default class extends Controller {
                 body: JSON.stringify(data)
             });
             
-            const result = await response.json();
-            
-            // Gestion des réponses du serveur
             if (!response.ok) {
-                if (result.error) {
-                    throw new Error(result.error);
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const result = await response.json();
+                    if (result.errors) {
+                        this.showErrors(result.errors);
+                        return;
+                    }
+                    throw new Error(result.error || 'Une erreur est survenue');
+                } else {
+                    throw new Error('Une erreur est survenue lors de l\'envoi du formulaire');
                 }
-                throw new Error('Une erreur est survenue lors de l\'envoi du formulaire');
             }
+            
+            const result = await response.json();
             
             // Réinitialiser le formulaire
             event.target.reset();
             
-            // Rediriger vers la page de confirmation
-            window.location.href = '/contact/confirmation';
+            // Afficher le message de succès
+            this.showSuccessMessage();
             
         } catch (error) {
             console.error('Erreur:', error);
-            alert(error.message);
+            this.showErrorMessage();
         } finally {
             submitButton.disabled = false;
         }

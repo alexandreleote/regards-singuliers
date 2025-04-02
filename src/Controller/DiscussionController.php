@@ -76,7 +76,7 @@ final class DiscussionController extends AbstractController
                 'currentDiscussion' => $currentDiscussion,
                 'hasUnreadMessages' => $hasUnreadMessages,
                 'page_title' => 'Messagerie - regards singuliers',
-                'meta_description' => 'Gérez toutes les discussions avec vos clients.',
+                'meta_description' => 'Profitez de la messagerie pour discuter de votre projet avec votre architecte d\'intérieur.',
             ]);
         }
 
@@ -89,7 +89,7 @@ final class DiscussionController extends AbstractController
                 'currentDiscussion' => null,
                 'hasUnreadMessages' => false,
                 'page_title' => 'Messagerie - regards singuliers',
-                'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur.',
+                'meta_description' => 'Profitez de la messagerie pour discuter de votre projet avec votre architecte d\'intérieur.',
             ]);
         }
 

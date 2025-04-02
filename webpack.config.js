@@ -1,7 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 
-// Manually configure the runtime environment if not already set yet.
-// It's useful when you use tools that rely on webpack.config.js file.
+// Manually configure the runtime environment if not already configured yet.
+// This's useful when you use tools like `symfony var:export` on your production server or require a specific Node.js version.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
@@ -21,13 +21,6 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('auth', './assets/auth.js')
-    .addEntry('honeypot', './assets/honeypot.js')
-    .addEntry('reservation', './assets/js/reservation/date.js')
-    .addEntry('reservation/date', './assets/js/reservation/date.js')
-    .addEntry('reservation/payment', './assets/js/reservation/payment.js')
-    .addEntry('reservation/success', './assets/js/reservation/success.js')
-    .addEntry('reservation/canceled', './assets/js/reservation/canceled.js')
 
     // enables the Symfony UX Stimulus bridge
     .enableStimulusBridge('./assets/controllers.json')
@@ -51,10 +44,7 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
 
-    // configure Babel
-    .configureBabel((config) => {
-        config.plugins.push('@babel/plugin-proposal-class-properties');
-    })
+    // enables and configure @babel/preset-env polyfills
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';
         config.corejs = '3.23';

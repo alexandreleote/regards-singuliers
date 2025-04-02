@@ -17,8 +17,13 @@ class ContactController extends AbstractController
     public function index(Request $request, MailerInterface $mailer): Response
     {
         if ($request->isMethod('POST')) {
+            // Récupérer les données selon le format
+            $data = $request->headers->get('Content-Type') === 'application/json' 
+                ? json_decode($request->getContent(), true)
+                : $request->request->all();
+
             // Vérification du honeypot
-            if (!empty($request->request->get('website')) || !empty($request->request->get('website2'))) {
+            if (!empty($data['website']) || !empty($data['website2'])) {
                 return $this->json(['success' => true, 'message' => 'Message envoyé avec succès']);
             }
 
@@ -35,7 +40,7 @@ class ContactController extends AbstractController
                 'message' => [new Assert\NotBlank(), new Assert\Length(['min' => 10, 'max' => 1000])],
             ]);
 
-            $violations = $this->container->get('validator')->validate($request->request->all(), $constraints);
+            $violations = $this->container->get('validator')->validate($data, $constraints);
 
             if (count($violations) > 0) {
                 return $this->json([
@@ -51,19 +56,19 @@ class ContactController extends AbstractController
 
             // Préparation de l'email
             $email = (new Email())
-                ->from($request->request->get('email'))
+                ->from($data['email'])
                 ->to('hello@regards-singuliers.com')
                 ->subject('Nouveau message de contact - regards singuliers')
                 ->html($this->renderView('contact/email.html.twig', [
-                    'type' => $request->request->get('type'),
-                    'civilite' => $request->request->get('civilite'),
-                    'nom' => $request->request->get('nom'),
-                    'prenom' => $request->request->get('prenom'),
-                    'email' => $request->request->get('email'),
-                    'telephone' => $request->request->get('telephone'),
-                    'localisation' => $request->request->get('localisation'),
-                    'entreprise' => $request->request->get('entreprise'),
-                    'message' => $request->request->get('message')
+                    'type' => $data['type'],
+                    'civilite' => $data['civilite'],
+                    'nom' => $data['nom'],
+                    'prenom' => $data['prenom'],
+                    'email' => $data['email'],
+                    'telephone' => $data['telephone'],
+                    'localisation' => $data['localisation'],
+                    'entreprise' => $data['entreprise'] ?? null,
+                    'message' => $data['message']
                 ]));
 
             try {
@@ -78,8 +83,9 @@ class ContactController extends AbstractController
         }
 
         return $this->render('contact/index.html.twig', [
-            'page_title' => 'Contact - regards singuliers',
-            'meta_description' => 'Contactez regards singuliers pour vos projets d\'architecture d\'intérieur. Nous sommes à votre écoute pour transformer vos espaces.'
+            'page_title' => 'Contact',
+            'meta_description' => 'Contactez-nous pour toute demande de service ou pour obtenir plus d\'informations sur nos prestations.',
+            'google_maps_api_key' => $this->getParameter('app.google_maps_api_key')
         ]);
     }
 } 
