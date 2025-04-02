@@ -13,9 +13,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Route('/contact')]
 class ContactController extends AbstractController
 {
-    #[Route('/', name: 'contact', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'contact')]
     public function index(Request $request, MailerInterface $mailer): Response
     {
+        // Gérer les requêtes OPTIONS
+        if ($request->getMethod() === 'OPTIONS') {
+            return new Response(null, Response::HTTP_OK);
+        }
+
         if ($request->isMethod('POST')) {
             // Récupérer les données selon le format
             $data = $request->headers->get('Content-Type') === 'application/json' 
@@ -30,11 +35,11 @@ class ContactController extends AbstractController
             // Validation des données
             $constraints = new Assert\Collection([
                 'type' => [new Assert\NotBlank(), new Assert\Choice(['particulier', 'professionnel'])],
-                'civilite' => [new Assert\NotBlank(), new Assert\Choice(['M.', 'Mme'])],
+                'civilite' => [new Assert\NotBlank(), new Assert\Choice(['monsieur', 'madame'])],
                 'nom' => [new Assert\NotBlank(), new Assert\Length(['min' => 2, 'max' => 100])],
                 'prenom' => [new Assert\NotBlank(), new Assert\Length(['min' => 2, 'max' => 100])],
                 'email' => [new Assert\NotBlank(), new Assert\Email()],
-                'telephone' => [new Assert\NotBlank(), new Assert\Regex(['pattern' => '/^[0-9+\s()]+$/', 'message' => 'Le numéro de téléphone n\'est pas valide'])],
+                'telephone' => [new Assert\NotBlank(), new Assert\Regex(['pattern' => '/^[0-9]{10}$/', 'message' => 'Le numéro de téléphone n\'est pas valide'])],
                 'localisation' => [new Assert\NotBlank(), new Assert\Length(['min' => 2, 'max' => 100])],
                 'entreprise' => [new Assert\Optional([new Assert\Length(['min' => 2, 'max' => 100])])],
                 'message' => [new Assert\NotBlank(), new Assert\Length(['min' => 10, 'max' => 1000])],
@@ -59,7 +64,7 @@ class ContactController extends AbstractController
                 ->from($data['email'])
                 ->to('hello@regards-singuliers.com')
                 ->subject('Nouveau message de contact - regards singuliers')
-                ->html($this->renderView('contact/email.html.twig', [
+                ->html($this->renderView('emails/contact.html.twig', [
                     'type' => $data['type'],
                     'civilite' => $data['civilite'],
                     'nom' => $data['nom'],
@@ -88,4 +93,4 @@ class ContactController extends AbstractController
             'google_maps_api_key' => $this->getParameter('app.google_maps_api_key')
         ]);
     }
-} 
+}

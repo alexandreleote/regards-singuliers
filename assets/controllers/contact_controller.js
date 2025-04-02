@@ -1,16 +1,13 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    // Définition des targets (éléments du DOM ciblés) pour le contrôleur
     static targets = ['form', 'type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'description'];
       
-    // Valeurs personnalisées du contrôleur (ici une classe CSS pour masquer des éléments)
     static values = {
         hiddenClass: String
     }
 
     connect() {
-        // Initialiser les placeholders pour améliorer l'UX
         this.prenomTarget.placeholder = 'Votre prénom';
         this.nomTarget.placeholder = 'Votre nom';
         this.emailTarget.placeholder = 'Votre adresse@email.fr';
@@ -19,7 +16,6 @@ export default class extends Controller {
         this.entrepriseTarget.placeholder = 'Nom de votre entreprise';
         this.descriptionTarget.placeholder = 'Décrivez votre projet';
 
-        // Initialiser les aria-labels pour l'accessibilité
         this.prenomTarget.setAttribute('aria-label', 'Votre prénom');
         this.nomTarget.setAttribute('aria-label', 'Votre nom de famille');
         this.emailTarget.setAttribute('aria-label', 'Votre adresse email');
@@ -28,24 +24,20 @@ export default class extends Controller {
         this.entrepriseTarget.setAttribute('aria-label', 'Nom de votre entreprise');
         this.descriptionTarget.setAttribute('aria-label', 'Description de votre projet');
 
-        // Initialiser les gestionnaires d'événements
         this.setupPhoneInput();
         this.setupLocationAutocomplete();
 
-        // Gestion de l'état initial du formulaire (particulier/professionnel)
         const isProfessionnel = this.typeTargets.find(target => target.checked)?.value === 'professionnel';
         this.toggleProfessionnelSection(isProfessionnel);
 
         this.formTarget.addEventListener('submit', this.submit.bind(this));
     }
 
-    // Gérer le changement de la nature du contact (particulier ou professionnel)
     change(event) {
         const isProfessionnel = event.target.value === 'professionnel';
         this.toggleProfessionnelSection(isProfessionnel);
     }
 
-    // Affiche/masque la section entreprise selon le type de contact
     toggleProfessionnelSection(isProfessionnel) {
         if (isProfessionnel) {
             this.sectionTarget.classList.remove('hidden');
@@ -59,23 +51,17 @@ export default class extends Controller {
         }
     }
 
-    // Configuration de la validation et du formatage du numéro de téléphone
     setupPhoneInput() {
         this.telephoneTarget.addEventListener('input', (e) => {
-            // Supprimer tous les caractères non numériques
             let value = e.target.value.replace(/\D/g, '');
-            
-            // Limiter à 10 chiffres
             value = value.substring(0, 10);
             
-            // Formater le numéro (XX XX XX XX XX)
             if (value.length > 0) {
                 value = value.match(/.{1,2}/g).join(' ');
             }
             
             e.target.value = value;
 
-            // Vérifier la validité
             const numericValue = value.replace(/\s/g, '');
             if (numericValue.length === 10) {
                 e.target.setCustomValidity('');
@@ -85,12 +71,10 @@ export default class extends Controller {
         });
     }
 
-    // Configuration de l'autocomplétion pour la localisation
     setupLocationAutocomplete() {
         if (this.hasLocalisationTarget) {
             let timeout;
             this.localisationTarget.addEventListener('input', (e) => {
-                // Recherche différée pour éviter trop d'appels API
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     const query = e.target.value;
@@ -102,7 +86,6 @@ export default class extends Controller {
         }
     }
 
-    // Recherche de localités via L'API gouv.fr
     async searchLocation(query) {
         if (!query || query.length < 3) return;
 
@@ -123,13 +106,11 @@ export default class extends Controller {
             
             const data = await response.json();
             
-            // Supprimer les anciennes suggestions
             const oldSuggestions = document.querySelector('.location-suggestions');
             if (oldSuggestions) {
                 oldSuggestions.remove();
             }
 
-            // Création de la liste de suggestions
             if (data.features && data.features.length > 0) {
                 const suggestions = document.createElement('ul');
                 suggestions.className = 'location-suggestions';
@@ -161,12 +142,10 @@ export default class extends Controller {
     }
 
     clearErrors() {
-        // Supprimer tous les messages d'erreur
         document.querySelectorAll('.error-message').forEach(el => el.remove());
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
     }
 
-    // Affichage d'un message d'erreur pour un champ spécifique
     showError(field, message) {
         const input = this.element.querySelector(`[name="${field}"]`);
         if (!input) return;
@@ -177,7 +156,6 @@ export default class extends Controller {
         errorDiv.className = 'error-message';
         errorDiv.textContent = message;
         
-        // Supprimer l'ancien message d'erreur s'il existe
         const existingError = input.parentNode.querySelector('.error-message');
         if (existingError) {
             existingError.remove();
@@ -186,53 +164,50 @@ export default class extends Controller {
         input.parentNode.appendChild(errorDiv);
     }
 
-    // Gestion de la soumission du formulaire
     async submit(event) {
         event.preventDefault();
         this.clearErrors();
         
-        // Vérifier la validité du formulaire
-        if (!event.target.checkValidity()) {
-            event.target.reportValidity();
+        if (!this.formTarget.checkValidity()) {
+            this.formTarget.reportValidity();
             return;
         }
-        
-        const formData = new FormData(event.target);
-        const submitButton = event.target.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        
-        try {
-            const data = {};
-            
-            // Préparation des données du formulaire
-            formData.forEach((value, key) => {
-                if (key !== '_token') {
-                    // Pour le téléphone, supprimer les espaces
-                    if (key === 'telephone') {
-                        data[key] = value.replace(/\s/g, '');
-                    } else {
-                        data[key] = this.sanitizeInput(value);
-                    }
-                }
-            });
 
-            // Ne pas inclure le champ entreprise si on est en mode particulier
-            if (data.type !== 'professionnel') {
-                delete data.entreprise;
+        const submitButton = this.formTarget.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+            const formData = new FormData(this.formTarget);
+            const data = {
+                type: formData.get('type'),
+                civilite: formData.get('civilite'),
+                nom: formData.get('nom'),
+                prenom: formData.get('prenom'),
+                email: formData.get('email'),
+                telephone: formData.get('telephone').replace(/\s+/g, ''),
+                localisation: formData.get('localisation'),
+                message: formData.get('description')
+            };
+
+            if (data.type === 'professionnel') {
+                data.entreprise = formData.get('entreprise');
             }
 
-            // Récupérer le token CSRF
-            const token = event.target.querySelector('input[name="_token"]').value;
-
-            // Envoi des données au serveur
-            const response = await fetch('http://127.0.0.1:8000/contact', {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            
+            // Utiliser l'URL actuelle pour la requête
+            const currentProtocol = window.location.protocol;
+            const currentHost = window.location.host;
+            const url = `${currentProtocol}//${currentHost}/contact`;
+            
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-Token': token
+                    'X-CSRF-Token': csrfToken
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include'
             });
             
             if (!response.ok) {
@@ -251,10 +226,7 @@ export default class extends Controller {
             
             const result = await response.json();
             
-            // Réinitialiser le formulaire
-            event.target.reset();
-            
-            // Afficher le message de succès
+            this.formTarget.reset();
             this.showSuccessMessage();
             
         } catch (error) {
@@ -265,11 +237,9 @@ export default class extends Controller {
         }
     }
 
-    // Nettoyage et sécurisation des entrées utilisateur
     sanitizeInput(value) {
         if (typeof value !== 'string') return value;
         
-        // Convertir les caractères spéciaux en entités HTML
         return value
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -296,11 +266,9 @@ export default class extends Controller {
     }
 
     showErrors(errors) {
-        // Supprimer les messages d'erreur existants
         this.formTarget.querySelectorAll('.error-message').forEach(el => el.remove());
         this.formTarget.querySelectorAll('.form-control.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
-        // Afficher les nouveaux messages d'erreur
         errors.forEach(error => {
             const field = this.formTarget.querySelector(`[name="${error.field}"]`);
             if (field) {
