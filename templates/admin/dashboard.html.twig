@@ -8,28 +8,22 @@
     <div class="dashboard-stats">
         <div class="stats-grid">
             <div class="stat-card">
-                <i class="stat-icon fa fa-users"></i>
-                <div class="stat-content">
-                    <span class="stat-value">{{ stats.users }}</span>
-                    <span class="stat-label">Utilisateurs</span>
-                </div>
+                <i class="fas fa-users"></i>
+                <span class="stat-label">Utilisateurs</span>
+                <span class="stat-value">{{ stats.users|default(0) }}</span>
             </div>
             <div class="stat-card">
-                <i class="stat-icon fa fa-image"></i>
-                <div class="stat-content">
-                    <span class="stat-value">{{ stats.realisations }}</span>
-                    <span class="stat-label">Réalisations</span>
-                </div>
+                <i class="fas fa-image"></i>
+                <span class="stat-label">Réalisations</span>
+                <span class="stat-value">{{ stats.realisations|default(0) }}</span>
             </div>
             <div class="stat-card">
-                <i class="stat-icon fa fa-gear"></i>
-                <div class="stat-content">
-                    <span class="stat-value">{{ stats.services }}</span>
-                    <span class="stat-label">Services</span>
-                </div>
+                <i class="fas fa-briefcase"></i>
+                <span class="stat-label">Prestations</span>
+                <span class="stat-value">{{ stats.services|default(0) }}</span>
             </div>
             <div class="stat-card">
-                <i class="stat-icon fa fa-envelope"></i>
+                <i class="fas fa-envelope"></i>
                 <div class="stat-content">
                     <span class="stat-value">{{ stats.contacts|default(0) }}</span>
                     <span class="stat-label">Messages</span>

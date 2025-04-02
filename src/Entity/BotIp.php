@@ -13,7 +13,7 @@ class BotIp
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 45)]
+    #[ORM\Column(length: 64)]
     private ?string $ip = null;
 
     #[ORM\Column]

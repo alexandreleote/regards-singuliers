@@ -3,17 +3,14 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
-use App\Entity\Contact;
 use App\Entity\Service;
 use App\Entity\Realisation;
 use App\Repository\UserRepository;
-use App\Repository\ContactRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\RealisationRepository;
 use Symfony\Component\HttpFoundation\Response;
 use App\Controller\Admin\ServiceCrudController;
 use App\Controller\Admin\RealisationCrudController;
-use App\Controller\Admin\ContactCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -27,20 +24,17 @@ class DashboardController extends AbstractDashboardController
     private $realisationRepository;
     private $serviceRepository;
     private $adminUrlGenerator;
-    private $contactRepository;
 
     public function __construct(
         UserRepository $userRepository,
         RealisationRepository $realisationRepository,
         ServiceRepository $serviceRepository,
-        ContactRepository $contactRepository,
         AdminUrlGenerator $adminUrlGenerator
     ) {
         $this->userRepository = $userRepository;
         $this->realisationRepository = $realisationRepository;
         $this->serviceRepository = $serviceRepository;
         $this->adminUrlGenerator = $adminUrlGenerator;
-        $this->contactRepository = $contactRepository;
     }
 
     public function index(): Response
@@ -50,11 +44,7 @@ class DashboardController extends AbstractDashboardController
             'users' => $this->userRepository->count([]),
             'realisations' => $this->realisationRepository->count([]),
             'services' => count($this->serviceRepository->findActive()),
-            'contacts' => $this->contactRepository->count([]),
-            'unread_contacts' => $this->contactRepository->countUnreadMessages(),
-            'professional_contacts' => $this->contactRepository->findByType(Contact::TYPE_PROFESSIONNEL),
-            'latest_realisations' => $this->realisationRepository->findLatest(5),
-            'pending_contacts' => $this->contactRepository->findUnrespondedProfessional()
+            'latest_realisations' => $this->realisationRepository->findLatest(5)
         ];
 
         // Actions rapides
@@ -74,14 +64,6 @@ class DashboardController extends AbstractDashboardController
                     ->setAction('new')
                     ->generateUrl(),
                 'icon' => 'fa fa-briefcase'
-            ],
-            [
-                'title' => 'Messages non lus',
-                'url' => $this->adminUrlGenerator
-                    ->setController(ContactCrudController::class)
-                    ->setAction('index')
-                    ->generateUrl(),
-                'icon' => 'fa fa-envelope'
             ]
         ];
 
@@ -108,10 +90,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Contenu');
         yield MenuItem::linkToCrud('Prestations', 'fa fa-briefcase', Service::class);
         yield MenuItem::linkToCrud('Réalisations', 'fa fa-image', Realisation::class);
-        
-        yield MenuItem::section('Communication');
-        yield MenuItem::linkToCrud('Contacts', 'fa fa-envelope', Contact::class)
-            ->setBadge($this->contactRepository->countUnreadMessages(), 'warning');
         
         yield MenuItem::section('Liens rapides');
         yield MenuItem::linkToRoute('Retour au site', 'fa fa-arrow-left', 'home');

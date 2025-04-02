@@ -122,10 +122,10 @@ export default class extends Controller {
                         keyboardShortcuts: false
                     });
 
-                    // Créer un marqueur standard (pin)
+                    // Créer le marqueur standard
                     new google.maps.Marker({
-                        position: { lat: 48.0686, lng: -2.9630 }, // Coordonnées de Pontivy
-                        map: map,
+                        map,
+                        position: { lat: 48.0686, lng: -2.9630 },
                         title: 'regards singuliers'
                     });
                 };

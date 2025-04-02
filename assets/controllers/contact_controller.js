@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     // Définition des targets (éléments du DOM ciblés) pour le contrôleur
-    static targets = ['type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'description'];
+    static targets = ['type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'message'];
       
     // Valeurs personnalisées du contrôleur (ici une classe CSS pour masquer des éléments)
     static values = {
@@ -17,7 +17,7 @@ export default class extends Controller {
         this.telephoneTarget.placeholder = 'Votre numéro de téléphone';
         this.localisationTarget.placeholder = 'Votre ville';
         this.entrepriseTarget.placeholder = 'Nom de votre entreprise';
-        this.descriptionTarget.placeholder = 'Décrivez votre projet en quelques mots (style souhaité, budget, contraintes particulières...)';
+        this.messageTarget.placeholder = 'Votre message';
 
         // Initialiser les aria-labels pour l'accessibilité
         this.prenomTarget.setAttribute('aria-label', 'Votre prénom');
@@ -26,7 +26,7 @@ export default class extends Controller {
         this.telephoneTarget.setAttribute('aria-label', 'Votre numéro de téléphone');
         this.localisationTarget.setAttribute('aria-label', 'Votre ville');
         this.entrepriseTarget.setAttribute('aria-label', 'Nom de votre entreprise');
-        this.descriptionTarget.setAttribute('aria-label', 'Description détaillée de votre projet (style souhaité, budget, contraintes particulières...)');
+        this.messageTarget.setAttribute('aria-label', 'Votre message');
 
         // Initialiser les gestionnaires d'événements
         this.setupPhoneInput(); // Validation et formatage du numéro de téléphone
@@ -100,6 +100,10 @@ export default class extends Controller {
         try {
             // Appel à l'API d'adresse pour obtenir des suggestions
             const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+            if (!response.ok) {
+                throw new Error('Erreur lors de la recherche de localisation');
+            }
+            
             const data = await response.json();
             
             // Supprimer les anciennes suggestions
@@ -184,7 +188,6 @@ export default class extends Controller {
         
         try {
             const data = {};
-            const csrfToken = formData.get('_token');
             
             // Préparation des données du formulaire
             formData.forEach((value, key) => {
@@ -203,28 +206,28 @@ export default class extends Controller {
                 delete data.entreprise;
             }
 
+            // Récupérer le token CSRF
+            const token = event.target.querySelector('input[name="_token"]').value;
+
             // Envoi des données au serveur
             const response = await fetch('/contact/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-Token': token
                 },
                 body: JSON.stringify(data)
             });
             
+            const result = await response.json();
+            
             // Gestion des réponses du serveur
             if (!response.ok) {
-                const result = await response.json();
-                if (result.errors) {
-                    // Affichage des erreurs de validation
-                    console.log('Erreurs de validation:', result.errors);
-                    Object.entries(result.errors).forEach(([field, message]) => {
-                        this.showError(field, message);
-                    });
-                    throw new Error('Veuillez corriger les erreurs dans le formulaire');
+                if (result.error) {
+                    throw new Error(result.error);
                 }
-                throw new Error(result.error || 'Erreur lors de l\'envoi du formulaire');
+                throw new Error('Une erreur est survenue lors de l\'envoi du formulaire');
             }
             
             // Réinitialiser le formulaire
@@ -235,9 +238,7 @@ export default class extends Controller {
             
         } catch (error) {
             console.error('Erreur:', error);
-            if (error.message !== 'Veuillez corriger les erreurs dans le formulaire') {
-                alert(error.message);
-            }
+            alert(error.message);
         } finally {
             submitButton.disabled = false;
         }

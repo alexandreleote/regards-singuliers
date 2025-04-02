@@ -1,0 +1,26 @@
+nelmio_security:
+    csp:
+        enabled: true
+        enforce: true
+        hosts:
+            - 'self'
+            - 'https://*.calendly.com'
+            - 'https://calendly.com'
+            - 'https://maps.googleapis.com'
+            - 'https://maps.gstatic.com'
+            - 'https://api-adresse.data.gouv.fr'
+            - 'https://*.googleapis.com'
+            - 'https://*.gstatic.com'
+            - 'https://fonts.googleapis.com'
+            - 'https://fonts.gstatic.com'
+        content_types:
+            - 'text/html'
+            - 'application/json'
+            - 'application/javascript'
+            - 'text/css'
+            - 'image/*'
+            - 'font/*'
+        compat_headers: true
+    clickjacking:
+        paths:
+            - { pattern: '^/', header: 'DENY' } 
