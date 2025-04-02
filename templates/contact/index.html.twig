@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+<section class="contact-section">
+    <div class="container">
+        <div {{ stimulus_controller('map') }} data-map-api-key-value="{{ google_maps_api_key|default('') }}">
+            <div class="contact-container">
+                <div class="contact-grid">
+                    <!-- Colonne de gauche (1/3) -->
+                    <div class="contact-info">
+                        <h2>Contactez-moi</h2>
+                        <p>Prenons le temps d'établir vos besoins et de discuter de votre projet.</p>
+                        
+                        <div class="info-section">
+                            <h3>Informations de contact</h3>
+                            <ul>
+                                <li><i class="fas fa-envelope"></i> <span>hello@regards-singuliers.com</span></li>
+                                <li><i class="fas fa-phone"></i> <span>06 07 02 92 22</span></li>
+                                <li><i class="fas fa-map-marker-alt"></i> <span>6 Le Bronz 56480 Saint-Aignan</span></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h3>Horaires</h3>
+                            <ul>
+                                <li><i class="fas fa-clock"></i> <span>Lundi - Vendredi: 9h - 18h</span></li>
+                                <li><i class="fas fa-clock"></i> <span>Samedi: 10h - 14h</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Colonne de droite (2/3) -->
+                    <form {{ stimulus_controller('contact') }} 
+                          {{ stimulus_controller('honeypot') }}
+                          data-contact-hidden-class="hidden"
+                          data-honeypot-hidden-class="hidden"
+                          data-action="submit->contact#submit submit->honeypot#submit"
+                          class="contact-form">
+                        <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
+                        
+                        <!-- Champs honeypot -->
+                        <div {{ stimulus_target('honeypot', 'mobilePhone') }} style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                            <input type="text" name="mobilePhone" value="" aria-hidden="true" tabindex="-1">
+                        </div>
+                        <div {{ stimulus_target('honeypot', 'workEmail') }} style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                            <input type="text" name="workEmail" value="" aria-hidden="true" tabindex="-1">
+                        </div>
+                        
+                        <div class="form-type">
+                            <div class="switch-container">
+                                <input type="radio" id="type-particulier" name="type" value="particulier" 
+                                       {{ stimulus_target('contact', 'type') }}
+                                       data-action="change->contact#change"
+                                       checked>
+                                <label for="type-particulier">Particulier</label>
+                                <input type="radio" id="type-professionnel" name="type" value="professionnel"
+                                       {{ stimulus_target('contact', 'type') }}
+                                       data-action="change->contact#change">
+                                <label for="type-professionnel">Professionnel</label>
+                            </div>
+                        </div>
+
+                        <!-- Section commune initiale -->
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label>Civilité</label>
+                                <div class="radio-group">
+                                    <label for="civilite-monsieur">
+                                        <input type="radio" id="civilite-monsieur" name="civilite" value="monsieur" 
+                                               {{ stimulus_target('contact', 'civilite') }} checked>
+                                        Monsieur
+                                    </label>
+                                    <label for="civilite-madame">
+                                        <input type="radio" id="civilite-madame" name="civilite" value="madame"
+                                               {{ stimulus_target('contact', 'civilite') }}>
+                                        Madame
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-display">
+                                <!-- Prénom -->
+                                <div class="form-group form-item">
+                                    <label for="prenom">Prénom</label>
+                                    <input type="text" id="prenom" name="prenom" class="form-control" {{ stimulus_target('contact', 'prenom') }} required>
+                                </div>
+
+                                <!-- Nom -->
+                                <div class="form-group form-item">
+                                    <label for="nom">Nom</label>
+                                    <input type="text" id="nom" name="nom" class="form-control" {{ stimulus_target('contact', 'nom') }} required>
+                                </div>
+                            </div>
+
+                            <div class="form-display">
+                            <!-- Email -->
+                                <div class="form-group form-item">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
+                                </div>
+
+                                <!-- Téléphone -->
+                                <div class="form-group form-item">
+                                    <label for="telephone">Téléphone</label>
+                                    <input type="tel" id="telephone" name="telephone" class="form-control" {{ stimulus_target('contact', 'telephone') }} required>
+                                </div>
+                            </div>
+
+                            <!-- Localisation -->
+                            <div class="form-group">
+                                <label for="localisation">Localisation</label>
+                                <input type="text" id="localisation" name="localisation" class="form-control" {{ stimulus_target('contact', 'localisation') }} required>
+                            </div>
+                        </div>
+
+                        <!-- Section professionnelle -->
+                        <div class="form-section hidden" {{ stimulus_target('contact', 'section') }}>
+                            <div class="form-group">
+                                <label for="entreprise">Entreprise</label>
+                                <input type="text" id="entreprise" name="entreprise" class="form-control" 
+                                       {{ stimulus_target('contact', 'entreprise') }}>
+                            </div>
+                        </div>
+
+                        <!-- Section finale commune -->
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="description">Description du projet</label>
+                                <textarea id="description" name="description" class="form-control" rows="5" {{ stimulus_target('contact', 'description') }} required></textarea>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Envoyer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     // Définition des targets (éléments du DOM ciblés) pour le contrôleur
-    static targets = ['type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'message'];
+    static targets = ['form', 'type', 'section', 'entreprise', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'message'];
       
     // Valeurs personnalisées du contrôleur (ici une classe CSS pour masquer des éléments)
     static values = {
@@ -35,12 +35,18 @@ export default class extends Controller {
         // Gestion de l'éatat initial du formaulaire (particulier/professionnel)
         const isProfessionnel = this.typeTargets.find(target => target.checked)?.value === 'professionnel';
         this.toggleProfessionnelSection(isProfessionnel);
+
+        this.formTarget.addEventListener('submit', this.handleSubmit.bind(this));
     }
 
     // Gérer le changement de la nature du contact (particulier ou professionnel)
     change(event) {
-        const isProfessionnel = event.target.value === 'professionnel';
-        this.toggleProfessionnelSection(isProfessionnel);
+        const type = event.target.value;
+        if (type === 'professionnel') {
+            this.sectionTarget.classList.remove(this.hiddenClass);
+        } else {
+            this.sectionTarget.classList.add(this.hiddenClass);
+        }
     }
 
     // Affiche/masque la section entreprise selon le type de contact
@@ -172,7 +178,7 @@ export default class extends Controller {
     }
 
     // Gestion de la soumission du formulaire
-    async submit(event) {
+    async handleSubmit(event) {
         event.preventDefault();
         this.clearErrors();
         
@@ -256,5 +262,39 @@ export default class extends Controller {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#x27;')
             .replace(/\//g, '&#x2F;');
+    }
+
+    showSuccessMessage() {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success';
+        alert.textContent = 'Votre message a été envoyé avec succès.';
+        this.formTarget.insertAdjacentElement('beforebegin', alert);
+        setTimeout(() => alert.remove(), 5000);
+    }
+
+    showErrorMessage() {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger';
+        alert.textContent = 'Une erreur est survenue lors de l\'envoi du message.';
+        this.formTarget.insertAdjacentElement('beforebegin', alert);
+        setTimeout(() => alert.remove(), 5000);
+    }
+
+    showErrors(errors) {
+        // Supprimer les messages d'erreur existants
+        this.formTarget.querySelectorAll('.error-message').forEach(el => el.remove());
+        this.formTarget.querySelectorAll('.form-control.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+        // Afficher les nouveaux messages d'erreur
+        errors.forEach(error => {
+            const field = this.formTarget.querySelector(`[name="${error.field}"]`);
+            if (field) {
+                field.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = error.message;
+                field.parentNode.appendChild(errorDiv);
+            }
+        });
     }
 }
