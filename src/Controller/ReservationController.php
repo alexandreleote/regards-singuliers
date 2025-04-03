@@ -14,6 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use App\Security\EmailVerifier;
 
 #[Route('/reservation')]
 #[IsGranted('ROLE_USER')]
@@ -24,19 +28,22 @@ class ReservationController extends AbstractController
     private $serviceRepository;
     private $entityManager;
     private $calendlyService;
+    private $emailVerifier;
 
     public function __construct(
         ReservationService $reservationService,
         ReservationRepository $reservationRepository,
         ServiceRepository $serviceRepository,
         EntityManagerInterface $entityManager,
-        CalendlyService $calendlyService
+        CalendlyService $calendlyService,
+        EmailVerifier $emailVerifier
     ) {
         $this->reservationService = $reservationService;
         $this->reservationRepository = $reservationRepository;
         $this->serviceRepository = $serviceRepository;
         $this->entityManager = $entityManager;
         $this->calendlyService = $calendlyService;
+        $this->emailVerifier = $emailVerifier;
     }
 
     #[Route('/date/{slug}', name: 'reservation_date')]
@@ -177,6 +184,24 @@ class ReservationController extends AbstractController
             $reservation->setStatus('confirmé');
             $this->entityManager->flush();
         }
+
+        // Envoyer un email de confirmation
+        $paymentData = $this->reservationService->createPaymentIntent($reservation);
+        $depositAmount = $paymentData['depositAmount'];
+
+        $email = (new TemplatedEmail())
+            ->from('no-reply@regards-singuliers.com')
+            ->to($reservation->getUser()->getEmail())
+            ->subject('Confirmation de votre réservation')
+            ->htmlTemplate('email/reservation_confirmation.html.twig')
+            ->context([
+                'reservation' => $reservation,
+                'user' => $reservation->getUser(),
+                'service' => $reservation->getService(),
+                'deposit_amount' => $depositAmount
+            ]);
+
+        $this->emailVerifier->sendEmailConfirmation('reservation_confirmation', $reservation->getUser(), $email);
 
         return $this->render('reservation/success.html.twig', [
             'page_title' => 'Réservation confirmée - regards singuliers',
