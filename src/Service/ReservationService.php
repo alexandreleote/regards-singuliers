@@ -144,5 +144,44 @@ class ReservationService
             'amount' => $paymentIntent->amount, // Montant en centimes
             'reason' => 'requested_by_customer'
         ]);
+
+        // Mettre à jour le statut du paiement
+        $payment = $reservation->getPayments()->first();
+        if ($payment) {
+            $payment->setPaymentStatus('refunded');
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * Annule une réservation et gère le remboursement et l'annulation Calendly
+     */
+    public function cancelReservation(Reservation $reservation): void
+    {
+        // Vérifier si on est à plus de 72h du rendez-vous pour le remboursement
+        $appointmentDate = $reservation->getAppointmentDatetime();
+        $now = new \DateTime();
+        $interval = $now->diff($appointmentDate);
+        $hoursUntilAppointment = $interval->h + ($interval->days * 24);
+
+        // Si on est à plus de 72h, procéder au remboursement
+        if ($hoursUntilAppointment >= 72) {
+            $this->refundPayment($reservation);
+            $reservation->setStatus('refunded');
+        } else {
+            $reservation->setStatus('canceled');
+        }
+
+        // Annuler l'événement Calendly si un ID existe
+        if ($reservation->getCalendlyEventId()) {
+            try {
+                $this->calendlyService->cancelEvent($reservation->getCalendlyEventId());
+            } catch (\Exception $e) {
+                // Log l'erreur mais ne pas bloquer le processus d'annulation
+                error_log('Erreur lors de l\'annulation Calendly: ' . $e->getMessage());
+            }
+        }
+
+        $this->entityManager->flush();
     }
 } 

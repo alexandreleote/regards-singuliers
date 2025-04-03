@@ -10,74 +10,80 @@
         </a>
 
         <article class="card">
-            <h1>Mes réservations</h1>
+            <div class="card-body">
+                <h1 class="card-title">Mes réservations</h1>
 
-            {# Filtres #}
-            <div class="filters mb-4">
-                <div class="btn-group" role="group">
-                    <a href="{{ path('profile_reservations', {'filter': 'aujourd-hui'}) }}" 
-                    class="btn {% if filter == 'aujourd-hui' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                        Aujourd'hui
-                    </a>
-                    <a href="{{ path('profile_reservations', {'filter': 'a-venir'}) }}" 
-                    class="btn {% if filter == 'a-venir' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                        À venir
-                    </a>
-                    <a href="{{ path('profile_reservations', {'filter': 'passees'}) }}" 
-                    class="btn {% if filter == 'passees' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                        Passées
-                    </a>
+                {# Filtres #}
+                <div class="filters mb-4">
+                    <div class="btn-group" role="group">
+                        <a href="{{ path('profile_reservations', {'filter': 'aujourd-hui'}) }}" 
+                           class="btn {% if filter == 'aujourd-hui' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            Aujourd'hui
+                        </a>
+                        <a href="{{ path('profile_reservations', {'filter': 'a-venir'}) }}" 
+                           class="btn {% if filter == 'a-venir' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            À venir
+                        </a>
+                        <a href="{{ path('profile_reservations', {'filter': 'passees'}) }}" 
+                           class="btn {% if filter == 'passees' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            Passées
+                        </a>
+                        <a href="{{ path('profile_reservations', {'filter': 'annulees'}) }}" 
+                           class="btn {% if filter == 'annulees' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                            Annulées
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            {# Liste des réservations #}
-            {% if reservations|length > 0 %}
-                <div class="row">
-                    {% for reservation in reservations %}
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100 reservation-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ reservation.service.title }}</h5>
-                                    <p class="card-text">
-                                        <strong>Date :</strong> {{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}<br>
-                                        <strong>Statut :</strong> 
-                                        <span class="badge {% if reservation.status == 'confirmed' %}bg-success
-                                                      {% elseif reservation.status == 'waiting' %}bg-warning
-                                                      {% elseif reservation.status == 'canceled' %}bg-danger
-                                                      {% elseif reservation.status == 'refunded' %}bg-info
-                                                      {% else %}bg-secondary{% endif %}">
-                                            {% if reservation.status == 'confirmed' %}Confirmé
-                                            {% elseif reservation.status == 'waiting' %}En attente
-                                            {% elseif reservation.status == 'canceled' %}Annulé
-                                            {% elseif reservation.status == 'refunded' %}Remboursé
-                                            {% else %}{{ reservation.status }}{% endif %}
-                                        </span>
-                                    </p>
-                                    <div class="mt-3">
-                                        <a href="{{ path('profile_reservation_detail', {'id': reservation.id}) }}" 
-                                        class="btn btn-primary">
-                                            Voir les détails
-                                        </a>
-                                        {% if reservation.status == 'confirmé' and reservation.appointmentDatetime > date('+72 hours') %}
-                                            <form action="{{ path('reservation_cancel', {'id': reservation.id}) }}" 
-                                                method="post" 
-                                                class="d-inline"
-                                                onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
-                                                <button type="submit" class="btn btn-danger">Annuler</button>
-                                            </form>
-                                        {% endif %}
+                {# Liste des réservations #}
+                {% if reservations|length > 0 %}
+                    <div class="row">
+                        {% for reservation in reservations %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ reservation.service.title }}</h5>
+                                        <p class="card-text">
+                                            <strong>Date :</strong> {{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}<br>
+                                            <strong>Statut :</strong> 
+                                            <span class="badge {% if reservation.status == 'confirmed' %}bg-success
+                                                          {% elseif reservation.status == 'waiting' %}bg-warning
+                                                          {% elseif reservation.status == 'canceled' %}bg-danger
+                                                          {% elseif reservation.status == 'refunded' %}bg-info
+                                                          {% else %}bg-secondary{% endif %}">
+                                                {% if reservation.status == 'confirmed' %}Confirmé
+                                                {% elseif reservation.status == 'waiting' %}En attente
+                                                {% elseif reservation.status == 'canceled' %}Annulé
+                                                {% elseif reservation.status == 'refunded' %}Remboursé
+                                                {% else %}{{ reservation.status }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="mt-3">
+                                            <a href="{{ path('profile_reservation_detail', {'id': reservation.id}) }}" 
+                                            class="btn btn-primary">
+                                                Voir les détails
+                                            </a>
+                                            {% if reservation.status == 'confirmé' and reservation.appointmentDatetime > date('+72 hours') %}
+                                                <form action="{{ path('reservation_cancel', {'id': reservation.id}) }}" 
+                                                    method="post" 
+                                                    class="d-inline"
+                                                    onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
+                                                    <button type="submit" class="btn btn-danger">Annuler</button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    Aucune réservation trouvée pour ce filtre.
-                </div>
-            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        Aucune réservation trouvée pour ce filtre.
+                    </div>
+                {% endif %}
+            </div>
         </article>
     </section>
 {% endblock %}

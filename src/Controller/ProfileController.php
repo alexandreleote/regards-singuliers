@@ -121,7 +121,7 @@ class ProfileController extends AbstractController
     public function reservations(ReservationRepository $reservationRepository, string $filter = 'aujourd-hui'): Response
     {
         // Vérifier que le filtre est valide
-        if (!in_array($filter, ['passees', 'aujourd-hui', 'a-venir'])) {
+        if (!in_array($filter, ['passees', 'aujourd-hui', 'a-venir', 'annulees'])) {
             $filter = 'aujourd-hui';
         }
         
@@ -167,7 +167,7 @@ class ProfileController extends AbstractController
             );
         }
 
-        $reservation->setStatus('cancelled');
+        $reservation->setStatus('canceled');
         $entityManager->flush();
 
         return $this->render('profile/reservation_cancel.html.twig', [

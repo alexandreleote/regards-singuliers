@@ -245,68 +245,9 @@ class ReservationController extends AbstractController
         // Calculer le montant de l'acompte pour l'email
         $depositAmount = $reservation->getPrice() * 0.5;
 
-        // Gérer l'annulation selon le statut
-        if ($reservation->getStatus() === 'confirmed') {
-            $appointmentDate = $reservation->getAppointmentDatetime();
-            $now = new \DateTime();
-            $interval = $now->diff($appointmentDate);
-            $hoursUntilAppointment = $interval->h + ($interval->days * 24);
-
-            // Vérifier si on est à plus de 72h du rendez-vous pour le remboursement
-            if ($hoursUntilAppointment >= 72) {
-                // Créer un remboursement via Stripe
-                try {
-                    $this->reservationService->refundPayment($reservation);
-                    $reservation->setStatus('refunded');
-                    $this->entityManager->flush();
-
-                    // Envoyer un email de confirmation d'annulation avec remboursement
-                    $email = (new TemplatedEmail())
-                        ->from('no-reply@regards-singuliers.com')
-                        ->to($reservation->getUser()->getEmail())
-                        ->subject('Confirmation d\'annulation de votre réservation - regards singuliers')
-                        ->htmlTemplate('email/reservation_cancellation.html.twig')
-                        ->context([
-                            'reservation' => $reservation,
-                            'user' => $reservation->getUser(),
-                            'service' => $reservation->getService(),
-                            'refund_amount' => $depositAmount,
-                            'will_be_refunded' => true
-                        ]);
-
-                    $this->emailVerifier->sendEmailConfirmation('reservation_cancellation', $reservation->getUser(), $email);
-
-                    $this->addFlash('success', 'Votre réservation a été annulée et vous serez remboursé de l\'acompte.');
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Une erreur est survenue lors du remboursement. Veuillez nous contacter.');
-                }
-            } else {
-                // Annulation sans remboursement
-                $reservation->setStatus('canceled');
-                $this->entityManager->flush();
-
-                // Envoyer un email de confirmation d'annulation sans remboursement
-                $email = (new TemplatedEmail())
-                    ->from('no-reply@regards-singuliers.com')
-                    ->to($reservation->getUser()->getEmail())
-                    ->subject('Confirmation d\'annulation de votre réservation - regards singuliers')
-                    ->htmlTemplate('email/reservation_cancellation.html.twig')
-                    ->context([
-                        'reservation' => $reservation,
-                        'user' => $reservation->getUser(),
-                        'service' => $reservation->getService(),
-                        'refund_amount' => $depositAmount,
-                        'will_be_refunded' => false
-                    ]);
-
-                $this->emailVerifier->sendEmailConfirmation('reservation_cancellation', $reservation->getUser(), $email);
-
-                $this->addFlash('warning', 'Votre réservation a été annulée. Aucun remboursement ne sera effectué car l\'annulation est intervenue à moins de 72h du rendez-vous.');
-            }
-        } else {
-            // Annulation d'une réservation en attente
-            $reservation->setStatus('canceled');
-            $this->entityManager->flush();
+        try {
+            // Annuler la réservation via le service
+            $this->reservationService->cancelReservation($reservation);
 
             // Envoyer un email de confirmation d'annulation
             $email = (new TemplatedEmail())
@@ -318,13 +259,18 @@ class ReservationController extends AbstractController
                     'reservation' => $reservation,
                     'user' => $reservation->getUser(),
                     'service' => $reservation->getService(),
-                    'refund_amount' => 0,
-                    'will_be_refunded' => false
+                    'refund_amount' => $depositAmount,
+                    'will_be_refunded' => $reservation->getStatus() === 'refunded'
                 ]);
 
             $this->emailVerifier->sendEmailConfirmation('reservation_cancellation', $reservation->getUser(), $email);
 
-            $this->addFlash('info', 'Votre réservation en attente a été annulée.');
+            $this->addFlash('success', $reservation->getStatus() === 'refunded' 
+                ? 'Votre réservation a été annulée et vous serez remboursé de l\'acompte.'
+                : 'Votre réservation a été annulée. Aucun remboursement ne sera effectué car l\'annulation est intervenue à moins de 72h du rendez-vous.'
+            );
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'annulation. Veuillez nous contacter.');
         }
 
         return $this->redirectToRoute('profile_reservations');

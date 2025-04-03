@@ -22,30 +22,46 @@ class ReservationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r')
             ->andWhere('r.user = :user')
-            ->setParameter('user', $user)
-            ->andWhere('r.status != :status')
-            ->setParameter('status', 'annulée');
+            ->setParameter('user', $user);
             
         $now = new \DateTime();
         
         switch ($filter) {
+            case 'annulees':
+                $qb->andWhere('r.status = :status')
+                   ->setParameter('status', 'canceled');
+                break;
             case 'passees':
                 $qb->andWhere('r.appointment_datetime < :today')
-                   ->setParameter('today', $now->format('Y-m-d 00:00:00'));
+                   ->andWhere('r.status != :canceledStatus')
+                   ->setParameter('today', $now->format('Y-m-d 00:00:00'))
+                   ->setParameter('canceledStatus', 'canceled');
                 break;
             case 'aujourd-hui':
                 $qb->andWhere('r.appointment_datetime >= :todayStart')
                    ->andWhere('r.appointment_datetime <= :todayEnd')
+                   ->andWhere('r.status != :canceledStatus')
                    ->setParameter('todayStart', $now->format('Y-m-d 00:00:00'))
-                   ->setParameter('todayEnd', $now->format('Y-m-d 23:59:59'));
+                   ->setParameter('todayEnd', $now->format('Y-m-d 23:59:59'))
+                   ->setParameter('canceledStatus', 'canceled');
                 break;
             case 'a-venir':
                 $qb->andWhere('r.appointment_datetime > :now')
-                   ->setParameter('now', $now);
+                   ->andWhere('r.status != :canceledStatus')
+                   ->setParameter('now', $now)
+                   ->setParameter('canceledStatus', 'canceled');
                 break;
+            default:
+                // Si le filtre n'est pas valide, on revient à 'aujourd-hui'
+                $qb->andWhere('r.appointment_datetime >= :todayStart')
+                   ->andWhere('r.appointment_datetime <= :todayEnd')
+                   ->andWhere('r.status != :canceledStatus')
+                   ->setParameter('todayStart', $now->format('Y-m-d 00:00:00'))
+                   ->setParameter('todayEnd', $now->format('Y-m-d 23:59:59'))
+                   ->setParameter('canceledStatus', 'canceled');
         }
         
-        return $qb->orderBy('r.appointment_datetime', $filter === 'passees' ? 'DESC' : 'ASC')
+        return $qb->orderBy('r.appointment_datetime', $filter === 'passees' || $filter === 'annulees' ? 'DESC' : 'ASC')
                  ->getQuery()
                  ->getResult();
     }
