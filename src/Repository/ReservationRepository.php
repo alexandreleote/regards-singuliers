@@ -29,23 +29,23 @@ class ReservationRepository extends ServiceEntityRepository
         $now = new \DateTime();
         
         switch ($filter) {
-            case 'past':
+            case 'passees':
                 $qb->andWhere('r.appointment_datetime < :today')
                    ->setParameter('today', $now->format('Y-m-d 00:00:00'));
                 break;
-            case 'today':
+            case 'aujourd-hui':
                 $qb->andWhere('r.appointment_datetime >= :todayStart')
                    ->andWhere('r.appointment_datetime <= :todayEnd')
                    ->setParameter('todayStart', $now->format('Y-m-d 00:00:00'))
                    ->setParameter('todayEnd', $now->format('Y-m-d 23:59:59'));
                 break;
-            case 'upcoming':
+            case 'a-venir':
                 $qb->andWhere('r.appointment_datetime > :now')
                    ->setParameter('now', $now);
                 break;
         }
         
-        return $qb->orderBy('r.appointment_datetime', $filter === 'past' ? 'DESC' : 'ASC')
+        return $qb->orderBy('r.appointment_datetime', $filter === 'passees' ? 'DESC' : 'ASC')
                  ->getQuery()
                  ->getResult();
     }

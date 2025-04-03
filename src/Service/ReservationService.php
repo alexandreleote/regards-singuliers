@@ -120,4 +120,19 @@ class ReservationService
         $this->calendlyService->createEvent($reservation);
         $this->entityManager->flush();
     }
+
+    public function refundPayment(Reservation $reservation): void
+    {
+        $stripe = new \Stripe\StripeClient($this->params->get('stripe.secret_key'));
+
+        // Récupérer le PaymentIntent associé à la réservation
+        $paymentIntent = $stripe->paymentIntents->retrieve($reservation->getStripePaymentIntentId());
+
+        // Créer le remboursement
+        $stripe->refunds->create([
+            'payment_intent' => $paymentIntent->id,
+            'amount' => $paymentIntent->amount, // Montant en centimes
+            'reason' => 'requested_by_customer'
+        ]);
+    }
 } 

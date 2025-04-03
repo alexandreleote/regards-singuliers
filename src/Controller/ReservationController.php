@@ -186,9 +186,6 @@ class ReservationController extends AbstractController
         }
 
         // Envoyer un email de confirmation
-        $paymentData = $this->reservationService->createPaymentIntent($reservation);
-        $depositAmount = $paymentData['depositAmount'];
-
         $email = (new TemplatedEmail())
             ->from('no-reply@regards-singuliers.com')
             ->to($reservation->getUser()->getEmail())
@@ -198,7 +195,7 @@ class ReservationController extends AbstractController
                 'reservation' => $reservation,
                 'user' => $reservation->getUser(),
                 'service' => $reservation->getService(),
-                'deposit_amount' => $depositAmount
+                'deposit_amount' => $reservation->getService()->getDepositAmount()
             ]);
 
         $this->emailVerifier->sendEmailConfirmation('reservation_confirmation', $reservation->getUser(), $email);
@@ -211,11 +208,80 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/canceled', name: 'reservation_canceled')]
-    public function canceled(): Response
+    public function canceled(Request $request): Response
     {
+        // Récupérer la réservation en attente la plus récente de l'utilisateur
+        $reservation = $this->reservationRepository->findOneBy([
+            'user' => $this->getUser(),
+            'status' => 'en attente'
+        ], ['bookedAt' => 'DESC']);
+
+        if ($reservation) {
+            $reservation->setStatus('annulé');
+            $this->entityManager->flush();
+        }
+
         return $this->render('reservation/canceled.html.twig', [
             'page_title' => 'Paiement annulé - regards singuliers',
             'meta_description' => 'Paiement interrompu.',
+            'reservation' => $reservation
         ]);
+    }
+
+    #[Route('/annulation/{id}', name: 'reservation_cancel_confirmed')]
+    public function cancelConfirmedReservation(Request $request, Reservation $reservation): Response
+    {
+        // Vérifier que l'utilisateur est bien le propriétaire de la réservation
+        if ($reservation->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette réservation');
+        }
+
+        // Vérifier que la réservation est bien confirmée
+        if ($reservation->getStatus() !== 'confirmé') {
+            throw $this->createAccessDeniedException('Cette réservation ne peut pas être annulée');
+        }
+
+        // Vérifier le token CSRF
+        if (!$this->isCsrfTokenValid('cancel_reservation_'.$reservation->getId(), $request->request->get('_token'))) {
+            throw new InvalidCsrfTokenException('Token CSRF invalide');
+        }
+
+        $appointmentDate = $reservation->getAppointmentDatetime();
+        $now = new \DateTime();
+        $interval = $now->diff($appointmentDate);
+        $hoursUntilAppointment = $interval->h + ($interval->days * 24);
+
+        // Vérifier si l'annulation est possible (72h avant le rendez-vous)
+        if ($hoursUntilAppointment >= 72) {
+            // Créer un remboursement via Stripe
+            try {
+                $this->reservationService->refundPayment($reservation);
+                $reservation->setStatus('annulé');
+                $this->entityManager->flush();
+
+                // Envoyer un email de confirmation d'annulation avec remboursement
+                $email = (new TemplatedEmail())
+                    ->from('no-reply@regards-singuliers.com')
+                    ->to($reservation->getUser()->getEmail())
+                    ->subject('Confirmation d\'annulation de votre réservation')
+                    ->htmlTemplate('email/reservation_cancellation.html.twig')
+                    ->context([
+                        'reservation' => $reservation,
+                        'user' => $reservation->getUser(),
+                        'service' => $reservation->getService(),
+                        'refund_amount' => $reservation->getService()->getDepositAmount()
+                    ]);
+
+                $this->emailVerifier->sendEmailConfirmation('reservation_cancellation', $reservation->getUser(), $email);
+
+                $this->addFlash('success', 'Votre réservation a été annulée et vous serez remboursé de l\'acompte.');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors du remboursement. Veuillez nous contacter.');
+            }
+        } else {
+            $this->addFlash('error', 'Impossible d\'annuler la réservation moins de 72h avant le rendez-vous.');
+        }
+
+        return $this->redirectToRoute('reservation_show', ['id' => $reservation->getId()]);
     }
 }

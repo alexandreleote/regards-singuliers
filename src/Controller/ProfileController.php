@@ -117,12 +117,12 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/reservations/{filter}', name: 'profile_reservations', defaults: ['filter' => 'upcoming'])]
-    public function reservations(ReservationRepository $reservationRepository, string $filter = 'upcoming'): Response
+    #[Route('/reservations/{filter}', name: 'profile_reservations', defaults: ['filter' => 'aujourd-hui'])]
+    public function reservations(ReservationRepository $reservationRepository, string $filter = 'aujourd-hui'): Response
     {
         // Vérifier que le filtre est valide
-        if (!in_array($filter, ['past', 'today', 'upcoming'])) {
-            $filter = 'upcoming';
+        if (!in_array($filter, ['passees', 'aujourd-hui', 'a-venir'])) {
+            $filter = 'aujourd-hui';
         }
         
         $user = $this->getUser();

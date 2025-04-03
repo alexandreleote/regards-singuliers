@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation d'annulation de votre réservation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .section {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            margin: 10px 0;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <article class="email-container">
+        <h1>Confirmation d'annulation de votre réservation</h1>
+        
+        <p>Bonjour {{ user.firstname }},</p>
+        
+        <p>Nous confirmons l'annulation de votre réservation. Voici les détails :</p>
+        
+        <section class="section">
+            <aside class="section-title">Détails de la réservation annulée</aside>
+            <aside class="detail-item">
+                <span class="detail-label">Prestation :</span> {{ service.title }}
+            </aside>
+            <aside class="detail-item">
+                <span class="detail-label">Date du rendez-vous :</span> {{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}
+            </aside>
+            <aside class="detail-item">
+                <span class="detail-label">Montant remboursé :</span> {{ refund_amount }}€
+            </aside>
+        </section>
+
+        <p>Le remboursement de votre acompte sera effectué sur votre carte bancaire dans les prochains jours.</p>
+        
+        <p>Si vous souhaitez effectuer une nouvelle réservation, n'hésitez pas à nous contacter.</p>
+        
+        <p>Cordialement,<br>L'équipe regards singuliers</p>
+    </article>
+</body>
+</html> 
