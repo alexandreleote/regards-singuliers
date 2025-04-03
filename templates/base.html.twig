@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="cookie-policy" content="same-origin">
         {% if app.user %}
             <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
         {% endif %}
@@ -24,6 +25,8 @@
                 const isUserConnected = {{ app.user ? 'true' : 'false' }};
                 const currentDiscussionId = {{ currentDiscussionId|default('null') }};
             </script>
+
+
         {% endblock %}
 
         <!-- Google Fonts -->
@@ -52,8 +55,8 @@
                 <nav class="navbar">
                     <ul class="nav-list">
                         <li class="nav-item"><a href="{{ path('studio') }}" class="nav-link">Le Studio</a></li>
-                        <li class="nav-item"><a href="{{ path('prestations') }}" class="nav-link">Prestations</a></li>
                         <li class="nav-item"><a href="{{ path('realisations') }}" class="nav-link">Réalisations</a></li>
+                        <li class="nav-item"><a href="{{ path('prestations') }}" class="nav-link">Prestations</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Blog</a></li>
                         <li class="nav-item"><a href="{{ path('contact') }}" class="nav-link">Contact</a></li>
                     </ul>
@@ -63,8 +66,8 @@
                     <nav class="mobile-nav">
                         <ul class="nav-list-mobile">
                             <li class="nav-item-mobile"><a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a></li>
-                            <li class="nav-item-mobile"><a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a></li>
                             <li class="nav-item-mobile"><a href="{{ path('realisations') }}" class="nav-link-mobile">Réalisations</a></li>
+                            <li class="nav-item-mobile"><a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a></li>
                             <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Blog</a></li>
                             <li class="nav-item-mobile"><a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a></li>
                         </ul>
@@ -113,7 +116,7 @@
         <div class="menu-overlay"></div>
 
         <main class="page-fullheight"> 
-            <div class="container page-content">
+            <section class="container page-content">
                 {% block body %}
                     {# {% if app.flashes|length > 0 %}
                         <div class="section">
@@ -127,7 +130,7 @@
                         </div>
                     {% endif %} #}
                 {% endblock %}
-            </div>
+            </section>
         </main>
 
         <footer class="footer">
@@ -156,8 +159,8 @@
                     <div class="footer-title">Navigation</div>
                     <ul class="footer-links">
                         <li class="footer-link-item"><a href="{{ path('studio') }}" class="footer-link">Le Studio</a></li>
-                        <li class="footer-link-item"><a href="{{ path('prestations') }}" class="footer-link">Prestations</a></li>
                         <li class="footer-link-item"><a href="{{ path('realisations') }}" class="footer-link">Réalisations</a></li>
+                        <li class="footer-link-item"><a href="{{ path('prestations') }}" class="footer-link">Prestations</a></li>
                         <li class="footer-link-item"><a href="#" class="footer-link">Blog</a></li>
                         <li class="footer-link-item"><a href="{{ path('contact') }}" class="footer-link">Contact</a></li>
                     </ul>

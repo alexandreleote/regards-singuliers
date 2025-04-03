@@ -1,140 +1,216 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['form', 'paymentElement', 'submitButton', 'loadingElement', 'messageElement']
+    static targets = ['form', 'paymentElement', 'submitButton', 'loadingElement', 'messageElement', 'container']
     static values = {
         stripeKey: String,
         clientSecret: String,
-        type: String // 'date', 'payment', 'success', 'canceled'
+        type: String,
+        calendlyUrl: String,
+        serviceSlug: String,
+        serviceId: String
     }
 
     connect() {
-        switch (this.typeValue) {
-            case 'date':
-                this.initializeDateSelection();
-                break;
-            case 'payment':
-                this.initializePayment();
-                break;
-            case 'success':
-                this.initializeSuccess();
-                break;
-            case 'canceled':
-                this.initializeCanceled();
-                break;
+        if (!this.hasTypeValue) {
+            console.error('Type value is missing');
+            return;
+        }
+
+        if (this.typeValue === 'date') {
+            if (!this.hasCalendlyUrlValue || !this.hasServiceSlugValue || !this.hasServiceIdValue) {
+                console.error('Missing required values for date reservation', {
+                    hasCalendlyUrl: this.hasCalendlyUrlValue,
+                    hasServiceSlug: this.hasServiceSlugValue,
+                    hasServiceId: this.hasServiceIdValue
+                });
+                return;
+            }
+            this.initializeCalendly();
+        } else if (this.typeValue === 'payment') {
+            if (!this.hasStripeKeyValue || !this.hasClientSecretValue) {
+                console.error('Missing required values for payment');
+                return;
+            }
+            this.initializePayment();
         }
     }
 
-    // Gestion de la sélection de date
-    initializeDateSelection() {
-        if (this.hasFormTarget) {
-            this.formTarget.addEventListener('submit', this.handleDateSubmit.bind(this));
+    initializeCalendly() {
+        if (!document.getElementById('calendly-container')) {
+            console.error('Calendly container not found');
+            this.showMessage('Erreur de chargement du calendrier', 'error');
+            return;
         }
-    }
 
-    async handleDateSubmit(event) {
-        event.preventDefault();
-        const formData = new FormData(this.formTarget);
-        
-        try {
-            const response = await fetch('/reservation/check-date', {
-                method: 'POST',
-                body: formData
+        const script = document.createElement('script');
+        script.src = 'https://assets.calendly.com/assets/external/widget.js';
+        script.async = true;
+
+        script.onerror = () => {
+            console.error('Failed to load Calendly script');
+            this.showMessage('Erreur de chargement de Calendly', 'error');
+        };
+
+        script.onload = () => {
+            const container = document.getElementById('calendly-container');
+            if (!container) {
+                console.error('Calendly container not found after script load');
+                return;
+            }
+
+            Calendly.initInlineWidget({
+                url: this.calendlyUrlValue,
+                parentElement: container,
+                prefill: {},
+                utm: {}
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.available) {
-                    window.location.href = `/reservation/payment?date=${formData.get('date')}`;
-                } else {
-                    this.showMessage('Cette date n\'est pas disponible', 'error');
+            window.addEventListener('message', async (e) => {
+                if (e.data.event && e.data.event === 'calendly.event_scheduled') {
+                    await this.handleCalendlyEventScheduled(e.data);
                 }
+            });
+        };
+
+        document.body.appendChild(script);
+    }
+
+    async handleCalendlyEventScheduled(data) {
+        try {
+            if (!this.serviceIdValue || !this.serviceSlugValue) {
+                throw new Error('Données du service manquantes');
+            }
+
+            // Extraction correcte des IDs depuis la payload Calendly
+            const eventId = data.payload.event.uri;
+            const inviteeId = data.payload.invitee.uri;
+
+            if (!eventId || !inviteeId) {
+                throw new Error('Données de l\'événement Calendly manquantes');
+            }
+
+            const requestData = {
+                serviceId: this.serviceIdValue,
+                event: {
+                    event_id: eventId,
+                    invitee_id: inviteeId
+                }
+            };
+
+            console.log('Sending reservation data:', requestData);
+
+            const response = await fetch('/reservation/process-date', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const responseData = await response.json();
+            console.log('Server response:', responseData);
+
+            if (!response.ok) {
+                throw new Error(responseData.error || `Erreur serveur: ${response.status}`);
+            }
+            
+            if (responseData.success) {
+                window.location.href = `/reservation/paiement/${this.serviceSlugValue}`;
+            } else {
+                throw new Error(responseData.error || 'Une erreur est survenue');
             }
         } catch (error) {
-            console.error('Erreur lors de la vérification de la date:', error);
-            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Erreur lors du traitement de la réservation:', error);
+            this.showMessage(error.message || 'Une erreur est survenue lors du traitement de la réservation', 'error');
         }
     }
 
-    // Gestion du paiement
-    initializePayment() {
-        if (this.hasPaymentElementTarget) {
-            this.initializeStripe();
+    async initializePayment() {
+        if (!this.hasPaymentElementTarget) {
+            console.error('Payment element target not found');
+            return;
         }
-    }
 
-    async initializeStripe() {
-        const stripe = Stripe(this.stripeKeyValue);
-        const elements = stripe.elements({
-            clientSecret: this.clientSecretValue,
-            appearance: {
-                theme: 'stripe'
-            }
-        });
-
-        const paymentElement = elements.create('payment');
-        paymentElement.mount(this.paymentElementTarget);
-
-        if (this.hasFormTarget) {
-            this.formTarget.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                this.submitButtonTarget.disabled = true;
-                this.loadingElementTarget.classList.remove('hidden');
-
-                try {
-                    const { error } = await stripe.confirmPayment({
-                        elements,
-                        confirmParams: {
-                            return_url: `${window.location.origin}/reservation/success`,
-                        },
-                    });
-
-                    if (error) {
-                        this.showMessage(error.message, 'error');
+        try {
+            const stripe = Stripe(this.stripeKeyValue);
+            const elements = stripe.elements({
+                clientSecret: this.clientSecretValue,
+                appearance: {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#0a2540',
+                        colorBackground: '#ffffff',
+                        colorText: '#30313d',
+                        colorDanger: '#df1b41',
+                        fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                        spacingUnit: '4px',
+                        borderRadius: '4px'
                     }
-                } catch (error) {
-                    console.error('Erreur lors du paiement:', error);
-                    this.showMessage('Une erreur est survenue', 'error');
-                } finally {
-                    this.submitButtonTarget.disabled = false;
-                    this.loadingElementTarget.classList.add('hidden');
                 }
             });
+
+            const paymentElement = elements.create('payment');
+            await paymentElement.mount(this.paymentElementTarget);
+
+            if (this.hasFormTarget) {
+                this.formTarget.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    await this.handlePaymentSubmission(stripe, elements);
+                });
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation du paiement:', error);
+            this.showMessage('Erreur lors de l\'initialisation du paiement', 'error');
         }
     }
 
-    // Gestion de la page de succès
-    initializeSuccess() {
-        // Animation ou logique spécifique à la page de succès
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 5000);
+    async handlePaymentSubmission(stripe, elements) {
+        if (this.hasSubmitButtonTarget) {
+            this.submitButtonTarget.disabled = true;
+        }
+        
+        if (this.hasLoadingElementTarget) {
+            this.loadingElementTarget.classList.remove('hidden');
+        }
+
+        try {
+            const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: `${window.location.origin}/reservation/success`,
+                }
+            });
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            console.error('Erreur de paiement:', error);
+            this.showMessage(error.message || 'Une erreur est survenue lors du paiement', 'error');
+        } finally {
+            if (this.hasSubmitButtonTarget) {
+                this.submitButtonTarget.disabled = false;
+            }
+            if (this.hasLoadingElementTarget) {
+                this.loadingElementTarget.classList.add('hidden');
+            }
+        }
     }
 
-    // Gestion de la page d'annulation
-    initializeCanceled() {
-        // Animation ou logique spécifique à la page d'annulation
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 5000);
-    }
-
-    // Utilitaires
     showMessage(message, type = 'info') {
-        if (this.hasMessageElementTarget) {
-            this.messageElementTarget.textContent = message;
-            this.messageElementTarget.className = `message message-${type}`;
-            this.messageElementTarget.classList.remove('hidden');
-            
-            setTimeout(() => {
-                this.messageElementTarget.classList.add('hidden');
-            }, 5000);
+        if (!this.hasMessageElementTarget) {
+            console.error('Message element target not found');
+            return;
         }
-    }
 
-    disconnect() {
-        if (this.hasFormTarget) {
-            this.formTarget.removeEventListener('submit', this.handleDateSubmit.bind(this));
-        }
+        this.messageElementTarget.textContent = message;
+        this.messageElementTarget.className = `message message-${type}`;
+        this.messageElementTarget.classList.remove('hidden');
+        
+        setTimeout(() => {
+            this.messageElementTarget.classList.add('hidden');
+        }, 5000);
     }
-} 
+}

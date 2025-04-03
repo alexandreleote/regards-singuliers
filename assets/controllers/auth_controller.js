@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import '../styles/auth.css';
 
 export default class extends Controller {
     static targets = ['form', 'submitButton', 'messageElement']

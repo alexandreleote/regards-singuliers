@@ -19,6 +19,7 @@
 @import './pages/legal.css';
 @import './pages/profile.css';
 @import './pages/discussion.css';
+@import './pages/reservation.css';
 
 /* Admin */
 @import './admin/admin.css';

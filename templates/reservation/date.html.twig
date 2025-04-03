@@ -4,37 +4,33 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('reservation') }}
+    {{ encore_entry_link_tags('app') }}
 {% endblock %}
 
 {% block body %}
-    <div class="date-container">
-        <div class="date-content">
-            <div class="service-info" data-service-id="{{ service.id }}">
-                <h1 class="service-title">{{ service.title }}</h1>
-                <p class="service-description">{{ service.description|raw }}</p>
-                <div class="price-info">
-                    <div class="price-row">
-                        <span>Prix total :</span>
-                        <span>{{ service.price }}€</span>
-                    </div>
-                    <div class="price-row">
-                        <span>Acompte à verser :</span>
-                        <span>{{ service.price * 0.5 }}€</span>
-                    </div>
-                </div>
-            </div>
-
-            {# Conteneur unique pour Calendly #}
-            <div id="calendly-container" class="calendly-container" data-url="{{ calendly_url }}">
+    <div class="service-info">
+        <h1 class="service-title">{{ service.title }}</h1>
+        <p class="service-description">{{ service.description|raw }}</p>
+        <div class="price-info">
+            <div class="price-row">
+                <span>Prix total :</span>
+                <span>{{ service.price }}€</span>
             </div>
         </div>
     </div>
 
-    <div data-csrf-token="{{ csrf_token('process_date') }}"></div>
+    <div id="calendly-container" class="calendly-container"></div>
+
+    <div data-controller="reservation" 
+         data-reservation-type-value="date" 
+         data-reservation-calendly-url-value="{{ calendly_url }}"
+         data-reservation-service-slug-value="{{ service.slug }}"
+         data-reservation-service-id-value="{{ service.id }}">
+        <div data-reservation-target="messageElement" class="message hidden"></div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('reservation') }}
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}

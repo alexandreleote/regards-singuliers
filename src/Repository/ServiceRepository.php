@@ -11,6 +11,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ServiceRepository extends ServiceEntityRepository
 {
+    public function findBySlug(string $slug): ?Service
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Service::class);

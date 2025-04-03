@@ -16,7 +16,7 @@
                 Le paiement a été annulé. Vous pouvez réessayer ou revenir à l'accueil.
             </p>
             <div>
-                <a href="{{ path('reservation_payment', {id: service.id}) }}" class="retry-button">
+                <a href="{{ path('reservation_payment', {slug: service.slug}) }}" class="retry-button">
                     Réessayer le paiement
                 </a>
                 <a href="{{ path('home') }}" class="home-button">

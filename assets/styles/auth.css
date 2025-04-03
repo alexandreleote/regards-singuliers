@@ -22,10 +22,15 @@ body {
 
 /* Styles spécifiques à l'authentification */
 .auth-container {
-    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: stretch;
     background-color: white;
+    z-index: 1000; /* S'assurer que le contenu est au-dessus de la navbar */
 }
 
 /* Style spécifique pour la page de connexion */
@@ -238,6 +243,37 @@ body {
 .auth-form .form-footer a:hover {
     color: black;
     text-decoration: underline;
+}
+
+/* Styles pour les exigences du mot de passe */
+.password-requirements {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    color: #495057;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.password-requirements ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.password-requirements li {
+    position: relative;
+    padding-left: 25px;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.password-requirements li::before {
+    content: '•';
+    position: absolute;
+    left: 8px;
+    color: #6c757d;
 }
 
 /* Responsive */

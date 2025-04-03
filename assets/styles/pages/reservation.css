@@ -1,0 +1,87 @@
+/* Styles pour la page de réservation */
+
+/* Styles pour les informations de service */
+.service-info {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.service-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text);
+}
+
+.service-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--color-text-light);
+    margin-bottom: 2rem;
+}
+
+.price-info {
+    background: var(--color-background-light);
+    padding: 1.5rem;
+    border-radius: 6px;
+    margin-top: 2rem;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+/* Styles pour le conteneur Calendly */
+.calendly-container {
+    min-height: 850px;
+    width: 100%;
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.calendly-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 850px !important;
+    border: none !important;
+}
+
+.calendly-inline-widget {
+    min-width: 100% !important;
+    width: 100% !important;
+    height: 850px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .service-info {
+        padding: 1.5rem;
+    }
+
+    .service-title {
+        font-size: 1.5rem;
+    }
+
+    .service-description {
+        font-size: 1rem;
+    }
+
+    .calendly-container {
+        min-height: 700px;
+    }
+    
+    .calendly-container iframe,
+    .calendly-inline-widget {
+        min-height: 700px !important;
+        height: 700px !important;
+    }
+} 

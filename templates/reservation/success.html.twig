@@ -2,11 +2,6 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('reservation/success') }}
-{% endblock %}
-
 {% block body %}
     <div class="confirmation-container">
         <div class="confirmation-content">

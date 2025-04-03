@@ -39,11 +39,13 @@ class ReservationController extends AbstractController
         $this->calendlyService = $calendlyService;
     }
 
-    #[Route('/date/{slug:service}', name: 'reservation_date')]
-    public function date(Service $service): Response
+    #[Route('/date/{slug}', name: 'reservation_date')]
+    public function date(string $slug): Response
     {
+        $service = $this->serviceRepository->findOneBy(['slug' => $slug]);
+        
         if (!$service) {
-            return $this->redirectToRoute('home');
+            throw $this->createNotFoundException('Service non trouvé');
         }
 
         if (!$service->isActive()) {
@@ -52,10 +54,9 @@ class ReservationController extends AbstractController
 
         return $this->render('reservation/date.html.twig', [
             'page_title' => 'Choisir une date - regards singuliers',
-            'meta_description' => 'Sélectionnez votre date de rendez-vous avec notre architecte d\'intérieur. Un moment unique pour donner vie à votre projet de décoration.',
+            'meta_description' => 'Sélectionnez votre date de rendez-vous avec notre architecte d\'intérieur.',
             'service' => $service,
-            'calendly_url' => $this->getParameter('calendly.url'),
-            'calendly_api_key' => $_ENV['CALENDLY_API_KEY']
+            'calendly_url' => $this->getParameter('calendly.url')
         ]);
     }
 
@@ -69,13 +70,6 @@ class ReservationController extends AbstractController
                 throw new \Exception('Données JSON invalides');
             }
 
-            // Vérifier le token CSRF
-            $token = $request->headers->get('X-CSRF-TOKEN');
-            if (!$this->isCsrfTokenValid('process_date', $token)) {
-                throw new InvalidCsrfTokenException('Token CSRF invalide');
-            }
-
-            // Valider les données requises
             if (!isset($data['serviceId'], $data['event']['event_id'], $data['event']['invitee_id'])) {
                 throw new \Exception('Données manquantes');
             }
@@ -85,14 +79,24 @@ class ReservationController extends AbstractController
                 throw new \Exception('Service non trouvé');
             }
 
-            // Créer la réservation
-            $reservation = $this->reservationService->createReservation($service, $this->getUser());
+            // Vérifier si une réservation en attente existe déjà
+            $existingReservation = $this->reservationRepository->findOneBy([
+                'user' => $this->getUser(),
+                'service' => $service,
+                'status' => 'en attente'
+            ]);
+
+            if ($existingReservation) {
+                // Mettre à jour la réservation existante
+                $reservation = $existingReservation;
+            } else {
+                // Créer une nouvelle réservation
+                $reservation = $this->reservationService->createReservation($service, $this->getUser());
+            }
             
-            // Sauvegarder les IDs Calendly
             $reservation->setCalendlyEventId($data['event']['event_id']);
             $reservation->setCalendlyInviteeId($data['event']['invitee_id']);
 
-            // Récupérer les détails de l'événement via l'API Calendly
             $eventId = str_replace('https://api.calendly.com/scheduled_events/', '', $data['event']['event_id']);
             $response = $this->calendlyService->getEventDetails($eventId);
             
@@ -101,20 +105,16 @@ class ReservationController extends AbstractController
                 $reservation->setAppointmentDatetime($startTime);
             }
             
-            // Définir le statut initial
             $reservation->setStatus('en attente');
-
-            // Sauvegarder la réservation
+            
             $this->entityManager->persist($reservation);
             $this->entityManager->flush();
 
             return $this->json([
                 'success' => true,
-                'redirect' => $this->generateUrl('reservation_payment', [
-                    'slug' => $service->getSlug()
-                ])
+                'message' => 'Réservation créée avec succès',
+                'reservationId' => $reservation->getId()
             ]);
-
         } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
@@ -123,14 +123,20 @@ class ReservationController extends AbstractController
         }
     }
 
-    #[Route('/payment/{slug:service}', name: 'reservation_payment')]
-    public function payment(Service $service): Response
+    #[Route('/paiement/{slug}', name: 'reservation_payment')]
+    public function payment(string $slug): Response
     {
+        $service = $this->serviceRepository->findOneBy(['slug' => $slug]);
+        
+        if (!$service) {
+            throw $this->createNotFoundException('Service non trouvé');
+        }
+
         $reservation = $this->reservationRepository->findOneBy([
             'user' => $this->getUser(),
             'service' => $service,
             'status' => 'en attente'
-        ], ['bookedAt' => 'DESC']);
+        ], ['bookedAt' => 'DESC']); // Changé de createdAt à bookedAt
 
         if (!$reservation) {
             return $this->redirectToRoute('reservation_date', ['slug' => $service->getSlug()]);
@@ -140,12 +146,12 @@ class ReservationController extends AbstractController
 
         return $this->render('reservation/payment.html.twig', [
             'page_title' => 'Paiement de l\'acompte - regards singuliers',
-            'meta_description' => 'Finalisez votre projet avec le paiement de l\'acompte. Une étape proche de la transformation de votre intérieur.',
+            'meta_description' => 'Finalisez votre projet avec le paiement de l\'acompte.',
             'service' => $service,
             'reservation' => $reservation,
             'deposit_amount' => $paymentData['depositAmount'],
             'stripe_public_key' => $this->getParameter('stripe.public_key'),
-            'client_secret' => $paymentData['clientSecret'],
+            'client_secret' => $paymentData['clientSecret']
         ]);
     }
 
@@ -166,13 +172,15 @@ class ReservationController extends AbstractController
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette réservation');
         }
 
-        if ($reservation->getPayments()->isEmpty()) {
+        if ($reservation->getStatus() !== 'confirmé') {
             $this->reservationService->handlePaymentSuccess($paymentIntentId);
+            $reservation->setStatus('confirmé');
+            $this->entityManager->flush();
         }
 
         return $this->render('reservation/success.html.twig', [
             'page_title' => 'Réservation confirmée - regards singuliers',
-            'meta_description' => 'Votre réservation est confirmée. Première étape vers la métamorphose de votre espace de vie.',
+            'meta_description' => 'Votre réservation est confirmée.',
             'reservation' => $reservation
         ]);
     }
@@ -182,7 +190,7 @@ class ReservationController extends AbstractController
     {
         return $this->render('reservation/canceled.html.twig', [
             'page_title' => 'Paiement annulé - regards singuliers',
-            'meta_description' => 'Paiement interrompu. Votre projet reste notre priorité, nous sommes là pour vous accompagner.',
+            'meta_description' => 'Paiement interrompu.',
         ]);
     }
 }

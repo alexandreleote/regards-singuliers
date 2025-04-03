@@ -2,11 +2,6 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('reservation/payment') }}
-{% endblock %}
-
 {% block body %}
     <div class="payment-container">
         <div class="payment-content">
@@ -25,26 +20,24 @@
                 </div>
             </div>
 
-            <form id="payment-form" class="payment-form">
-                <div id="payment-element"></div>
-                <button id="submit" class="payment-button">
-                    <span class="loading"></span>
-                    Payer l'acompte
-                </button>
-                <div id="payment-message"></div>
-            </form>
+            <div data-controller="reservation"
+                 data-reservation-type-value="payment"
+                 data-reservation-stripe-key-value="{{ stripe_public_key }}"
+                 data-reservation-client-secret-value="{{ client_secret }}">
+                <form data-reservation-target="form" class="payment-form">
+                    <div data-reservation-target="paymentElement"></div>
+                    <button data-reservation-target="submitButton" class="payment-button">
+                        <span data-reservation-target="loadingElement" class="loading hidden">Chargement...</span>
+                        Payer l'acompte
+                    </button>
+                    <div data-reservation-target="messageElement" class="message hidden"></div>
+                </form>
+            </div>
         </div>
     </div>
-
-    <div 
-        data-stripe-key="{{ stripe_public_key }}"
-        data-client-secret="{{ client_secret }}"
-        data-return-url="{{ url('reservation_success') }}"
-    ></div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="https://js.stripe.com/v3/"></script>
-    {{ encore_entry_script_tags('reservation/payment') }}
 {% endblock %} 
