@@ -13,7 +13,16 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/cgu.html.twig', [
             'page_title' => 'Conditions générales d\'utilisation - regards singuliers',
-            'meta_description' => 'Consultez les conditions générales d\'utilisation de regards singuliers, régissant l\'accès et l\'utilisation de notre site et de nos services d\'architecture d\'intérieur.',
+            'meta_description' => 'Consultez les conditions générales d\'utilisation de regards singuliers, régissant l\'accès et l\'utilisation de notre site d\'architecture d\'intérieur.',
+        ]);
+    }
+    
+    #[Route('/mentions-legales/conditions-generales-vente', name: 'cgv')]
+    public function cgv(): Response
+    {
+        return $this->render('legal/cgv.html.twig', [
+            'page_title' => 'Conditions générales de vente - regards singuliers',
+            'meta_description' => 'Consultez les conditions générales de vente de regards singuliers, régissant l\'ensemble de nos services d\'architecture d\'intérieur.',
         ]);
     }
     

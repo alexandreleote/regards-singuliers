@@ -23,35 +23,43 @@
                         <p><strong>Date :</strong> {{ reservation.appointmentDatetime|date('d/m/Y') }}</p>
                         <p><strong>Heure :</strong> {{ reservation.appointmentDatetime|date('H:i') }}</p>
                         <p><strong>Prix total :</strong> {{ reservation.service.price }} €</p>
-                        <p><strong>Acompte versé :</strong> {{ reservation.payments[0].depositAmount }} €</p>
+                        {% if reservation.payments|length > 0 %}
+                            <p><strong>Acompte versé :</strong> {{ reservation.payments|first.depositAmount }} €</p>
+                            {% if reservation.status == 'confirmed' %}
+                                <p><strong>Reste à payer :</strong> {{ reservation.service.price - reservation.payments|first.depositAmount }} €</p>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     
-                    {% if reservation.status == 'confirmed' %}
-                        {% set now = "now"|date('U') %}
-                        {% set appointmentTime = reservation.appointmentDatetime|date('U') %}
-                        {% set timeBeforeAppointment = appointmentTime - now %}
-                        {% set hoursBeforeAppointment = timeBeforeAppointment / 3600 %}
-                        
+                    {% if reservation.status != 'canceled' and reservation.status != 'refunded' %}
                         <div class="cancellation-section">
                             <h2>Annulation</h2>
                             
-                            {% if hoursBeforeAppointment > 72 %}
-                                <div class="alert alert-info">
-                                    <p>Vous pouvez annuler cette réservation. L'acompte de {{ reservation.payments[0].depositAmount }} € vous sera intégralement remboursé.</p>
-                                </div>
-                                <form method="post" action="{{ path('reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
-                                    <button type="submit" class="btn btn-danger">Annuler ma réservation</button>
-                                </form>
-                            {% else %}
+                            {% if reservation.status == 'confirmed' %}
+                                {% set now = "now"|date('U') %}
+                                {% set appointmentTime = reservation.appointmentDatetime|date('U') %}
+                                {% set timeBeforeAppointment = appointmentTime - now %}
+                                {% set hoursBeforeAppointment = timeBeforeAppointment / 3600 %}
+                                
+                                {% if hoursBeforeAppointment > 72 %}
+                                    <div class="alert alert-info">
+                                        <p>Vous pouvez annuler cette réservation. L'acompte de {{ reservation.payments|length > 0 ? reservation.payments|first.depositAmount : 0 }} € vous sera intégralement remboursé.</p>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-warning">
+                                        <p>Vous pouvez annuler cette réservation, mais aucun remboursement ne sera effectué car l'annulation intervient moins de 72 heures avant le rendez-vous.</p>
+                                    </div>
+                                {% endif %}
+                            {% elseif reservation.status == 'waiting' %}
                                 <div class="alert alert-warning">
-                                    <p>Vous pouvez annuler cette réservation, mais aucun remboursement ne sera effectué car l'annulation intervient moins de 72 heures avant le rendez-vous.</p>
+                                    <p>Vous pouvez annuler cette réservation en attente. Aucun remboursement ne sera effectué car aucun paiement n'a encore été effectué.</p>
                                 </div>
-                                <form method="post" action="{{ path('reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation sans remboursement ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
-                                    <button type="submit" class="btn btn-danger">Annuler ma réservation sans remboursement</button>
-                                </form>
                             {% endif %}
+
+                            <form method="post" action="{{ path('reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
+                                <button type="submit" class="btn btn-danger">Annuler ma réservation</button>
+                            </form>
                         </div>
                     {% endif %}
                 </div>

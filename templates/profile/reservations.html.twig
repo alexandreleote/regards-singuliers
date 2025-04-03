@@ -9,7 +9,7 @@
             Retour
         </a>
 
-        <article class="card animate-fade-in">
+        <article class="card">
             <h1>Mes réservations</h1>
 
             {# Filtres #}
@@ -41,11 +41,16 @@
                                     <p class="card-text">
                                         <strong>Date :</strong> {{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}<br>
                                         <strong>Statut :</strong> 
-                                        <span class="badge {% if reservation.status == 'confirmé' %}bg-success
-                                                        {% elseif reservation.status == 'en attente' %}bg-warning
-                                                        {% elseif reservation.status == 'annulé' %}bg-danger
-                                                        {% else %}bg-secondary{% endif %}">
-                                            {{ reservation.status }}
+                                        <span class="badge {% if reservation.status == 'confirmed' %}bg-success
+                                                      {% elseif reservation.status == 'waiting' %}bg-warning
+                                                      {% elseif reservation.status == 'canceled' %}bg-danger
+                                                      {% elseif reservation.status == 'refunded' %}bg-info
+                                                      {% else %}bg-secondary{% endif %}">
+                                            {% if reservation.status == 'confirmed' %}Confirmé
+                                            {% elseif reservation.status == 'waiting' %}En attente
+                                            {% elseif reservation.status == 'canceled' %}Annulé
+                                            {% elseif reservation.status == 'refunded' %}Remboursé
+                                            {% else %}{{ reservation.status }}{% endif %}
                                         </span>
                                     </p>
                                     <div class="mt-3">

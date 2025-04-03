@@ -81,6 +81,13 @@ class ReservationService
             throw new \RuntimeException('Réservation non trouvée');
         }
 
+        // Vérifier si un paiement existe déjà pour cette réservation
+        $existingPayment = $this->paymentRepository->findOneBy(['reservation' => $reservation]);
+        if ($existingPayment) {
+            throw new \RuntimeException('Un paiement existe déjà pour cette réservation');
+        }
+
+        // Créer le nouveau paiement
         $payment = new Payment();
         $payment->setReservation($reservation);
         $payment->setStripePaymentId($paymentIntentId);
@@ -90,8 +97,11 @@ class ReservationService
         $payment->setValidationStatus('validated');
         $payment->setPaidAt(new \DateTimeImmutable());
 
+        // Mettre à jour le statut de la réservation
         $reservation->setStatus('confirmed');
+        $reservation->addPayment($payment);
 
+        // Sauvegarder les modifications
         $this->entityManager->persist($payment);
         $this->entityManager->flush();
 

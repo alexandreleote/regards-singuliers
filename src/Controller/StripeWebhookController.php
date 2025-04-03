@@ -32,9 +32,40 @@ class StripeWebhookController extends AbstractController
             return new Response('', 400);
         }
 
-        if ($event->type === 'payment_intent.succeeded') {
-            $paymentIntent = $event->data->object;
-            $this->reservationService->handlePaymentSuccess($paymentIntent->id);
+        // Gérer les différents types d'événements Stripe
+        switch ($event->type) {
+            case 'payment_intent.succeeded':
+                $paymentIntent = $event->data->object;
+                try {
+                    $this->reservationService->handlePaymentSuccess($paymentIntent->id);
+                } catch (\Exception $e) {
+                    // Log l'erreur mais ne pas échouer le webhook
+                    error_log('Erreur lors du traitement du paiement : ' . $e->getMessage());
+                }
+                break;
+
+            case 'payment_intent.payment_failed':
+                $paymentIntent = $event->data->object;
+                try {
+                    $this->reservationService->handlePaymentFailure($paymentIntent->id);
+                } catch (\Exception $e) {
+                    error_log('Erreur lors du traitement de l\'échec du paiement : ' . $e->getMessage());
+                }
+                break;
+
+            case 'charge.refunded':
+                $charge = $event->data->object;
+                try {
+                    // Mettre à jour le statut de la réservation en 'refunded'
+                    $reservation = $this->reservationService->handleRefund($charge->payment_intent);
+                    if ($reservation) {
+                        $reservation->setStatus('refunded');
+                        $this->entityManager->flush();
+                    }
+                } catch (\Exception $e) {
+                    error_log('Erreur lors du traitement du remboursement : ' . $e->getMessage());
+                }
+                break;
         }
 
         return new Response('', 200);
