@@ -36,6 +36,7 @@ export default class extends Controller {
         }
     }
 
+    /*  Réservation / Calendrier */
     initializeCalendly() {
         if (!document.getElementById('calendly-container')) {
             console.error('Calendly container not found');
@@ -127,6 +128,7 @@ export default class extends Controller {
         }
     }
 
+    /* Réservation / Paiement */
     async initializePayment() {
         if (!this.hasPaymentElementTarget) {
             console.error('Payment element target not found');
@@ -199,6 +201,7 @@ export default class extends Controller {
         }
     }
 
+    /* Réservaiton / Résultat */
     showMessage(message, type = 'info') {
         if (!this.hasMessageElementTarget) {
             console.error('Message element target not found');

@@ -108,8 +108,17 @@ class ReservationController extends AbstractController
             $response = $this->calendlyService->getEventDetails($eventId);
             
             if ($response && isset($response['resource']['start_time'])) {
-                $startTime = new \DateTimeImmutable($response['resource']['start_time']);
-                $reservation->setAppointmentDatetime($startTime);
+                /* On définit le fuseau horaire sur Europe */
+                $timezone = new \DateTimeZone('Europe/Paris');
+
+                /* On récupère la resource start_time pour avoir l'heure du rendez-vous avec en définition l'UTC pour le décalage d'heures */
+                $startTimeUTC = new \DateTimeImmutable($response['resource']['start_time'], new \DateTimeZone('UTC'));
+
+                /* On applique le fuseau hoaire à la resource start_time en variable définie avec l'UTC */
+                $startTimeParis = $startTimeUTC->setTimezone($timezone);
+
+                /* On enregistre la réservation avec l'heure correcte */
+                $reservation->setAppointmentDatetime($startTimeParis);
             }
             
             $reservation->setStatus('waiting');

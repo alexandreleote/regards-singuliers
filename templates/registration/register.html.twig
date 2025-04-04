@@ -50,9 +50,9 @@
 
                     <div class="form-group">
                         {{ form_label(registrationForm.plainPassword.second) }}
-                        <div class="password-field">
-                            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
-                            <i class="fas fa-eye password-toggle"></i>
+                        <div class="password-field" data-controller="password-toggle">
+                            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control', 'data-target': 'password-toggle.input'}}) }}
+                            <i class="fas fa-eye password-toggle" data-target="toggle-toggle.toggle"></i>
                         </div>
                         {{ form_errors(registrationForm.plainPassword.second) }}
                     </div>

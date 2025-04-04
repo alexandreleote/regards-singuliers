@@ -30,7 +30,7 @@ class CalendlyService
             ],
             'json' => [
                 'start_time' => $reservation->getBookedAt()->format('Y-m-d\TH:i:s\Z'),
-                'end_time' => $reservation->getBookedAt()->modify('+30 minutes')->format('Y-m-d\TH:i:s\Z'),
+                'end_time' => $reservation->getBookedAt()->format('Y-m-d\TH:i:s\Z'),
                 'event_type' => 'https://api.calendly.com/event_types/' . $this->organizationUrl,
                 'location' => [
                     'type' => 'custom',

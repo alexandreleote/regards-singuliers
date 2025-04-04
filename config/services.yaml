@@ -9,6 +9,7 @@ parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     calendly.url: '%env(CALENDLY_URL)%'
+    timezone: '%env(APP_TIMEZONE)%'
 
 
 services:
