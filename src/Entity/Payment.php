@@ -36,6 +36,21 @@ class Payment
     #[ORM\JoinColumn(nullable: false)]
     private ?Reservation $reservation = null;
 
+    #[ORM\Column(length: 50)]
+    private ?string $billingNumber = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $billingAddress = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $billingDate = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +136,66 @@ class Payment
     public function setReservation(?Reservation $reservation): static
     {
         $this->reservation = $reservation;
+
+        return $this;
+    }
+
+    public function getBillingNumber(): ?string
+    {
+        return $this->billingNumber;
+    }
+
+    public function setBillingNumber(string $billingNumber): static
+    {
+        $this->billingNumber = $billingNumber;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getBillingAddress(): ?string
+    {
+        return $this->billingAddress;
+    }
+
+    public function setBillingAddress(string $billingAddress): static
+    {
+        $this->billingAddress = $billingAddress;
+
+        return $this;
+    }
+
+    public function getBillingDate(): ?\DateTimeImmutable
+    {
+        return $this->billingDate;
+    }
+
+    public function setBillingDate(\DateTimeImmutable $billingDate): static
+    {
+        $this->billingDate = $billingDate;
 
         return $this;
     }

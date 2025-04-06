@@ -17,7 +17,7 @@ export default class extends Controller {
     }
 
     updateToggleIcon() {
-        const icon = this.toggleTarget.querySelector('i');
+        const icon = this.toggleTarget;
         if (this.inputTarget.type === 'password') {
             icon.classList.remove('fa-eye');
             icon.classList.add('fa-eye-slash');

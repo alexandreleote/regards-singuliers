@@ -120,7 +120,11 @@ export default class extends Controller {
             if (responseData.success) {
                 window.location.href = `/reservation/paiement/${this.serviceSlugValue}`;
             } else {
-                throw new Error(responseData.error || 'Une erreur est survenue');
+                if (responseData.redirect) {
+                    window.location.href = responseData.redirect;
+                } else {
+                    throw new Error(responseData.error || 'Une erreur est survenue');
+                }
             }
         } catch (error) {
             console.error('Erreur lors du traitement de la réservation:', error);

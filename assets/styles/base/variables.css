@@ -2,10 +2,10 @@
 
 :root {
   /* Palette de couleurs minimaliste */
-  --color-primary: #000000;
+  --color-primary: #050505;
   --color-secondary: #333333;
   --color-accent: #666666;
-  --color-background: #ffffff;
+  --color-background: #fcfcfc;
   --color-text: #000000;
   --color-text-light: #666666;
   --color-border: #e0e0e0;

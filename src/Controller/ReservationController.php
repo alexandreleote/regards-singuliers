@@ -59,11 +59,16 @@ class ReservationController extends AbstractController
             throw $this->createNotFoundException('Ce service n\'est pas disponible pour la réservation.');
         }
 
+        // Vérifier si les champs requis sont vides
+        $user = $this->getUser();
+        $isProfileIncomplete = empty($user->getName()) || empty($user->getFirstName()) || empty($user->getAddress());
+
         return $this->render('reservation/date.html.twig', [
             'page_title' => 'Choisir une date - regards singuliers',
             'meta_description' => 'Sélectionnez votre date de rendez-vous avec notre architecte d\'intérieur.',
             'service' => $service,
-            'calendly_url' => $this->getParameter('calendly.url')
+            'calendly_url' => $this->getParameter('calendly.url'),
+            'isProfileIncomplete' => $isProfileIncomplete
         ]);
     }
 
@@ -97,8 +102,19 @@ class ReservationController extends AbstractController
                 // Mettre à jour la réservation existante
                 $reservation = $existingReservation;
             } else {
-                // Créer une nouvelle réservation
-                $reservation = $this->reservationService->createReservation($service, $this->getUser());
+                try {
+                    // Créer une nouvelle réservation
+                    $reservation = $this->reservationService->createReservation($service, $this->getUser());
+                } catch (\RuntimeException $e) {
+                    if ($e->getMessage() === 'Veuillez compléter votre profil avant de faire une réservation.') {
+                        return $this->json([
+                            'success' => false,
+                            'redirect' => $this->generateUrl('profile_edit'),
+                            'message' => 'Veuillez compléter votre profil avant de faire une réservation.'
+                        ], 400);
+                    }
+                    throw $e;
+                }
             }
             
             $reservation->setCalendlyEventId($data['event']['event_id']);

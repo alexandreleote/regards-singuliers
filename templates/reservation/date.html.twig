@@ -8,16 +8,29 @@
 {% endblock %}
 
 {% block body %}
-    <div class="service-info">
+
+    {% if isProfileIncomplete %}
+        <article class="alert alert-warning d-flex align-items-center justify-content-between mb-0">
+            <div>
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Veuillez compléter votre profil (nom, prénom et adresse) avant de faire une réservation.
+            </div>
+            <a href="{{ path('profile_edit') }}" class="btn btn-warning">
+                <i class="fas fa-user-edit me-2"></i>
+                Compléter mon profil
+            </a>
+        </article>
+    {% else %}
+    <article class="service-info">
         <h1 class="service-title">{{ service.title }}</h1>
         <p class="service-description">{{ service.description|raw }}</p>
-        <div class="price-info">
+        <aside class="price-info">
             <div class="price-row">
                 <span>Prix total :</span>
                 <span>{{ service.price }}€</span>
             </div>
-        </div>
-    </div>
+        </aside>
+    </article>
 
     <div id="calendly-container" class="calendly-container"></div>
 
@@ -28,6 +41,7 @@
          data-reservation-service-id-value="{{ service.id }}">
         <div data-reservation-target="messageElement" class="message hidden"></div>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}

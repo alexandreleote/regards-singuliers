@@ -38,11 +38,18 @@ class ReservationService
 
     public function createReservation(Service $service, User $user): Reservation
     {
+        // Vérifier si les champs requis sont vides
+        if (empty($user->getName()) || empty($user->getFirstName()) || empty($user->getAddress())) {
+            throw new \RuntimeException('Veuillez compléter votre profil (nom, prénom et adresse) avant de faire une réservation.');
+        }
+
         $reservation = new Reservation();
         $reservation->setService($service);
         $reservation->setUser($user);
         $reservation->setPrice($service->getPrice());
         $reservation->setStatus('en attente');
+        $reservation->setName($user->getName());
+        $reservation->setFirstName($user->getFirstName());
 
         $this->entityManager->persist($reservation);
         $this->entityManager->flush();
@@ -96,6 +103,20 @@ class ReservationService
         $payment->setPaymentStatus('completed');
         $payment->setValidationStatus('validated');
         $payment->setPaidAt(new \DateTimeImmutable());
+        
+        // Hydrater les informations de facturation
+        $user = $reservation->getUser();
+        $payment->setName($user->getName());
+        $payment->setFirstName($user->getFirstName());
+        $payment->setBillingAddress($user->getAddress());
+        $payment->setBillingDate(new \DateTimeImmutable());
+        
+        // Générer le numéro de facturation
+        $serviceRef = strtoupper(substr($reservation->getService()->getTitle(), 0, 3));
+        $userInitials = strtoupper(substr($user->getFirstName(), 0, 1) . substr($user->getName(), 0, 1));
+        $date = (new \DateTimeImmutable())->format('Ymd');
+        $billingNumber = $serviceRef . $userInitials . $date;
+        $payment->setBillingNumber($billingNumber);
 
         // Mettre à jour le statut de la réservation
         $reservation->setStatus('confirmed');

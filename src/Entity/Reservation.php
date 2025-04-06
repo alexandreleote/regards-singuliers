@@ -57,6 +57,12 @@ class Reservation
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $appointment_datetime = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $firstName = null;
+
     public function __construct()
     {
         $this->bookedAt = new \DateTimeImmutable(); // Définit automatiquement la date de réservation
@@ -230,6 +236,30 @@ class Reservation
     public function setAppointmentDatetime(\DateTimeInterface $appointment_datetime): static
     {
         $this->appointment_datetime = $appointment_datetime;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
 
         return $this;
     }

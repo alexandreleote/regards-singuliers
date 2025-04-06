@@ -286,6 +286,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getAddress(): ?string
+    {
+        // Si un des champs obligatoires est vide, on considère que l'adresse est incomplète
+        if (!$this->hasCompleteAddress()) {
+            return null;
+        }
+
+        $address = $this->streetNumber . ' ' . $this->streetName . ', ' . 
+                   $this->zip . ' ' . $this->city;
+
+        // Ajouter la région si elle existe
+        if (!empty($this->region)) {
+            $address .= ', ' . $this->region;
+        }
+
+        return $address;
+    }
+
+    public function hasCompleteAddress(): bool
+    {
+        return !empty($this->streetNumber) && !empty($this->streetName) && 
+               !empty($this->city) && !empty($this->zip);
+    }
+
     public function isPersonalInformationComplete(): bool
     {
         // Vérifier si tous les champs obligatoires sont renseignés

@@ -44,7 +44,10 @@
                     </a>
                 </div>
                 
-                <div class="burger-menu-btn" aria-label="Menu">
+                <div class="burger-menu-btn" 
+                     data-controller="menu-burger"
+                     data-action="click->menu-burger#toggle"
+                     aria-label="Menu">
                     <div class="burger-menu">
                         <span class="burger-line"></span>
                         <span class="burger-line"></span>
@@ -118,17 +121,6 @@
         <main class="page-fullheight"> 
             <section class="container page-content">
                 {% block body %}
-                    {# {% if app.flashes|length > 0 %}
-                        <div class="section">
-                            {% for type, messages in app.flashes %}
-                                {% for message in messages %}
-                                    <div class="alert alert-{{ type }}">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                        </div>
-                    {% endif %} #}
                 {% endblock %}
             </section>
         </main>
