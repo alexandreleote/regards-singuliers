@@ -1,7 +1,7 @@
 import { Application } from '@hotwired/stimulus';
 import MapController from './controllers/map_controller.js';
 import ContactController from './controllers/contact_controller.js';
-import MenuBurgerController from './controllers/menu_burger_controller.js';
+import MenuBurgerController from './controllers/menu-burger_controller.js';
 import HeaderScrollController from './controllers/header_scroll_controller.js';
 import FaqController from './controllers/faq_controller.js';
 import StudioController from './controllers/studio_controller.js';

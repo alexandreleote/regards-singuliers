@@ -52,9 +52,16 @@
                             <span class="burger-line"></span>
                         </div>
                     </button>
+
+                    {# Menu burger pour l'authentification (992px - 1200px) #}
+                    {% if app.user %}
+                        <button data-action="click->menu-burger#toggleAuth" class="auth-burger-menu-btn" aria-label="Ouvrir le menu d'authentification" aria-expanded="false" aria-controls="auth-menu-mobile">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    {% endif %}
                     
                     {# Menu de navigation mobile #} 
-                    <div class="nav-mobile" data-menu-burger-target="menu">
+                    <div class="nav-mobile" data-menu-burger-target="mainMenu">
                         <nav class="mobile-nav" aria-label="Menu de navigation mobile">
                             <ul class="nav-list-mobile">
                                 <li class="nav-item-mobile"><a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a></li>
@@ -62,7 +69,14 @@
                                 <li class="nav-item-mobile"><a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a></li>
                                 <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Blog</a></li>
                                 <li class="nav-item-mobile"><a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a></li>
-                                
+                            </ul>
+                        </nav>
+                    </div>
+
+                    {# Menu d'authentification mobile pour 992px - 1200px #}
+                    <div class="nav-mobile" data-menu-burger-target="authMenu">
+                        <nav class="mobile-nav" aria-label="Menu d'authentification mobile">
+                            <ul class="nav-list-mobile">
                                 {% if not app.user %}
                                 <li class="nav-item-mobile auth-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
                                 {% else %}
@@ -108,8 +122,6 @@
                 </div>
             </div>
         </header>
-
-        <div class="menu-overlay"></div>
 
         <main class="page-fullheight"> 
             <section class="container page-content">
