@@ -61,10 +61,11 @@
   .container {
     max-width: var(--container-max-width);
   }
+  
 }
 
-/* Mobile only */
-@media (max-width: 767.98px) {
+/* Mobile and tablets */
+@media (max-width: 992px) {
   .row {
     flex-direction: column;
   }
@@ -81,5 +82,13 @@
   
   .show-mobile {
     display: block !important;
+  }
+
+  .header-right {
+    display: none !important;
+  }
+
+  .navbar {
+    display: none !important;
   }
 }
