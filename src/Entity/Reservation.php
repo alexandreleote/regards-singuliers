@@ -63,6 +63,9 @@ class Reservation
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $canceledAt = null;
+
     public function __construct()
     {
         $this->bookedAt = new \DateTimeImmutable(); // Définit automatiquement la date de réservation
@@ -261,6 +264,17 @@ class Reservation
     {
         $this->firstName = $firstName;
 
+        return $this;
+    }
+
+    public function getCanceledAt(): ?\DateTimeImmutable
+    {
+        return $this->canceledAt;
+    }
+
+    public function setCanceledAt(?\DateTimeImmutable $canceledAt): static
+    {
+        $this->canceledAt = $canceledAt;
         return $this;
     }
 }

@@ -51,6 +51,9 @@ class Payment
     #[ORM\Column]
     private ?\DateTimeImmutable $billingDate = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $canceledAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -197,6 +200,17 @@ class Payment
     {
         $this->billingDate = $billingDate;
 
+        return $this;
+    }
+
+    public function getCanceledAt(): ?\DateTimeImmutable
+    {
+        return $this->canceledAt;
+    }
+
+    public function setCanceledAt(?\DateTimeImmutable $canceledAt): static
+    {
+        $this->canceledAt = $canceledAt;
         return $this;
     }
 }

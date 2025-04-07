@@ -66,17 +66,17 @@
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header">
         <img src="{{ absolute_url(asset('images/logo.png')) }}" alt="Logo" class="logo">
         <h1>Confirmation de votre réservation</h1>
-    </div>
+    </header>
 
-    <div class="content">
-        <p>Bonjour {{ user.firstname }},</p>
+    <main class="content">
+        <p>Bonjour {{ user.firstName }},</p>
 
         <p>Nous vous remercions pour votre réservation. Voici les détails de votre prestation :</p>
 
-        <div class="section">
+        <section class="section">
             <div class="section-title">Détails de la réservation</div>
             <div class="detail-item">
                 <span class="detail-label">Prestation :</span> {{ service.title }}
@@ -90,9 +90,9 @@
             <div class="detail-item">
                 <span class="detail-label">Montant restant :</span> {{ service.price - deposit_amount }}€
             </div>
-        </div>
+        </section>
 
-        <div class="section">
+        <section class="section">
             <div class="section-title">Engagements</div>
             <p>En confirmant cette réservation, vous vous engagez à :</p>
             <ul>
@@ -100,18 +100,18 @@
                 <li>Effectuer le paiement du montant restant au plus tard le lendemain du rendez-vous</li>
                 <li>Nous informer de tout changement ou annulation au moins 72h avant le rendez-vous</li>
             </ul>
-        </div>
+        </section>
 
-        <div class="important-notice">
+        <section class="important-notice">
             <strong>Politique d'annulation :</strong>
             <ul>
                 <li>Un remboursement total est possible jusqu'à 72h avant la date du rendez-vous</li>
                 <li>Passé ce délai, l'acompte ne sera pas remboursé</li>
                 <li>En cas d'absence au rendez-vous, l'acompte ne sera pas remboursé</li>
             </ul>
-        </div>
+        </section>
 
-        <div class="section">
+        <section class="section">
             <div class="section-title">Prochaines étapes</div>
             <p>Pour finaliser votre réservation, veuillez :</p>
             <ul>
@@ -119,13 +119,13 @@
                 <li>Préparer les documents nécessaires (si applicable)</li>
                 <li>Nous contacter en cas de question ou de modification</li>
             </ul>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <div class="footer">
+    <footer class="footer">
         <p>Si vous avez des questions, n'hésitez pas à nous contacter :</p>
         <p>Email : contact@regards-singuliers.com<br>
         Téléphone : +33 6 XX XX XX XX</p>
-    </div>
+    </footer>
 </body>
 </html> 

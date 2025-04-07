@@ -267,28 +267,9 @@ class ReservationController extends AbstractController
             throw new InvalidCsrfTokenException('Token CSRF invalide');
         }
 
-        // Calculer le montant de l'acompte pour l'email
-        $depositAmount = $reservation->getPrice() * 0.5;
-
         try {
             // Annuler la réservation via le service
             $this->reservationService->cancelReservation($reservation);
-
-            // Envoyer un email de confirmation d'annulation
-            $email = (new TemplatedEmail())
-                ->from('no-reply@regards-singuliers.com')
-                ->to($reservation->getUser()->getEmail())
-                ->subject('Confirmation d\'annulation de votre réservation - regards singuliers')
-                ->htmlTemplate('email/reservation_cancellation.html.twig')
-                ->context([
-                    'reservation' => $reservation,
-                    'user' => $reservation->getUser(),
-                    'service' => $reservation->getService(),
-                    'refund_amount' => $depositAmount,
-                    'will_be_refunded' => $reservation->getStatus() === 'refunded'
-                ]);
-
-            $this->emailVerifier->sendEmailConfirmation('reservation_cancellation', $reservation->getUser(), $email);
 
             $this->addFlash('success', $reservation->getStatus() === 'refunded' 
                 ? 'Votre réservation a été annulée et vous serez remboursé de l\'acompte.'

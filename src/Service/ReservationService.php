@@ -11,6 +11,8 @@ use App\Repository\PaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\StripeClient;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 
 class ReservationService
 {
@@ -20,19 +22,22 @@ class ReservationService
     private $stripeClient;
     private $calendlyService;
     private $params;
+    private $mailer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ReservationRepository $reservationRepository,
         PaymentRepository $paymentRepository,
         CalendlyService $calendlyService,
-        ParameterBagInterface $params
+        ParameterBagInterface $params,
+        MailerInterface $mailer
     ) {
         $this->entityManager = $entityManager;
         $this->reservationRepository = $reservationRepository;
         $this->paymentRepository = $paymentRepository;
         $this->calendlyService = $calendlyService;
         $this->params = $params;
+        $this->mailer = $mailer;
         $this->stripeClient = new StripeClient($this->params->get('stripe.secret_key'));
     }
 
@@ -129,6 +134,39 @@ class ReservationService
         return $reservation;
     }
 
+    private function sendCancellationEmail(Reservation $reservation, bool $willBeRefunded): void
+    {
+        try {
+            $depositAmount = $reservation->getPrice() * 0.5;
+            $userEmail = $reservation->getUser()->getEmail();
+
+            error_log('Tentative d\'envoi d\'email d\'annulation à ' . $userEmail);
+            error_log('Montant de l\'acompte : ' . $depositAmount);
+            error_log('Remboursement prévu : ' . ($willBeRefunded ? 'oui' : 'non'));
+
+            $email = (new TemplatedEmail())
+                ->from('no-reply@regards-singuliers.com')
+                ->to($userEmail)
+                ->subject('Confirmation d\'annulation de votre réservation - regards singuliers')
+                ->htmlTemplate('email/reservation_cancellation.html.twig')
+                ->context([
+                    'reservation' => $reservation,
+                    'user' => $reservation->getUser(),
+                    'service' => $reservation->getService(),
+                    'refund_amount' => $depositAmount,
+                    'will_be_refunded' => $willBeRefunded
+                ]);
+
+            error_log('Email créé avec succès, envoi en cours...');
+            $this->mailer->send($email);
+            error_log('Email d\'annulation envoyé avec succès à ' . $userEmail);
+        } catch (\Exception $e) {
+            error_log('Erreur lors de l\'envoi de l\'email d\'annulation : ' . $e->getMessage());
+            error_log('Stack trace : ' . $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function handlePaymentFailure(string $paymentIntentId): Reservation
     {
         $reservation = $this->reservationRepository->findOneBy(['stripePaymentIntentId' => $paymentIntentId]);
@@ -139,6 +177,9 @@ class ReservationService
 
         $reservation->setStatus('canceled');
         $this->entityManager->flush();
+
+        // Envoyer l'email d'annulation
+        $this->sendCancellationEmail($reservation, false);
 
         return $reservation;
     }
@@ -191,15 +232,18 @@ class ReservationService
 
         // Vérifier si on est à plus de 72h du rendez-vous pour le remboursement
         $appointmentDate = $reservation->getAppointmentDatetime();
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         $interval = $now->diff($appointmentDate);
         $hoursUntilAppointment = ($interval->days * 24) + $interval->h;
+
+        $willBeRefunded = false;
 
         // Si on est à plus de 72h, procéder au remboursement
         if ($hoursUntilAppointment > 72) {
             try {
                 $this->refundPayment($reservation);
                 $reservation->setStatus('refunded');
+                $willBeRefunded = true;
             } catch (\Exception $e) {
                 // Log l'erreur de remboursement
                 error_log('Erreur lors du remboursement: ' . $e->getMessage());
@@ -207,8 +251,22 @@ class ReservationService
             }
         } else {
             $reservation->setStatus('canceled');
+            // Mettre à jour le statut du paiement en "not_refunded" si un paiement existe
+            $payment = $reservation->getPayments()->first();
+            if ($payment) {
+                $payment->setPaymentStatus('not_refunded');
+            }
+        }
+
+        // Enregistrer la date d'annulation
+        $reservation->setCanceledAt($now);
+        if ($payment = $reservation->getPayments()->first()) {
+            $payment->setCanceledAt($now);
         }
 
         $this->entityManager->flush();
+
+        // Envoyer l'email d'annulation
+        $this->sendCancellationEmail($reservation, $willBeRefunded);
     }
 } 
