@@ -7,13 +7,28 @@ export default class extends Controller {
     }
 
     connect() {
-        this.updateToggleIcon();
+        if (this.hasTypeValue && this.typeValue === 'password') {
+            this.updateToggleIcon();
+        }
     }
 
     toggle() {
+        if (this.hasTypeValue && this.typeValue === 'password') {
+            this.togglePassword();
+        } else {
+            this.toggleText();
+        }
+    }
+
+    togglePassword() {
         const type = this.inputTarget.type === 'password' ? 'text' : 'password';
         this.inputTarget.type = type;
         this.updateToggleIcon();
+    }
+
+    toggleText() {
+        this.toggleTarget.classList.add('hidden');
+        this.inputTarget.classList.remove('hidden');
     }
 
     updateToggleIcon() {
