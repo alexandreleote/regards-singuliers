@@ -14,25 +14,25 @@
                 <h1 class="card-title">Mes réservations</h1>
 
                 {# Filtres #}
-                <div class="filters mb-4">
+                <div class="filters mb-4 btn-display">
                     <div class="btn-group" role="group">
                         <a href="{{ path('profile_reservations', {'filter': 'aujourd-hui'}) }}" 
-                           class="btn {% if filter == 'aujourd-hui' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        class="btn {% if filter == 'aujourd-hui' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                             Aujourd'hui
                         </a>
                         <a href="{{ path('profile_reservations', {'filter': 'a-venir'}) }}" 
-                           class="btn {% if filter == 'a-venir' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        class="btn {% if filter == 'a-venir' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                             À venir
                         </a>
                         <a href="{{ path('profile_reservations', {'filter': 'passees'}) }}" 
-                           class="btn {% if filter == 'passees' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        class="btn {% if filter == 'passees' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                             Passées
                         </a>
-                        <a href="{{ path('profile_reservations', {'filter': 'annulees'}) }}" 
-                           class="btn {% if filter == 'annulees' %}btn-danger{% else %}btn-outline-danger{% endif %}">
-                            Annulées
-                        </a>
                     </div>
+                    <a href="{{ path('profile_reservations', {'filter': 'annulees'}) }}" 
+                        class="btn {% if filter == 'annulees' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Annulées
+                    </a>
                 </div>
 
                 {# Liste des réservations #}
