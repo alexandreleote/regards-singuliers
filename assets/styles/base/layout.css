@@ -17,7 +17,7 @@ html {
 }
 
 body {
-  font-family: var(--font-text);
+  font-family: var(--font-body);
   color: var(--color-text);
   line-height: 1.5;
   background-color: var(--color-background);
@@ -31,7 +31,7 @@ body {
 
 /* Typographie */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-text);
+  font-family: var(--font-body);
   font-weight: 400;
   line-height: 1.2;
   margin-bottom: var(--spacing-md);
@@ -141,7 +141,7 @@ main {
 .btn {
   display: inline-block;
   padding: 0.5rem 1rem;
-  font-family: var(--font-text);
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
