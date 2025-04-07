@@ -32,7 +32,11 @@
                                 <a href="{{ path('pdf_invoice', {'billing_number': reservation.payments|first.billingNumber}) }}" 
                                    class="btn btn-primary" 
                                    target="_blank">
-                                    <i class="fas fa-file-pdf me-2"></i>Télécharger la facture
+                                    <i class="fas fa-file-pdf me-2"></i>Voir la facture
+                                </a>
+                                <a href="{{ path('pdf_invoice', {'billing_number': reservation.payments|first.billingNumber, 'download': true}) }}" 
+                                   class="btn btn-outline-primary ms-2">
+                                    <i class="fas fa-download me-2"></i>Télécharger
                                 </a>
                             </div>
                         {% endif %}

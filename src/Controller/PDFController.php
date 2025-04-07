@@ -8,11 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Request;
 
 class PDFController extends AbstractController
 {
     #[Route('/facture/{billing_number}', name: 'pdf_invoice')]
-    public function index(PdfGeneratorService $pdfGeneratorService, PaymentRepository $paymentRepository, string $billing_number): Response
+    public function index(PdfGeneratorService $pdfGeneratorService, PaymentRepository $paymentRepository, string $billing_number, Request $request): Response
     {
         $payment = $paymentRepository->findOneBy(['billingNumber' => $billing_number]);
         
@@ -40,7 +41,7 @@ class PDFController extends AbstractController
             ],
             'total_ht' => $payment->getTotalAmount(),
             'deposit_amount' => $payment->getDepositAmount(),
-            'payment_terms' => 'Solde à régler le : ' . $payment->getBillingDate()->format('d/m/Y'),
+            'payment_terms' => 'Solde à régler le : ' . $reservation->getAppointmentDatetime()->format('d/m/Y'),
             'iban' => 'FR76 XXXX XXXX XXXX XXXX XXXX XXX',
             'bic' => 'BICXXXXXXX'
         ];
@@ -49,7 +50,15 @@ class PDFController extends AbstractController
 
         $response = new Response($pdfContent);
         $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="facture-' . $payment->getBillingNumber() . '.pdf"');
+        
+        // Créer deux réponses : une pour l'affichage, une pour le téléchargement
+        $filename = 'facture-' . $payment->getBillingNumber() . '.pdf';
+        
+        if ($request->query->get('download')) {
+            $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        } else {
+            $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+        }
 
         return $response;
     }
