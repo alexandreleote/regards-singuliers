@@ -82,7 +82,7 @@
                 <span class="detail-label">Prestation :</span> {{ service.title }}
             </div>
             <div class="detail-item">
-                <span class="detail-label">Date du rendez-vous :</span> {{ reservation.bookedAt|date('d/m/Y à H:i') }}
+                <span class="detail-label">Date du rendez-vous :</span> {{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}
             </div>
             <div class="detail-item">
                 <span class="detail-label">Acompte payé :</span> {{ deposit_amount }}€

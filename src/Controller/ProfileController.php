@@ -24,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+use App\Service\ReservationService;
 
 #[Route('/profile')]
 #[IsGranted('ROLE_USER')]
@@ -141,40 +142,29 @@ class ProfileController extends AbstractController
     public function cancelReservation(
         Request $request,
         Reservation $reservation,
-        ReservationRepository $reservationRepository,
-        EntityManagerInterface $entityManager,
-        StripeService $stripeService
+        ReservationService $reservationService
     ): Response {
         if (!$this->isCsrfTokenValid('cancel-reservation-' . $reservation->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
-        $now = new \DateTime();
-        $appointmentTime = $reservation->getAppointmentDatetime();
-        $timeBeforeAppointment = $appointmentTime->getTimestamp() - $now->getTimestamp();
-        $hoursBeforeAppointment = $timeBeforeAppointment / 3600;
-
-        $payment = $reservation->getPayments()->first();
-        if (!$payment) {
-            throw $this->createNotFoundException('No payment found for this reservation');
+        // Vérifier que l'utilisateur est bien le propriétaire de la réservation
+        if ($reservation->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette réservation');
         }
 
-        // If cancellation is more than 72 hours before appointment, process refund
-        if ($hoursBeforeAppointment > 72) {
-            $stripeService->refundPayment(
-                $payment->getStripePaymentId(),
-                floatval($payment->getDepositAmount())
-            );
+        try {
+            $reservationService->cancelReservation($reservation);
+            
+            return $this->render('profile/reservation_cancel.html.twig', [
+                'refunded' => $reservation->getStatus() === 'refunded',
+                'amount' => $reservation->getPrice() * 0.5, // 50% d'acompte
+                'page_title' => 'Annulation confirmée - regards singuliers'
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'annulation. Veuillez nous contacter.');
+            return $this->redirectToRoute('profile_reservations');
         }
-
-        $reservation->setStatus('canceled');
-        $entityManager->flush();
-
-        return $this->render('profile/reservation_cancel.html.twig', [
-            'refunded' => $hoursBeforeAppointment > 72,
-            'amount' => $payment->getDepositAmount(),
-            'page_title' => 'Annulation confirmée - regards singuliers'
-        ]);
     }
 
     #[Route('/reservation/{id}', name: 'profile_reservation_detail')]

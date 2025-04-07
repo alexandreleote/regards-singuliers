@@ -29,8 +29,8 @@ class CalendlyService
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-                'start_time' => $reservation->getBookedAt()->format('Y-m-d\TH:i:s\Z'),
-                'end_time' => $reservation->getBookedAt()->format('Y-m-d\TH:i:s\Z'),
+                'start_time' => $reservation->getAppointmentDatetime()->format('Y-m-d\TH:i:s\Z'),
+                'end_time' => $reservation->getAppointmentDatetime()->modify('+90 minutes')->format('Y-m-d\TH:i:s\Z'),
                 'event_type' => 'https://api.calendly.com/event_types/' . $this->organizationUrl,
                 'location' => [
                     'type' => 'custom',
@@ -87,15 +87,13 @@ class CalendlyService
     public function cancelEvent(string $eventId): bool
     {
         try {
-            // Récupérer d'abord les informations sur l'événement pour obtenir l'URI de l'invité
-            $eventDetails = $this->getEventDetails($eventId);
-            
-            if (!$eventDetails || !isset($eventDetails['resource']['uri'])) {
-                throw new \Exception('Impossible de récupérer les détails de l\'événement Calendly');
-            }
+            // Extraire l'UUID de l'URL complète si nécessaire
+            $uuid = str_contains($eventId, 'https://api.calendly.com/scheduled_events/') 
+                ? str_replace('https://api.calendly.com/scheduled_events/', '', $eventId)
+                : $eventId;
             
             // Construire l'URL pour annuler
-            $cancelUrl = 'https://api.calendly.com/scheduled_events/' . $eventId . '/cancellation';
+            $cancelUrl = 'https://api.calendly.com/scheduled_events/' . $uuid . '/cancellation';
             
             // Envoyer la requête d'annulation
             $response = $this->client->request('POST', $cancelUrl, [
@@ -108,8 +106,13 @@ class CalendlyService
                 ]
             ]);
             
-            return $response->getStatusCode() === 201 || $response->getStatusCode() === 204;
+            if (!in_array($response->getStatusCode(), [201, 204])) {
+                throw new \Exception('Erreur lors de l\'annulation : ' . $response->getContent(false));
+            }
+            
+            return true;
         } catch (\Exception $e) {
+            error_log('Erreur lors de l\'annulation sur Calendly: ' . $e->getMessage());
             throw new \Exception('Erreur lors de l\'annulation sur Calendly: ' . $e->getMessage());
         }
     }

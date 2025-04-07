@@ -16,7 +16,7 @@
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Date du rendez-vous :</span>
-                    <span>{{ reservation.bookedAt|date('d/m/Y à H:i') }}</span>
+                    <span>{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</span>
                 </div>
                 {% if reservation.payments|length > 0 %}
                     {% set lastPayment = reservation.payments|last %}

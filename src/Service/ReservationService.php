@@ -179,28 +179,34 @@ class ReservationService
      */
     public function cancelReservation(Reservation $reservation): void
     {
-        // Vérifier si on est à plus de 72h du rendez-vous pour le remboursement
-        $appointmentDate = $reservation->getAppointmentDatetime();
-        $now = new \DateTime();
-        $interval = $now->diff($appointmentDate);
-        $hoursUntilAppointment = $interval->h + ($interval->days * 24);
-
-        // Si on est à plus de 72h, procéder au remboursement
-        if ($hoursUntilAppointment >= 72) {
-            $this->refundPayment($reservation);
-            $reservation->setStatus('refunded');
-        } else {
-            $reservation->setStatus('canceled');
-        }
-
-        // Annuler l'événement Calendly si un ID existe
+        // Annuler d'abord l'événement Calendly si un ID existe
         if ($reservation->getCalendlyEventId()) {
             try {
                 $this->calendlyService->cancelEvent($reservation->getCalendlyEventId());
             } catch (\Exception $e) {
-                // Log l'erreur mais ne pas bloquer le processus d'annulation
+                // Log l'erreur mais continuer le processus d'annulation
                 error_log('Erreur lors de l\'annulation Calendly: ' . $e->getMessage());
             }
+        }
+
+        // Vérifier si on est à plus de 72h du rendez-vous pour le remboursement
+        $appointmentDate = $reservation->getAppointmentDatetime();
+        $now = new \DateTime();
+        $interval = $now->diff($appointmentDate);
+        $hoursUntilAppointment = ($interval->days * 24) + $interval->h;
+
+        // Si on est à plus de 72h, procéder au remboursement
+        if ($hoursUntilAppointment > 72) {
+            try {
+                $this->refundPayment($reservation);
+                $reservation->setStatus('refunded');
+            } catch (\Exception $e) {
+                // Log l'erreur de remboursement
+                error_log('Erreur lors du remboursement: ' . $e->getMessage());
+                $reservation->setStatus('canceled');
+            }
+        } else {
+            $reservation->setStatus('canceled');
         }
 
         $this->entityManager->flush();
