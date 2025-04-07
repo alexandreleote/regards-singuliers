@@ -28,6 +28,13 @@
                             {% if reservation.status == 'confirmed' %}
                                 <p><strong>Reste à payer :</strong> {{ reservation.service.price - reservation.payments|first.depositAmount }} €</p>
                             {% endif %}
+                            <div class="mt-3">
+                                <a href="{{ path('pdf_invoice', {'billing_number': reservation.payments|first.billingNumber}) }}" 
+                                   class="btn btn-primary" 
+                                   target="_blank">
+                                    <i class="fas fa-file-pdf me-2"></i>Télécharger la facture
+                                </a>
+                            </div>
                         {% endif %}
                     </div>
                     

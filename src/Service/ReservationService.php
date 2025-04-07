@@ -119,8 +119,8 @@ class ReservationService
         // Générer le numéro de facturation
         $serviceRef = strtoupper(substr($reservation->getService()->getTitle(), 0, 3));
         $userInitials = strtoupper(substr($user->getFirstName(), 0, 1) . substr($user->getName(), 0, 1));
-        $date = (new \DateTimeImmutable())->format('Ymd');
-        $billingNumber = $serviceRef . $userInitials . $date;
+        $randomId = strtoupper(substr(uniqid(), -8)); // Génère un identifiant unique de 4 caractères
+        $billingNumber = $serviceRef . $userInitials . '-' . $randomId;
         $payment->setBillingNumber($billingNumber);
 
         // Mettre à jour le statut de la réservation

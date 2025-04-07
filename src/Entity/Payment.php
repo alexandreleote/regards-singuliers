@@ -179,6 +179,11 @@ class Payment
         return $this;
     }
 
+    public function getFullName(): ?string
+    {
+        return $this->firstName . ' ' . $this->name;
+    }
+
     public function getBillingAddress(): ?string
     {
         return $this->billingAddress;

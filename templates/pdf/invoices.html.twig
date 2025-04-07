@@ -1,0 +1,274 @@
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <style>
+        /* Définition des polices */
+        @font-face {
+            font-family: 'Meow Script';
+            font-style: normal;
+            font-weight: normal;
+            src: url({{ absolute_url(asset('build/fonts/MeowScript-Regular.ttf')) }}) format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: normal;
+            src: url({{ absolute_url(asset('build/fonts/Montserrat-Regular.ttf')) }}) format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: bold;
+            src: url({{ absolute_url(asset('build/fonts/Montserrat-Bold.ttf')) }}) format('truetype');
+        }
+
+        @page {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 20px 30px;
+            color: #050505;
+            line-height: 1.3;
+            font-size: 12px;
+        }
+
+        .page {
+            position: relative;
+            page-break-after: avoid;
+            page-break-before: avoid;
+        }
+
+        .header-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: top;
+            width: 50%;
+        }
+
+        .company-info {
+            padding-right: 20px;
+        }
+
+        .company-name {
+            font-family: 'Meow Script', cursive !important;
+            font-size: 36px;
+            margin: 0 0 10px 0;
+            color: #050505;
+            font-weight: normal;
+        }
+
+        .company-info p {
+            margin: 2px 0;
+            color: #666;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .invoice-info {
+            text-align: right;
+            padding: 15px;
+        }
+
+        .invoice-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .invoice-info p {
+            margin: 3px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .content-container {
+            margin-bottom: 15px;
+        }
+
+        .client-info {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+        }
+
+        .client-info h3 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .client-info p {
+            margin: 2px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .appointment-info {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background-color: #edf2f7;
+            border-radius: 8px;
+            border-left: 4px solid #2c3e50;
+        }
+
+        .appointment-info h3 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .appointment-info p {
+            margin: 2px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .table-container {
+            margin-bottom: 15px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .table th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-weight: 500;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .total {
+            text-align: right;
+            margin: 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .exoneration {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-style: italic;
+            color: #666;
+            font-size: 11px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .footer {
+            position: relative;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 11px;
+            color: #666;
+            font-family: 'Montserrat', sans-serif;
+            page-break-before: avoid;
+        }
+
+        .footer p {
+            margin: 2px 0;
+            margin: 3px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+    </style>
+
+    <div class="page">
+        <table class="header-table">
+            <tr>
+                <td class="company-info">
+                    <h1 class="company-name">regards singuliers</h1>
+                    <p>EI Priscilia Leote</p>
+                    <p>6 Le Bronz</p>
+                    <p>56480 Saint-Aignan</p>
+                    <p>Tél: 06 07 02 92 22</p>
+                    <p>Email: hello@regards-singuliers.com</p>
+                    <p>SIRET: 87852370300030</p>
+                </td>
+                <td>
+                    <div class="invoice-info">
+                        <h2 class="invoice-title">FACTURE</h2>
+                        <p>N° {{ invoice_number }}</p>
+                        <p>Date d'émission: {{ invoice_date|date('d/m/Y') }}</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="content-container">
+            <div class="client-info">
+                <h3>Client</h3>
+                <p>{{ client_name }}</p>
+                <p>{{ client_address }}</p>
+            </div>
+
+            <div class="appointment-info">
+                <h3>Rendez-vous : {{ service_name }}</h3>
+                <p>Date du rendez-vous: {{ appointment_date|date('d/m/Y') }}</p>
+                <p>Heure du rendez-vous: {{ appointment_date|date('H:i') }}</p>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantité</th>
+                            <th>Prix unitaire</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.description }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.unit_price|number_format(2, ',', ' ') }} €</td>
+                                <td>{{ (item.quantity * item.unit_price)|number_format(2, ',', ' ') }} €</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="total">
+                    <p style="color: #666; font-size: 14px;">Acompte versé le {{ invoice_date|date('d/m/Y') }}: {{ deposit_amount|number_format(2, ',', ' ') }} €</p>
+                    <p style="color: #2c3e50; font-weight: 700;">Reste à payer: {{ (total_ht - deposit_amount)|number_format(2, ',', ' ') }} €</p>
+                </div>
+            </div>
+
+            <div class="exoneration">
+                <p>Entreprise Individuelle : TVA non applicable selon l'article 293 B du CGI</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Conditions de paiement: {{ payment_terms }}</p>
+            <p>IBAN: {{ iban }}</p>
+            <p>BIC: {{ bic }}</p>
+            <p>En cas de retard de paiement, des pénalités seront appliquées conformément à l'article L.441-6 du code de commerce.</p>
+        </div>
+    </div>
+{% endblock %}
