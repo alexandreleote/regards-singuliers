@@ -100,19 +100,43 @@
                     <div class="form-stack">
                         <div class="form-group">
                             {{ form_label(form.currentPassword, 'Mot de passe actuel') }}
-                            {{ form_widget(form.currentPassword, {'attr': {'class': 'form-input'}}) }}
+                            <div class="password-field" data-controller="field-toggle">
+                                {{ form_widget(form.currentPassword, {
+                                    'attr': {
+                                        'class': 'form-input',
+                                        'data-field-toggle-target': 'input'
+                                    }
+                                }) }}
+                                <i class="fas password-toggle fa-eye-slash" data-field-toggle-target="toggle" data-action="click->field-toggle#toggle"></i>
+                            </div>
                             {{ form_errors(form.currentPassword) }}
                         </div>
 
                         <div class="form-group">
                             {{ form_label(form.newPassword, 'Nouveau mot de passe') }}
-                            {{ form_widget(form.newPassword, {'attr': {'class': 'form-input'}}) }}
+                            <div class="password-field" data-controller="field-toggle">
+                                {{ form_widget(form.newPassword, {
+                                    'attr': {
+                                        'class': 'form-input',
+                                        'data-field-toggle-target': 'input'
+                                    }
+                                }) }}
+                                <i class="fas password-toggle fa-eye-slash" data-field-toggle-target="toggle" data-action="click->field-toggle#toggle"></i>
+                            </div>
                             {{ form_errors(form.newPassword) }}
                         </div>
 
                         <div class="form-group">
                             {{ form_label(form.confirmPassword, 'Confirmer le nouveau mot de passe') }}
-                            {{ form_widget(form.confirmPassword, {'attr': {'class': 'form-input'}}) }}
+                            <div class="password-field" data-controller="field-toggle">
+                                {{ form_widget(form.confirmPassword, {
+                                    'attr': {
+                                        'class': 'form-input',
+                                        'data-field-toggle-target': 'input'
+                                    }
+                                }) }}
+                                <i class="fas password-toggle fa-eye-slash" data-field-toggle-target="toggle" data-action="click->field-toggle#toggle"></i>
+                            </div>
                             {{ form_errors(form.confirmPassword) }}
                         </div>
                     </div>

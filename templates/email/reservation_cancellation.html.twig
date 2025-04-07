@@ -17,8 +17,33 @@
             margin-bottom: 30px;
         }
         .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 400;
+            text-transform: lowercase;
+            text-align: start;
+        }
+        .logo a {
+            color: #2c3e50;
+            text-decoration: none;
+            display: block;
+        }
+        .logo p {
+            font-family: 'Meow Script', cursive;
+            font-size: 36px;
+            margin: 0;
+            line-height: 1;
+            color: #2c3e50;
+        }
+        .logo span {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 12px;
+            color: #666;
+        }
+        h1 {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 20px;
         }
         .content {
             background-color: #f9fafb;
@@ -64,7 +89,12 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ absolute_url(asset('images/logo.png')) }}" alt="Logo" class="logo">
+        <div class="logo">
+            <a href="{{ absolute_url(path('home')) }}">
+                <p>regards singuliers</p>
+                <span>Architecture d'intérieur</span>
+            </a>
+        </div>
         <h1>Confirmation d'annulation de votre réservation</h1>
     </div>
 

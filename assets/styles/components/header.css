@@ -42,7 +42,7 @@
   flex-direction: column;
 }
 
-.logo h1 {
+.logo p {
   font-size: var(--font-size-2xl);
   font-family: var(--font-title);
   margin: 0;

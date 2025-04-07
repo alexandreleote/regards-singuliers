@@ -1,6 +1,7 @@
 // Import de Stimulus et des contrôleurs
 import './bootstrap.js';
 import './controllers/menu-burger_controller.js';
+import './controllers/phone-toggle_controller.js';
 
 // Import des styles CSS
 import './styles/app.css';

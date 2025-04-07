@@ -59,6 +59,20 @@
   font-size: var(--font-size-sm);
 }
 
+.footer-contact-text .cursor-pointer {
+  cursor: pointer;
+  color: var(--color-primary);
+  transition: color var(--transition-fast);
+}
+
+.footer-contact-text .cursor-pointer:hover {
+  color: var(--color-accent);
+}
+
+.footer-contact-text .hidden {
+  display: none;
+}
+
 .footer-links {
   list-style: none;
   padding: 0;

@@ -10,6 +10,7 @@ import FieldToggleController from './controllers/field_toggle_controller.js';
 import DiscussionsController from './controllers/discussions_controller.js';
 import ReservationController from './controllers/reservation_controller.js';
 import AuthController from './controllers/auth_controller.js';
+import PhoneToggleController from './controllers/phone-toggle_controller.js';
 
 // Registers Stimulus controllers from controllers.json and in the controllers/ directory
 export const app = Application.start();
@@ -27,3 +28,4 @@ app.register('field-toggle', FieldToggleController);
 app.register('discussions', DiscussionsController);
 app.register('reservation', ReservationController);
 app.register('auth', AuthController);
+app.register('phone-toggle', PhoneToggleController);

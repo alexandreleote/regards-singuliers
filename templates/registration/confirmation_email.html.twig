@@ -3,38 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <title>Confirmation d'inscription - regards singuliers</title>
-    <link rel="stylesheet" href="{{ asset('styles/email.css') }}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Meow+Script&display=swap');
+
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 16px;
+            font-weight: 400;
+            text-transform: lowercase;
+            text-align: start;
+        }
+
+        .logo a {
+            color: #2c3e50;
+            text-decoration: none;
+            display: block;
+        }
+
+        .logo p {
+            font-family: 'Meow Script', cursive;
+            font-size: 36px;
+            margin: 0;
+            line-height: 1;
+            color: #2c3e50;
+        }
+
+        .logo span {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .content {
+            background-color: #f9fafb;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+
+        h1 {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+
+        .warning {
+            background-color: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+
+        .signature {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .signature strong {
+            font-family: 'Meow Script', cursive;
+            font-size: 24px;
+            font-weight: normal;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue ! <br>Confirmez votre adresse email</h1>
+    <header class="header">
+        <div class="logo">
+            <a href="{{ absolute_url(path('home')) }}">
+                <p>regards singuliers</p>
+                <span>Architecture d'intérieur</span>
+            </a>
+        </div>
+    </header>
 
-    <p>
-        Merci de votre inscription ! Nous sommes ravis de vous compter parmi nous.
-    </p>
-    
-    <p>
-        Notre approche ? Sublimer l'existant, révéler le potentiel des espaces sans en faire trop, avec justesse et harmonie.
-    </p>
+    <div class="content">
+        <h1>Bienvenue !<br>Confirmez votre adresse email</h1>
 
-    <p>
-        Pour finaliser votre inscription, il vous suffit de confirmer votre adresse email en cliquant sur le lien ci-dessous :
-    </p>
+        <p>
+            Merci de votre inscription ! Nous sommes ravis de vous compter parmi nous.
+        </p>
+        
+        <p>
+            Notre approche ? Sublimer l'existant, révéler le potentiel des espaces sans en faire trop, avec justesse et harmonie.
+        </p>
 
-    <p class="text-center">
-        <a href="{{ signedUrl }}" class="btn">👉 Confirmer mon adresse email</a>
-    </p>
+        <p>
+            Pour finaliser votre inscription, il vous suffit de confirmer votre adresse email en cliquant sur le lien ci-dessous :
+        </p>
 
-    <p class="warning">
-        ⚠️ Ce lien est valable jusqu'à {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-    </p>
+        <p class="text-center">
+            <a href="{{ signedUrl }}" class="btn">👉 Confirmer mon adresse email</a>
+        </p>
 
-    <p>
-        À très bientôt pour imaginer ensemble un intérieur qui vous ressemble.
-    </p>
+        <p class="warning">
+            ⚠️ Ce lien est valable jusqu'à {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+        </p>
 
-    <p class="signature">
-        <strong>regards singuliers</strong><br>
+        <p>
+            À très bientôt pour imaginer ensemble un intérieur qui vous ressemble.
+        </p>
+    </div>
+
+    <footer class="signature">
+        <strong>regards singuliers</strong>
         Priscilia Leote - Architecte d'intérieur
-    </p>
+    </footer>
 </body>
 </html>

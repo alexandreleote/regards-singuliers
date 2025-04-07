@@ -18,6 +18,10 @@
                 "enabled": false,
                 "fetch": "eager"
             }
+        },
+        "phone-toggle": {
+            "enabled": true,
+            "fetch": "eager"
         }
     }
 }

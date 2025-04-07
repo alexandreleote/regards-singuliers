@@ -39,7 +39,7 @@
             <div class="container header-container">
                 <div class="logo">
                     <a href="{{ path('home') }}">
-                        <h1>regards singuliers</h1>
+                        <p>regards singuliers</p>
                         <span>Architecture d'intérieur</span>
                     </a>
                 </div>
@@ -188,9 +188,9 @@
                         </div>
                     </div>
                     <div class="footer-contact-item">
-                        <div class="footer-contact-text" data-controller="field-toggle">
-                            <p id="show-phone" data-field-toggle-target="toggle" data-action="click->field-toggle#toggle" class="cursor-pointer">Afficher le numéro</p>
-                            <p id="phone-number" data-field-toggle-target="input" class="hidden">Tél : 06 07 02 92 22</p>
+                        <div class="footer-contact-text" data-controller="phone-toggle">
+                            <p id="show-phone" data-phone-toggle-target="toggle" data-action="click->phone-toggle#toggle" class="cursor-pointer">Afficher le numéro</p>
+                            <p id="phone-number" data-phone-toggle-target="input" class="hidden">Tél : 06 07 02 92 22</p>
                         </div>
                     </div>
                 </aside>
@@ -207,7 +207,7 @@
             </section>
 
             <section class="footer-bottom">
-                <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - Architecture d'intérieur</p>
+                <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - architecture d'intérieur</p>
                 <p>Tous droits réservés</p>
             </section>
         </footer>

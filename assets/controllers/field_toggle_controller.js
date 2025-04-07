@@ -2,33 +2,15 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static targets = ['input', 'toggle']
-    static values = {
-        type: String
-    }
 
     connect() {
-        if (this.hasTypeValue && this.typeValue === 'password') {
-            this.updateToggleIcon();
-        }
-    }
-
-    toggle() {
-        if (this.hasTypeValue && this.typeValue === 'password') {
-            this.togglePassword();
-        } else {
-            this.toggleText();
-        }
-    }
-
-    togglePassword() {
-        const type = this.inputTarget.type === 'password' ? 'text' : 'password';
-        this.inputTarget.type = type;
         this.updateToggleIcon();
     }
 
-    toggleText() {
-        this.toggleTarget.classList.add('hidden');
-        this.inputTarget.classList.remove('hidden');
+    toggle() {
+        const type = this.inputTarget.type === 'password' ? 'text' : 'password';
+        this.inputTarget.type = type;
+        this.updateToggleIcon();
     }
 
     updateToggleIcon() {
