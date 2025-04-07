@@ -27,7 +27,7 @@ class PDFController extends AbstractController
             'title' => 'Facture' . ' ' . $payment->getBillingNumber(),
             'invoice_number' => $payment->getBillingNumber(),
             'invoice_date' => $payment->getPaidAt(),
-            'due_date' => $payment->getBillingDate(),
+            'due_date' => $reservation->getAppointmentDatetime(),
             'client_name' => $payment->getFirstName() . ' ' . $payment->getName(),
             'client_address' => $payment->getBillingAddress(),
             'appointment_date' => $reservation->getAppointmentDatetime(),
@@ -41,17 +41,20 @@ class PDFController extends AbstractController
             ],
             'total_ht' => $payment->getTotalAmount(),
             'deposit_amount' => $payment->getDepositAmount(),
-            'payment_terms' => 'Solde à régler le : ' . $reservation->getAppointmentDatetime()->format('d/m/Y'),
+            'payment_terms' => 'Solde à régler le jour du rendez-vous : ' . $reservation->getAppointmentDatetime()->format('d/m/Y'),
             'iban' => 'FR76 XXXX XXXX XXXX XXXX XXXX XXX',
             'bic' => 'BICXXXXXXX'
         ];
 
-        $pdfContent = $pdfGeneratorService->generateInvoicePdf($data);
+        try {
+            $pdfContent = $pdfGeneratorService->generateInvoicePdf($data);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Erreur lors de la génération du PDF : ' . $e->getMessage());
+        }
 
         $response = new Response($pdfContent);
         $response->headers->set('Content-Type', 'application/pdf');
         
-        // Créer deux réponses : une pour l'affichage, une pour le téléchargement
         $filename = 'facture-' . $payment->getBillingNumber() . '.pdf';
         
         if ($request->query->get('download')) {

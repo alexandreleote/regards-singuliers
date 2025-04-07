@@ -44,6 +44,14 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
 
+    // Copy video files
+    .copyFiles({
+        from: './assets/videos',
+        to: 'videos/[path][name].[ext]',
+        pattern: /\.(mp4|webm)$/,
+        includeSubdirectories: true
+    })
+
     // enables and configure @babel/preset-env polyfills
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';

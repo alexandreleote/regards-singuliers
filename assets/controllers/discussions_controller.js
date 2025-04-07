@@ -14,7 +14,6 @@ export default class extends Controller {
     }
 
     initializeDiscussions() {
-        // Initialiser les discussions si l'utilisateur est connecté
         if (this.isUserConnectedValue) {
             this.setupMessageForm();
             this.loadMessages();
@@ -34,33 +33,53 @@ export default class extends Controller {
         if (!message.trim()) return;
 
         try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!csrfToken) {
+                throw new Error('CSRF token non trouvé');
+            }
+
             const response = await fetch(`/discussion/${this.discussionIdValue}/message`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ message })
             });
 
-            if (response.ok) {
-                this.messageInputTarget.value = '';
-                this.loadMessages();
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
             }
+
+            this.messageInputTarget.value = '';
+            await this.loadMessages();
         } catch (error) {
             console.error('Erreur lors de l\'envoi du message:', error);
+            // Ajout d'une notification visuelle pour l'utilisateur
+            const notification = document.createElement('div');
+            notification.className = 'error-notification';
+            notification.textContent = 'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
         }
     }
 
     async loadMessages() {
         try {
             const response = await fetch(`/discussion/${this.discussionIdValue}/messages`);
-            if (response.ok) {
-                const messages = await response.json();
-                this.updateMessageList(messages);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
             }
+            const messages = await response.json();
+            this.updateMessageList(messages);
         } catch (error) {
             console.error('Erreur lors du chargement des messages:', error);
+            // Ajout d'une notification visuelle pour l'utilisateur
+            const notification = document.createElement('div');
+            notification.className = 'error-notification';
+            notification.textContent = 'Une erreur est survenue lors du chargement des messages.';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
         }
     }
 
