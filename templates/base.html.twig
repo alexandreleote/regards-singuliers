@@ -44,6 +44,7 @@
                     </a>
                 </div>
                 
+                {# Menu burger pour la navigation (- 992px) #}
                 <div data-controller="menu-burger">
                     <button data-action="click->menu-burger#toggle" class="burger-menu-btn" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="menu-mobile">
                         <div class="burger-menu">
@@ -69,6 +70,16 @@
                                 <li class="nav-item-mobile"><a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a></li>
                                 <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Blog</a></li>
                                 <li class="nav-item-mobile"><a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a></li>
+                                
+                                {% if not app.user %}
+                                    <li class="nav-item-mobile auth-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
+                                {% else %}
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <li class="nav-item-mobile auth-mobile"><a href="{{ path('admin') }}" class="nav-link-mobile">Admin</a></li>
+                                    {% endif %}
+                                    <li class="nav-item-mobile auth-mobile"><a href="{{ path('profile') }}" class="nav-link-mobile">Mon Profil</a></li>
+                                    <li class="nav-item-mobile auth-mobile"><a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a></li>
+                                {% endif %}
                             </ul>
                         </nav>
                     </div>
