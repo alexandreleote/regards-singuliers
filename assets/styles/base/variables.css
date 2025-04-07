@@ -1,40 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Meow+Script&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
 :root {
-  /* Palette de couleurs minimaliste */
-  --color-primary: #050505;
-  --color-secondary: #333333;
-  --color-accent: #666666;
-  --color-background: #fcfcfc;
-  --color-text: #000000;
-  --color-text-light: #666666;
-  --color-border: #e0e0e0;
-  --color-error: #d32f2f;
-  
-  /* Typographie */
-  --font-text: 'Montserrat', Arial, sans-serif;
-  --font-title: 'Meow Script', Arial, sans-serif;
-  --font-size-xs: 0.75rem;   /* 12px */
-  --font-size-sm: 0.875rem;  /* 14px */
-  --font-size-base: 1rem;    /* 16px */
-  --font-size-md: 1.125rem;  /* 18px */
-  --font-size-lg: 1.25rem;   /* 20px */
-  --font-size-xl: 1.5rem;    /* 24px */
-  --font-size-2xl: 1.75rem;  /* 28px */
-  
-  /* Espacement */
-  --spacing-xs: 0.5rem;      /* 8px */
-  --spacing-sm: 1rem;        /* 16px */
-  --spacing-md: 1.5rem;      /* 24px */
-  --spacing-lg: 2rem;        /* 32px */
-  --spacing-xl: 3rem;        /* 48px */
-  --spacing-map: 8rem;       /* 64px */
-  
-  /* Transitions */
-  --transition-fast: 0.2s ease;
-  
-  /* Layout */
-  --header-height: 70px;     /* Hauteur du header */
-  --container-max-width: 1200px;
-  --container-padding: 1rem;
+    /* Colors */
+    --color-primary: #050505;
+    --color-secondary: #333333;
+    --color-accent: #D4A373;
+    --color-text: #333333;
+    --color-text-light: #666666;
+    --color-border: #DDDDDD;
+    --color-error: #DC3545;
+    --color-success: #28A745;
+    --color-warning: #FFC107;
+    --color-info: #17A2B8;
+    --color-background: #FFFFFF;
+    --color-background-alt: #F8F9FA;
+    --color-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Typography */
+    --font-title: 'Meow Script', cursive;
+    --font-body: 'Montserrat', sans-serif;
+    --font-size-xs: 0.75rem;   /* 12px */
+    --font-size-sm: 0.875rem;  /* 14px */
+    --font-size-base: 1rem;    /* 16px */
+    --font-size-md: 1.125rem;  /* 18px */
+    --font-size-lg: 1.25rem;   /* 20px */
+    --font-size-xl: 1.5rem;    /* 24px */
+    --font-size-2xl: 1.875rem; /* 30px */
+    --font-size-3xl: 2.25rem;  /* 36px */
+    --font-size-4xl: 3rem;     /* 48px */
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;   /* 4px */
+    --spacing-sm: 0.5rem;    /* 8px */
+    --spacing-md: 1rem;      /* 16px */
+    --spacing-lg: 2rem;      /* 32px */
+    --spacing-xl: 4rem;      /* 64px */
+    --spacing-map: 3rem;     /* 48px */
+
+    /* Border radius */
+    --border-radius: 0.25rem;
+    --border-radius-lg: 0.5rem;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Box shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Z-index */
+    --z-index-dropdown: 1000;
+    --z-index-sticky: 1020;
+    --z-index-fixed: 1030;
+    --z-index-modal-backdrop: 1040;
+    --z-index-modal: 1050;
+    --z-index-popover: 1060;
+    --z-index-tooltip: 1070;
+
+    /* Layout */
+    --header-height: 70px;     /* Hauteur du header */
+    --container-max-width: 1200px;
+    --container-padding: 1rem;
 }
