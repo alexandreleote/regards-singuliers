@@ -78,6 +78,22 @@ class ServiceRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Trouve les 3 prestations les plus réservées
+     */
+    public function findMostBooked(int $limit = 3): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.reservations', 'r')
+            ->andWhere('s.isActive = :active')
+            ->setParameter('active', true)
+            ->groupBy('s.id')
+            ->orderBy('COUNT(r.id)', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Service[] Returns an array of Service objects
     //     */

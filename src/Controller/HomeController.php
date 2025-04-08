@@ -19,7 +19,7 @@ final class HomeController extends AbstractController
             'page_title' => 'regards singuliers - Architecture d\'intérieur',
             'meta_description' => 'regards singuliers accompagne la rénovation de vos espaces en respectant le bâti existant, et en créant des environnements vivants, fonctionnels et adaptés à vos besoins.',
             'latest_realisations' => $realisationRepository->findLatest(3),
-            'services' => $serviceRepository->findActive(),
+            'services' => $serviceRepository->findMostBooked(3),
         ]);
     }
 

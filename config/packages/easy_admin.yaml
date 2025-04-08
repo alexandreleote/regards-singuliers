@@ -1,0 +1,9 @@
+easy_admin:
+    design:
+        menu:
+            - { label: 'Tableau de bord', route: 'admin', icon: 'home' }
+            - { label: 'Utilisateurs', entity: 'User', icon: 'users' }
+            - { label: 'Réservations', entity: 'Reservation', icon: 'calendar' }
+            - { label: 'Prestations', entity: 'Service', icon: 'briefcase' }
+            - { label: 'Réalisations', entity: 'Realisation', icon: 'image' }
+            - { label: 'Messages', entity: 'Contact', icon: 'envelope' } 

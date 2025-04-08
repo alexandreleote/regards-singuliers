@@ -4,31 +4,40 @@
 
 {% block body %}
     <!-- Section vidéo d'accueil -->
-    <div class="video-container">
-        <div class="video-overlay"></div>
-        <video class="video-background" autoplay muted loop playsinline>
+    <div class="home-video-container">
+        <div class="home-video-overlay"></div>
+        <video class="home-video-background" autoplay muted loop playsinline>
             <source src="/videos/home-video.mp4" type="video/mp4">
             Votre navigateur ne supporte pas la lecture de vidéos.
         </video>
-        <div class="video-content">
-            <h1 class="video-title">regards singuliers</h1>
+        <div class="home-video-content">
+            <h1 class="home-video-title">regards singuliers</h1>
             <a href="{{ path('realisations') }}" class="btn btn-primary">
                 Découvrir nos réalisations
             </a>
         </div>
     </div>
 
-    <div class="content">
+    <div class="home-content">
         <!-- Section des prestations -->
-        <h2 class="section-title">Nos prestations</h2>
-        <div class="services">
+        <h2 class="home-section-title">Nos prestations</h2>
+        <p class="home-section-text">Parce que chaque projet est unique, nous proposons des prestations adaptées à vos besoins, votre espace et vos envies. 
+        Du simple rendez-vous conseil à l'accompagnement complet avec suivi de chantier, découvrez nos formules pensées pour transformer votre intérieur avec créativité, méthode et exigence.</p>
+        <div class="home-services-grid">
             {% for service in services %}
-                <div class="service">
-                    <div class="service-content">
-                        <h3 class="service-title">{{ service.title }}</h3>
-                        <p class="service-description">{{ service.description|striptags|length > 150 ? service.description|striptags|slice(0, 150) ~ '...' : service.description|striptags }}</p>
+                <div class="home-service-card">
+                    <div class="home-service-content">
+                        <h3 class="home-service-title">{{ service.title }}</h3>
+                        <p class="home-service-description">{{ service.smallDescription|raw }}</p>
+                        <p class="home-service-price">
+                            {% if service.price > 450.01 %}
+                                À partir de {{ service.price|format_price }} €
+                            {% else %}
+                                Tarif : {{ service.price|format_price }} €
+                            {% endif %}
+                        </p>
                         <a href="{{ path('prestation_show', {'slug': service.slug}) }}" 
-                           class="service-link">
+                           class="home-service-link">
                             En savoir plus
                         </a>
                     </div>
@@ -37,15 +46,19 @@
         </div>
     </div>
 
-    <div class="content">
-        <!-- Section contact -->
-        <h2 class="section-title">Contactez-nous</h2>
-        <p>
-            Vous souhaitez discuter de votre projet ?
-            Nous sommes là pour vous aider.
-        </p>
-        <a href="{{ path('contact') }}" class="btn btn-primary">
-            Contactez-nous
-        </a>
+    <div class="home-contact-section">
+        <div class="home-contact-parallax">
+            <div class="home-contact-overlay"></div>
+            <div class="home-contact-content">
+                <h2 class="home-section-title">Contactez-nous</h2>
+                <p class="home-contact-text">
+                    Vous souhaitez discuter de votre projet ?
+                    Nous sommes là pour vous aider.
+                </p>
+                <a href="{{ path('contact') }}" class="btn btn-primary">
+                    Contactez-nous
+                </a>
+            </div>
+        </div>
     </div>
 {% endblock %}

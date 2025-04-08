@@ -52,6 +52,14 @@ Encore
         includeSubdirectories: true
     })
 
+    // Copy images
+    .copyFiles({
+        from: './assets/images',
+        to: 'images/[path][name].[ext]',
+        pattern: /\.(png|jpg|jpeg|gif|ico|svg|webp)$/,
+        includeSubdirectories: true
+    })
+
     // enables and configure @babel/preset-env polyfills
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';

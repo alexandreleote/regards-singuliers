@@ -76,19 +76,22 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Regards Singuliers - Administration')
+            ->setTitle('regards singuliers - Administration')
             ->setFaviconPath('favicon.ico');
     }
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::section('Accueil');
+        yield MenuItem::linkToDashboard('Tableau de bord', 'fa-solid fa-table-columns');
         
         yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         
-        yield MenuItem::section('Contenu');
+        yield MenuItem::section('Gestion des prestations');
         yield MenuItem::linkToCrud('Prestations', 'fa fa-briefcase', Service::class);
+
+        yield MenuItem::section('Gestion des réalisations');
         yield MenuItem::linkToCrud('Réalisations', 'fa fa-image', Realisation::class);
         
         yield MenuItem::section('Liens rapides');

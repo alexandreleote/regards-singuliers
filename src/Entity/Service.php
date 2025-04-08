@@ -28,6 +28,9 @@ class Service
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $smallDescription = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
     private ?string $price = null;
 
@@ -91,6 +94,17 @@ class Service
     public function setDescription(string $description): static
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function getSmallDescription(): ?string
+    {
+        return $this->smallDescription;
+    }
+
+    public function setSmallDescription(?string $smallDescription): static
+    {
+        $this->smallDescription = $smallDescription;
         return $this;
     }
 

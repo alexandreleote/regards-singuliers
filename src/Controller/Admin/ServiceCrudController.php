@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -36,6 +37,12 @@ class ServiceCrudController extends AbstractCrudController
                 ->setRequired(true),
             TextField::new('title', 'Intitulé de la prestation')
                 ->setRequired(true),
+            TextEditorField::new('smallDescription', 'Description courte')
+                ->setRequired(true)
+                ->setHelp('Une description courte qui apparaîtra dans la liste des prestations')
+                ->setFormTypeOption('attr', [
+                    'class' => 'text-editor',
+                ]),
             TextEditorField::new('description', 'Description de la prestation')
                 ->setRequired(true)
                 ->setFormTypeOption('attr', [
@@ -104,13 +111,20 @@ class ServiceCrudController extends AbstractCrudController
     {
         if ($entityInstance instanceof Service) {
             $description = $entityInstance->getDescription();
+            $smallDescription = $entityInstance->getSmallDescription();
             $slug = strtolower($this->slugger->slug($entityInstance->getTitle()));
             $entityInstance->setSlug($slug);
+            
             if ($description !== null) {
-                // Autoriser les balises HTML pour le formatage riche
-                $allowedTags = '<strong><em><i><b><ul><ol><li><p><br><span>';
-                $cleanDescription = strip_tags($description, $allowedTags);
+                // Convertir uniquement les entités HTML
+                $cleanDescription = html_entity_decode($description, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $entityInstance->setDescription($cleanDescription);
+            }
+            
+            if ($smallDescription !== null) {
+                // Convertir uniquement les entités HTML
+                $cleanSmallDescription = html_entity_decode($smallDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $entityInstance->setSmallDescription($cleanSmallDescription);
             }
         }
 
@@ -121,11 +135,18 @@ class ServiceCrudController extends AbstractCrudController
     {
         if ($entityInstance instanceof Service) {
             $description = $entityInstance->getDescription();
+            $smallDescription = $entityInstance->getSmallDescription();
+            
             if ($description !== null) {
-                // Autoriser les balises HTML pour le formatage riche
-                $allowedTags = '<strong><em><i><b><ul><ol><li><p><br><span>';
-                $cleanDescription = strip_tags($description, $allowedTags);
+                // Convertir uniquement les entités HTML
+                $cleanDescription = html_entity_decode($description, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $entityInstance->setDescription($cleanDescription);
+            }
+            
+            if ($smallDescription !== null) {
+                // Convertir uniquement les entités HTML
+                $cleanSmallDescription = html_entity_decode($smallDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $entityInstance->setSmallDescription($cleanSmallDescription);
             }
         }
 

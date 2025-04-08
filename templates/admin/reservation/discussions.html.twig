@@ -1,0 +1,164 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    Discussions pour la réservation #{{ reservation.id }}
+{% endblock %}
+
+{% block main %}
+    <div class="discussions-container">
+        <div class="reservation-info">
+            <h3>Informations de la réservation</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Utilisateur :</strong>
+                    <span>{{ reservation.user.fullname }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Prestation :</strong>
+                    <span>{{ reservation.service.title }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Date :</strong>
+                    <span>{{ reservation.date|date('d/m/Y H:i') }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Statut :</strong>
+                    <span class="status-badge {{ reservation.status }}">{{ reservation.status }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="discussions-list">
+            <h3>Historique des discussions</h3>
+            {% for discussion in discussions %}
+                <div class="discussion-item">
+                    <div class="discussion-header">
+                        <span class="author">{{ discussion.author.fullname }}</span>
+                        <span class="date">{{ discussion.createdAt|date('d/m/Y H:i') }}</span>
+                    </div>
+                    <div class="discussion-content">
+                        {{ discussion.message }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-discussions">
+                    Aucune discussion pour cette réservation.
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="new-discussion">
+            <h3>Nouveau message</h3>
+            <form action="{{ path('admin_reservation_add_discussion', {id: reservation.id}) }}" method="POST">
+                <div class="form-group">
+                    <textarea name="message" class="form-control" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .discussions-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .reservation-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .status-badge.pending {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-badge.confirmed {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .status-badge.cancelled {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .discussions-list {
+            margin-bottom: 30px;
+        }
+
+        .discussion-item {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .discussion-content {
+            white-space: pre-wrap;
+        }
+
+        .no-discussions {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .new-discussion {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+            border: none;
+        }
+    </style>
+{% endblock %} 

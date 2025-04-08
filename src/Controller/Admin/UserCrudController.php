@@ -179,10 +179,15 @@ class UserCrudController extends AbstractCrudController
 
     public function temporaryBanUser(AdminContext $adminContext, Request $request): Response
     {
-        $user = $adminContext->getEntity()->getInstance();
+        $entityDto = $adminContext->getEntity();
+        if ($entityDto === null) {
+            throw new \LogicException('Aucun utilisateur sélectionné. Veuillez sélectionner un utilisateur avant de le bannir.');
+        }
+
+        $user = $entityDto->getInstance();
         
         if (!$user instanceof User) {
-            throw new \LogicException('Entity is missing or not a User');
+            throw new \LogicException('L\'entité n\'est pas un utilisateur valide');
         }
 
         // Créer un formulaire pour choisir la date de fin de bannissement

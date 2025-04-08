@@ -128,7 +128,7 @@
                 <span class="detail-label">Acompte payé :</span> {{ deposit_amount }}€
             </div>
             <div class="detail-item">
-                <span class="detail-label">Montant restant :</span> {{ service.price - deposit_amount }}€
+                <span class="detail-label">Montant restant :</span> {{ (service.price - deposit_amount)|number_format(0, ',', ' ') }}€
             </div>
         </section>
 
