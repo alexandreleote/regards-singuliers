@@ -168,6 +168,16 @@ export default class extends Controller {
         event.preventDefault();
         this.clearErrors();
         
+        // Vérification des champs honeypot
+        const mobilePhone = this.formTarget.querySelector('input[name="mobilePhone"]').value;
+        const workEmail = this.formTarget.querySelector('input[name="workEmail"]').value;
+        
+        if (mobilePhone || workEmail) {
+            // Si un champ honeypot est rempli, on ne soumet pas le formulaire
+            this.showErrorMessage('Message non envoyé');
+            return;
+        }
+        
         if (!this.formTarget.checkValidity()) {
             this.formTarget.reportValidity();
             return;
@@ -186,52 +196,41 @@ export default class extends Controller {
                 email: formData.get('email'),
                 telephone: formData.get('telephone').replace(/\s+/g, ''),
                 localisation: formData.get('localisation'),
-                message: formData.get('description')
+                description: formData.get('description')
             };
 
-            if (data.type === 'professionnel') {
+            if (formData.get('entreprise')) {
                 data.entreprise = formData.get('entreprise');
             }
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            const csrfToken = document.querySelector('input[name="_token"]').value;
             
-            // Utiliser l'URL actuelle pour la requête
-            const currentProtocol = window.location.protocol;
-            const currentHost = window.location.host;
-            const url = `${currentProtocol}//${currentHost}/contact`;
-            
-            const response = await fetch(url, {
+            const response = await fetch('/contact/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken
+                    'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify(data),
-                credentials: 'include'
+                body: JSON.stringify(data)
             });
             
-            if (!response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const result = await response.json();
-                    if (result.errors) {
-                        this.showErrors(result.errors);
-                        return;
-                    }
-                    throw new Error(result.error || 'Une erreur est survenue');
-                } else {
-                    throw new Error('Une erreur est survenue lors de l\'envoi du formulaire');
-                }
-            }
-            
             const result = await response.json();
+            
+            if (!response.ok) {
+                if (result.errors) {
+                    this.showErrors(result.errors);
+                } else {
+                    this.showErrorMessage(result.message || 'Une erreur est survenue');
+                }
+                return;
+            }
             
             this.formTarget.reset();
             this.showSuccessMessage();
             
         } catch (error) {
             console.error('Erreur:', error);
-            this.showErrorMessage();
+            this.showErrorMessage('Une erreur est survenue lors de l\'envoi du formulaire');
         } finally {
             submitButton.disabled = false;
         }
@@ -257,10 +256,10 @@ export default class extends Controller {
         setTimeout(() => alert.remove(), 5000);
     }
 
-    showErrorMessage() {
+    showErrorMessage(message = 'Une erreur est survenue') {
         const alert = document.createElement('div');
         alert.className = 'alert alert-danger';
-        alert.textContent = 'Une erreur est survenue lors de l\'envoi du message.';
+        alert.textContent = message;
         this.formTarget.insertAdjacentElement('beforebegin', alert);
         setTimeout(() => alert.remove(), 5000);
     }

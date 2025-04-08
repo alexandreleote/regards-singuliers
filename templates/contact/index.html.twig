@@ -41,11 +41,11 @@
                         <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
                         
                         <!-- Champs honeypot -->
-                        <div {{ stimulus_target('honeypot', 'mobilePhone') }} style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
-                            <input type="text" name="mobilePhone" value="" aria-hidden="true" tabindex="-1">
+                        <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                            <input type="text" name="mobilePhone" value="" autocomplete="off">
                         </div>
-                        <div {{ stimulus_target('honeypot', 'workEmail') }} style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
-                            <input type="text" name="workEmail" value="" aria-hidden="true" tabindex="-1">
+                        <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+                            <input type="text" name="workEmail" value="" autocomplete="off">
                         </div>
                         
                         <div class="form-type">

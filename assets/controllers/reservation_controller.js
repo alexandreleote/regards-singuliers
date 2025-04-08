@@ -69,9 +69,14 @@ export default class extends Controller {
 
             window.addEventListener('message', async (e) => {
                 if (e.data.event && e.data.event === 'calendly.event_scheduled') {
-                    await this.handleCalendlyEventScheduled(e.data);
+                    try {
+                        await this.handleCalendlyEventScheduled(e.data);
+                    } catch (error) {
+                        console.error('Erreur lors du traitement de l\'événement Calendly:', error);
+                        this.showMessage('Une erreur est survenue lors de la réservation', 'error');
+                    }
                 }
-            });
+            }, { once: false });
         };
 
         document.body.appendChild(script);
