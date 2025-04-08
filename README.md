@@ -165,6 +165,6 @@ La documentation complète est disponible dans le dossier `docs/` du projet.
 - Communication client
 
 ___
-Projet réalisé dans le cadre de la formation [Développeur Web et Web Mobile](https://elan-formation.fr/formation/19754)
-📅 Date du stage : 03/02/2025 - 14/03/2025 
+Projet réalisé dans le cadre de la formation [Développeur Web et Web Mobile](https://elan-formation.fr/formation/19754) <br>
+📅 Date du stage : 03/02/2025 - 14/03/2025 <br>
 ✍️ Auteur : [Alexandre Leote](https://github.com/alexandreleote)
