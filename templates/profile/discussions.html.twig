@@ -65,9 +65,20 @@
                     <div class="messages-container" id="messagesContainer">
                         {% for message in messages %}
                             <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}">
-                                <div class="message-content">{{ message.content }}</div>
+                                <div class="message-content">
+                                    {% if message.isDeleted %}
+                                        <em>Message supprimé</em>
+                                    {% else %}
+                                        {{ message.content }}
+                                    {% endif %}
+                                </div>
                                 <div class="message-time">
                                     {{ message.sentAt|date('d/m/Y H:i') }}
+                                    {% if message.user.id == app.user.id and not message.isDeleted %}
+                                        <form action="{{ path('user_discussion_delete_message', {id: currentDiscussion.id, messageId: message.id}) }}" method="post" class="d-inline">
+                                            <a href="#" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce message ?')){this.closest('form').submit();return false;}">Supprimer</a>
+                                        </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}

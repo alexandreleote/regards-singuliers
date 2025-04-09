@@ -6,4 +6,5 @@ easy_admin:
             - { label: 'Réservations', entity: 'Reservation', icon: 'calendar' }
             - { label: 'Prestations', entity: 'Service', icon: 'briefcase' }
             - { label: 'Réalisations', entity: 'Realisation', icon: 'image' }
-            - { label: 'Messages', entity: 'Contact', icon: 'envelope' } 
+            - { label: 'Messages', entity: 'Contact', icon: 'envelope' }
+            - { label: 'Discussions', entity: 'Discussion', icon: 'comments' } 

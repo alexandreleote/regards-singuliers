@@ -23,6 +23,9 @@ class Message
     #[ORM\Column]
     private ?bool $isRead = null;
 
+    #[ORM\Column]
+    private ?bool $isDeleted = false;
+
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -68,6 +71,18 @@ class Message
     public function setIsRead(bool $isRead): static
     {
         $this->isRead = $isRead;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): static
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }

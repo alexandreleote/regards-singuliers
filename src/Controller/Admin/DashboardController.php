@@ -5,6 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Entity\Service;
 use App\Entity\Realisation;
+use App\Entity\Discussion;
+use App\Entity\Reservation;
 use App\Repository\UserRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\RealisationRepository;
@@ -87,9 +89,11 @@ class DashboardController extends AbstractDashboardController
         
         yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
+        yield MenuItem::linkToCrud('Discussions', 'fa fa-comments', Discussion::class);
         
         yield MenuItem::section('Gestion des prestations');
         yield MenuItem::linkToCrud('Prestations', 'fa fa-briefcase', Service::class);
+        yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Reservation::class);
 
         yield MenuItem::section('Gestion des réalisations');
         yield MenuItem::linkToCrud('Réalisations', 'fa fa-image', Realisation::class);

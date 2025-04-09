@@ -281,4 +281,28 @@ final class DiscussionController extends AbstractController
             'isLocked' => $discussion->isLocked()
         ]);
     }
+
+    #[Route('/{id}/delete-message/{messageId}', name: 'user_discussion_delete_message', methods: ['POST'])]
+    public function deleteMessage(int $id, int $messageId, EntityManagerInterface $entityManager): Response
+    {
+        $discussion = $entityManager->getRepository(Discussion::class)->find($id);
+        if (!$discussion) {
+            throw $this->createNotFoundException('Discussion non trouvée');
+        }
+
+        $message = $entityManager->getRepository(Message::class)->find($messageId);
+        if (!$message || $message->getDiscussion() !== $discussion) {
+            throw $this->createNotFoundException('Message non trouvé');
+        }
+
+        if ($message->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce message');
+        }
+
+        $message->setIsDeleted(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Message supprimé avec succès');
+        return $this->redirectToRoute('profile_discussions', ['discussionId' => $id]);
+    }
 }
