@@ -21,7 +21,7 @@
 @import './pages/profile.css';
 @import './pages/discussion.css';
 @import './pages/reservation.css';
-
+@import './pages/services.css';
 /* Admin */
 @import './admin/admin.css';
 @import './admin/dashboard.css';

@@ -9,7 +9,7 @@
             <i class="fas fa-arrow-left"></i>
             Retour
         </a>
-        <article class="discussion-container">
+        <article class="discussion-container" data-controller="discussions" data-discussions-discussion-id-value="{{ currentDiscussion ? currentDiscussion.id : '0' }}" data-discussions-is-user-connected-value="{{ app.user ? 'true' : 'false' }}">
             {% if is_granted('ROLE_ADMIN') %}
                 {% if discussions is defined and discussions|length > 0 %}
                     <div class="discussions-list">
@@ -17,7 +17,7 @@
                         <ul>
                             {% for discussion in discussions %}
                                 <li class="discussion-item {% if discussion.id == currentDiscussion.id %}active{% endif %}">
-                                    <a href="{{ path('profile_discussions', {'discussionId': discussion.id}) }}">
+                                    <a href="{{ path('admin_discussion', {'id': discussion.id}) }}">
                                         {% if 'ROLE_DELETED' in discussion.reservation.user.roles %}
                                             profil anonymisé
                                         {% elseif not discussion.reservation.user.personalInformationComplete %}
@@ -62,7 +62,7 @@
                         {% endif %}
                     </h1>
 
-                    <div class="messages-container" id="messagesContainer">
+                    <div class="messages-container" id="messagesContainer" data-discussions-target="messageList">
                         {% for message in messages %}
                             <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}">
                                 <div class="message-content">
@@ -84,13 +84,14 @@
                         {% endfor %}
                     </div>
 
-                    <form id="messageForm" class="message-form" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
+                    <form id="messageForm" class="message-form" data-discussions-target="form" action="{{ path('send_message') }}" method="post" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
                         {% if currentDiscussion is defined %}
                             <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
                         {% endif %}
                         <textarea 
                             name="content" 
                             class="message-input" 
+                            data-discussions-target="messageInput"
                             placeholder="{% if currentDiscussion.isLocked %}Cette discussion est verrouillée{% else %}Écrivez votre message...{% endif %}"
                             required
                             {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}

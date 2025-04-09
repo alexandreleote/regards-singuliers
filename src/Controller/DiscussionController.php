@@ -19,6 +19,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class DiscussionController extends AbstractController
 {
     #[Route('', name: 'profile_discussions')]
+    #[Route('/{id}', name: 'admin_discussion', requirements: ['id' => '\d+'])]
+
     public function discussions(
         Request $request,
         DiscussionRepository $discussionRepository, 
@@ -45,10 +47,17 @@ final class DiscussionController extends AbstractController
             
             if (!empty($discussions)) {
                 // Récupérer la discussion sélectionnée ou la première par défaut
-                $discussionId = $request->query->get('discussionId');
-                
-                if ($discussionId) {
+                $discussionId = $request->get('id');
+                if ($discussionId !== null) {
                     $currentDiscussion = $discussionRepository->find($discussionId);
+                    
+                    // Vérifier que l'utilisateur a le droit d'accéder à cette discussion
+                    if (!$currentDiscussion || 
+                        (!in_array('ROLE_ADMIN', $user->getRoles()) && 
+                        $currentDiscussion->getReservation()->getUser()->getId() !== $user->getId())
+                    ) {
+                        return $this->redirectToRoute('profile_discussions');
+                    }
                 }
                 
                 if (!$currentDiscussion) {

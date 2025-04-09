@@ -38,7 +38,9 @@ class DiscussionCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Discussion')
             ->setEntityLabelInPlural('Discussions')
             ->setPageTitle('index', 'Discussions avec les utilisateurs')
-            ->setPageTitle('detail', 'Échange de messages')
+            ->setPageTitle('detail', fn (Discussion $discussion) => sprintf('Discussion avec %s', 
+                $discussion->getReservation()->getUser()->getFullName() ?? $discussion->getReservation()->getUser()->getEmail()
+            ))
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->showEntityActionsInlined()
             ->setEntityPermission('ROLE_ADMIN');

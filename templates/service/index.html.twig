@@ -4,22 +4,30 @@
 
 {% block body %}
     <div class="page-container">
-        <h2>{{ page_title }}</h2>
+        <h2 class="service-title">Nos prestations sur mesure</h2>
 
-        <div class="">
+        <div class="service-intro">
+            <p class="service-lead">
+                Chez Regards Singuliers, chaque projet est unique, pensé avec sensibilité et créativité pour révéler le potentiel de votre intérieur. Que vous soyez en phase de réflexion, en pleine rénovation ou dans une optique de transformation complète, nous vous accompagnons à chaque étape avec professionnalisme et passion.
+            </p>
+        </div>
+
+        <div class="service-list">
             {% for service in services %}
-                <div class="">
-                    <div class="">
-                        <h5 class="">{{ service.title }}</h5>
-                        <p class="">{{ service.smallDescription|raw }}</p>
-                        <p class="">
+                <div class="service-card">
+                    <div class="service-card-body">
+                        <h5 class="service-card-title">
+                            <i class="icon-star"></i> {{ service.title }}
+                        </h5>
+                        <p class="service-card-text">{{ service.smallDescription|raw }}</p>
+                        <p class="service-card-text">
                             <strong>Prix :</strong> {{ service.price|number_format(0, ',', ' ') }} €
                         </p>
                     </div>
-                    <div class="">
+                    <div class="service-card-footer">
                         <a href="{{ path('prestation_show', {'slug': service.slug}) }}" 
-                           class="">
-                            Voir
+                           class="service-btn">
+                            <i class="icon-info-circle"></i> Voir les détails
                         </a>
                     </div>
                 </div>

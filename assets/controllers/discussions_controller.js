@@ -10,13 +10,19 @@ export default class extends Controller {
     connect() {
         if (this.hasFormTarget) {
             this.initializeDiscussions();
+            this.scrollToBottom();
+        }
+    }
+
+    scrollToBottom() {
+        if (this.hasMessageListTarget) {
+            this.messageListTarget.scrollTop = this.messageListTarget.scrollHeight;
         }
     }
 
     initializeDiscussions() {
         if (this.isUserConnectedValue) {
             this.setupMessageForm();
-            this.loadMessages();
         }
     }
 
@@ -28,9 +34,9 @@ export default class extends Controller {
         event.preventDefault();
         
         const formData = new FormData(this.formTarget);
-        const message = formData.get('message');
+        const content = formData.get('content');
 
-        if (!message.trim()) return;
+        if (!content || !content.trim()) return;
 
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -38,13 +44,13 @@ export default class extends Controller {
                 throw new Error('CSRF token non trouvé');
             }
 
-            const response = await fetch(`/discussion/${this.discussionIdValue}/message`, {
+            const response = await fetch('/discussion/send', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                     'X-CSRF-Token': csrfToken
                 },
-                body: JSON.stringify({ message })
+                body: new URLSearchParams(formData)
             });
 
             if (!response.ok) {
@@ -52,7 +58,8 @@ export default class extends Controller {
             }
 
             this.messageInputTarget.value = '';
-            await this.loadMessages();
+            // Recharger la page pour afficher le nouveau message
+            window.location.reload();
         } catch (error) {
             console.error('Erreur lors de l\'envoi du message:', error);
             // Ajout d'une notification visuelle pour l'utilisateur
@@ -64,32 +71,21 @@ export default class extends Controller {
         }
     }
 
-    async loadMessages() {
-        try {
-            const response = await fetch(`/discussion/${this.discussionIdValue}/messages`);
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
-            }
-            const messages = await response.json();
-            this.updateMessageList(messages);
-        } catch (error) {
-            console.error('Erreur lors du chargement des messages:', error);
-            // Ajout d'une notification visuelle pour l'utilisateur
-            const notification = document.createElement('div');
-            notification.className = 'error-notification';
-            notification.textContent = 'Une erreur est survenue lors du chargement des messages.';
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
+    updateMessageList(response) {
+        if (response.success && response.message) {
+            const message = response.message;
+            const isCurrentUser = true; // Le message vient d'être envoyé par l'utilisateur actuel
+            
+            const messageHtml = `
+                <div class="message ${isCurrentUser ? 'message-user' : 'message-admin'}">
+                    <div class="message-content">${message.content}</div>
+                    <div class="message-time">${message.sentAt}</div>
+                </div>
+            `;
+            
+            this.messageListTarget.insertAdjacentHTML('beforeend', messageHtml);
+            this.messageListTarget.scrollTop = this.messageListTarget.scrollHeight;
         }
-    }
-
-    updateMessageList(messages) {
-        this.messageListTarget.innerHTML = messages.map(message => `
-            <div class="message ${message.isUser ? 'user-message' : 'admin-message'}">
-                <div class="message-content">${message.content}</div>
-                <div class="message-time">${message.createdAt}</div>
-            </div>
-        `).join('');
     }
 
     disconnect() {
