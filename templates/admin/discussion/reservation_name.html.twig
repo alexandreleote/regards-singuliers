@@ -1,0 +1,11 @@
+{% if entity.instance.reservation %}
+    <a href="{{ ea_url()
+        .setController('App\\Controller\\Admin\\ReservationCrudController')
+        .setAction('detail')
+        .setEntityId(entity.instance.reservation.id)
+    }}">
+        {{ field.formattedValue }}
+    </a>
+{% else %}
+    <span class="badge badge-secondary">Non défini</span>
+{% endif %}

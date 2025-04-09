@@ -10,16 +10,16 @@ use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
@@ -29,13 +29,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\PdfGeneratorService;
 
 class ReservationCrudController extends AbstractCrudController
 {
     public function __construct(
         private AdminUrlGenerator $adminUrlGenerator,
         private EntityManagerInterface $entityManager,
-        private DiscussionRepository $discussionRepository
+        private DiscussionRepository $discussionRepository,
+        private PdfGeneratorService $pdfGeneratorService
     ) {}
 
     public static function getEntityFqcn(): string
@@ -52,7 +54,8 @@ class ReservationCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'Détails de la réservation')
             ->setPageTitle('edit', 'Modifier la réservation')
             ->setPageTitle('new', 'Nouvelle réservation')
-            ->setDefaultSort(['bookedAt' => 'DESC']);
+            ->setDefaultSort(['bookedAt' => 'DESC'])
+            ->overrideTemplate('crud/detail', 'admin/reservation/detail.html.twig');
     }
 
     public function configureFields(string $pageName): iterable
@@ -60,21 +63,34 @@ class ReservationCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             AssociationField::new('service', 'Prestation')
-                ->setFormTypeOption('choice_label', 'title')
+                ->setTemplatePath('admin/field/text.html.twig')
                 ->formatValue(function ($value, $entity) {
                     return $entity->getService()->getTitle();
-                }),
+                })
+                ->hideOnForm(),
+            AssociationField::new('service')
+                ->setFormTypeOption('choice_label', 'title')
+                ->onlyOnForms(),
+            Field::new('billingNumber', 'N° Facture')
+                ->setTemplatePath('admin/field/link.html.twig')
+                ->setCssClass('text-primary')
+                ->setCustomOption('route', 'detail')
+                ->formatValue(function ($value, $entity) {
+                    $payments = $entity->getPayments();
+                    return !empty($payments) ? $payments[0]->getBillingNumber() : '-';
+                })
+                ->hideOnForm(),
             TextField::new('name', 'Nom'),
             TextField::new('firstName', 'Prénom'),
             DateTimeField::new('bookedAt', 'Date de réservation'),
             DateTimeField::new('appointment_datetime', 'Date de rendez-vous'),
             TextField::new('status', 'Statut'),
-            NumberField::new('price', 'Prix')->hideOnIndex(),
+            NumberField::new('price', 'Prix total')->hideOnIndex(),
+            NumberField::new('depositAmount', 'Acompte')->hideOnIndex(),
             TextField::new('stripePaymentIntentId', 'ID Stripe')->hideOnIndex(),
             TextField::new('calendlyEventId', 'ID Calendly')->hideOnIndex(),
             TextField::new('calendlyInviteeId', 'ID Invité Calendly')->hideOnIndex(),
             DateTimeField::new('canceledAt', 'Date d\'annulation')->hideOnIndex(),
-            AssociationField::new('user')->hideOnIndex(),
         ];
     }
 
@@ -129,10 +145,9 @@ class ReservationCrudController extends AbstractCrudController
             });
     }
 
-    public function viewDiscussions(Request $request): Response
+    public function viewDiscussions(AdminContext $context): Response
     {
-        $reservationId = $request->query->get('entityId');
-        $reservation = $this->entityManager->getRepository(Reservation::class)->find($reservationId);
+        $reservation = $context->getEntity()->getInstance();
         
         if (!$reservation) {
             throw $this->createNotFoundException('Réservation non trouvée');
@@ -145,7 +160,7 @@ class ReservationCrudController extends AbstractCrudController
             return $this->redirectToRoute('admin', [
                 'crudAction' => 'detail',
                 'crudControllerFqcn' => self::class,
-                'entityId' => $reservationId
+                'entityId' => $entity_id
             ]);
         }
 
@@ -156,8 +171,9 @@ class ReservationCrudController extends AbstractCrudController
         ]);
     }
 
-    public function cancelReservation(Reservation $reservation): Response
+    public function cancelReservation(AdminContext $context): Response
     {
+        $reservation = $context->getEntity()->getInstance();
         $reservation->setStatus('annulée');
         $reservation->setCanceledAt(new \DateTimeImmutable());
         
@@ -172,8 +188,9 @@ class ReservationCrudController extends AbstractCrudController
         ]);
     }
 
-    public function refundReservation(Reservation $reservation): Response
+    public function refundReservation(AdminContext $context): Response
     {
+        $reservation = $context->getEntity()->getInstance();
         // TODO: Implémenter la logique de remboursement Stripe
         $reservation->setStatus('remboursée');
         
@@ -188,8 +205,9 @@ class ReservationCrudController extends AbstractCrudController
         ]);
     }
 
-    public function rescheduleReservation(Reservation $reservation): Response
+    public function rescheduleReservation(AdminContext $context): Response
     {
+        $reservation = $context->getEntity()->getInstance();
         // TODO: Implémenter la logique de replanification avec Calendly
         $reservation->setStatus('replanifiée');
         
@@ -197,32 +215,6 @@ class ReservationCrudController extends AbstractCrudController
 
         $this->addFlash('success', 'La réservation a été replanifiée avec succès.');
 
-        return $this->redirectToRoute('admin', [
-            'crudAction' => 'detail',
-            'crudControllerFqcn' => self::class,
-            'entityId' => $reservation->getId()
-        ]);
-    }
-
-    public function showInvoice(Reservation $reservation): Response
-    {
-        // TODO: Implémenter la logique d'affichage de la facture
-        // Par exemple, générer un PDF et l'afficher dans le navigateur
-        $this->addFlash('info', 'Affichage de la facture en cours de développement.');
-        
-        return $this->redirectToRoute('admin', [
-            'crudAction' => 'detail',
-            'crudControllerFqcn' => self::class,
-            'entityId' => $reservation->getId()
-        ]);
-    }
-
-    public function downloadInvoice(Reservation $reservation): Response
-    {
-        // TODO: Implémenter la logique de téléchargement de la facture
-        // Par exemple, générer un PDF et le télécharger
-        $this->addFlash('info', 'Téléchargement de la facture en cours de développement.');
-        
         return $this->redirectToRoute('admin', [
             'crudAction' => 'detail',
             'crudControllerFqcn' => self::class,

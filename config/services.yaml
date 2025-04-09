@@ -10,6 +10,9 @@ parameters:
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     calendly.url: '%env(CALENDLY_URL)%'
     timezone: '%env(APP_TIMEZONE)%'
+    app.invoice.payment_terms: 'Paiement à réception de la facture'
+    app.invoice.iban: '%env(INVOICE_IBAN)%'
+    app.invoice.bic: '%env(INVOICE_BIC)%'
 
 
 services:

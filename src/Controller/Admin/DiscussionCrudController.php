@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -109,8 +110,12 @@ class DiscussionCrudController extends AbstractCrudController
         $fields = [
             IdField::new('id')->hideOnForm(),
             AssociationField::new('reservation', 'Réservation')
+                ->setTemplatePath('admin/discussion/reservation_name.html.twig')
+                ->formatValue(function ($value, $entity) {
+                    return $entity->getReservation() ? $entity->getReservation()->getUser()->getFullName() : null;
+                })
                 ->setCrudController(ReservationCrudController::class)
-                ->hideOnDetail(),
+                ->hideOnForm(),
             DateTimeField::new('createdAt', 'Date de création')
                 ->hideOnDetail(),
             BooleanField::new('isLocked', 'Verrouillée')

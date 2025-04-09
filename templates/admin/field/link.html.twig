@@ -1,0 +1,9 @@
+{% if field.value is not null %}
+    <a href="{{ ea_url()
+        .setController('App\\Controller\\Admin\\ReservationCrudController')
+        .setAction(field.customOptions.get('route'))
+        .setEntityId(entity.instance.id)
+    }}" class="{{ field.cssClass }}">
+        {{ field.formattedValue }}
+    </a>
+{% endif %}
