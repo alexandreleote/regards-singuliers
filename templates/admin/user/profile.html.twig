@@ -1,0 +1,222 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+        }
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .profile-email {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .info-card-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .info-card-title {
+            margin: 0;
+            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .info-card-body {
+            padding: 1.5rem;
+        }
+        .info-table {
+            width: 100%;
+        }
+        .info-table th {
+            width: 35%;
+            color: #666;
+            font-weight: 500;
+            padding: 0.75rem 0;
+        }
+        .info-table td {
+            color: #333;
+            padding: 0.75rem 0;
+        }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status-active {
+            background: #e3fcef;
+            color: #00a854;
+        }
+        .status-inactive {
+            background: #fff1f0;
+            color: #f5222d;
+        }
+        .status-pending {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        .reservation-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .reservation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .reservation-service {
+            font-weight: 600;
+            color: #1890ff;
+        }
+        .reservation-date {
+            color: #666;
+        }
+        .reservation-link {
+            margin-bottom: 0.5rem;
+        }
+        
+        .reservation-item {
+            display: block;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .reservation-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        }
+        .message-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        .message-item:last-child {
+            border-bottom: none;
+        }
+        .message-meta {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="profile-header text-center">
+        <h1 class="profile-name">{{ user.fullName }}</h1>
+        <div class="profile-email">{{ user.email }}</div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title">Informations personnelles</h3>
+                    </div>
+                    <div class="info-card-body">
+                        <table class="info-table">
+                            <tr>
+                                <th>Email</th>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Nom</th>
+                                <td>{{ user.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Prénom</th>
+                                <td>{{ user.firstName }}</td>
+                            </tr>
+                            <tr>
+                                <th>Téléphone</th>
+                                <td>{{ user.phoneNumber }}</td>
+                            </tr>
+                            <tr>
+                                <th>Adresse</th>
+                                <td>
+                                    {% if user.streetNumber or user.streetName or user.city %}
+                                        {{ user.streetNumber }} {{ user.streetName }}<br>
+                                        {{ user.zip }} {{ user.city }}<br>
+                                        {{ user.region }}
+                                    {% else %}
+                                        Non renseignée
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Statut</th>
+                                <td>
+                                    <span class="status-badge {% if user.isVerified %}status-active{% else %}status-inactive{% endif %}">
+                                        {{ user.isVerified ? 'Vérifié' : 'Non vérifié' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date d'inscription</th>
+                                <td>{{ user.createdAt|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h3 class="info-card-title">Réservations</h3>
+                    </div>
+                    <div class="info-card-body">
+                        {% if user.reservations is empty %}
+                            <p class="text-muted">Aucune réservation</p>
+                        {% else %}
+                            {% for reservation in user.reservations %}
+                                <div class="reservation-link">
+                                    <a href="{{ path('admin_reservation_detail', {'entityId': reservation.id}) }}" class="reservation-item">
+                                        {{ reservation.service.title }}
+                                        {% if reservation.payments|length > 0 %}
+                                            - Facture n°{{ reservation.payments|first.billingNumber }}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ path('admin') }}" class="back-button">
+            <i class="fas fa-arrow-left mr-2"></i> Retour au tableau de bord
+        </a>
+    </div>
+{% endblock %}

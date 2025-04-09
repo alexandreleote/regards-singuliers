@@ -109,11 +109,14 @@ class DiscussionCrudController extends AbstractCrudController
     {
         $fields = [
             IdField::new('id')->hideOnForm(),
-            AssociationField::new('reservation', 'Réservation')
-                ->setTemplatePath('admin/discussion/reservation_name.html.twig')
+            TextField::new('clientName', 'Client')
+                ->setTemplatePath('admin/discussion/client_name.html.twig')
                 ->formatValue(function ($value, $entity) {
                     return $entity->getReservation() ? $entity->getReservation()->getUser()->getFullName() : null;
                 })
+                ->hideOnForm(),
+            AssociationField::new('reservation', 'Réservation')
+                ->setTemplatePath('admin/discussion/reservation_name.html.twig')
                 ->setCrudController(ReservationCrudController::class)
                 ->hideOnForm(),
             DateTimeField::new('createdAt', 'Date de création')

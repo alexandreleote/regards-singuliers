@@ -4,7 +4,7 @@
         .setAction('detail')
         .setEntityId(entity.instance.reservation.id)
     }}">
-        {{ field.formattedValue }}
+        {{ entity.instance.reservation.service.title }} - #{{ entity.instance.reservation.id }}
     </a>
 {% else %}
     <span class="badge badge-secondary">Non défini</span>
