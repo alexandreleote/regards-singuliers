@@ -59,20 +59,22 @@ class ReservationCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            AssociationField::new('user'),
-            AssociationField::new('service'),
+            AssociationField::new('service', 'Prestation')
+                ->setFormTypeOption('choice_label', 'title')
+                ->formatValue(function ($value, $entity) {
+                    return $entity->getService()->getTitle();
+                }),
+            TextField::new('name', 'Nom'),
+            TextField::new('firstName', 'Prénom'),
             DateTimeField::new('bookedAt', 'Date de réservation'),
             DateTimeField::new('appointment_datetime', 'Date de rendez-vous'),
             TextField::new('status', 'Statut'),
-            TextField::new('name', 'Nom'),
-            TextField::new('firstName', 'Prénom'),
-            NumberField::new('price', 'Prix')
-                ->setNumDecimals(2)
-                ->setStoredAsString(false),
+            NumberField::new('price', 'Prix')->hideOnIndex(),
             TextField::new('stripePaymentIntentId', 'ID Stripe')->hideOnIndex(),
             TextField::new('calendlyEventId', 'ID Calendly')->hideOnIndex(),
             TextField::new('calendlyInviteeId', 'ID Invité Calendly')->hideOnIndex(),
             DateTimeField::new('canceledAt', 'Date d\'annulation')->hideOnIndex(),
+            AssociationField::new('user')->hideOnIndex(),
         ];
     }
 
@@ -82,29 +84,49 @@ class ReservationCrudController extends AbstractCrudController
             ->linkToCrudAction('viewDiscussions')
             ->setCssClass('btn btn-info');
 
-        $cancelReservation = Action::new('cancelReservation', 'Annuler', 'fa fa-times')
+        $cancelReservation = Action::new('cancelReservation', 'Annuler la réservation', 'fa fa-times')
             ->linkToCrudAction('cancelReservation')
             ->displayAsButton()
             ->setCssClass('btn btn-danger');
 
-        $refundReservation = Action::new('refundReservation', 'Rembourser', 'fa fa-money-bill-wave')
+        $refundReservation = Action::new('refundReservation', 'Rembourser la réservation', 'fa fa-money-bill-wave')
             ->linkToCrudAction('refundReservation')
             ->displayAsButton()
             ->setCssClass('btn btn-warning');
 
-        $rescheduleReservation = Action::new('rescheduleReservation', 'Replanifier', 'fa fa-calendar-alt')
+        $rescheduleReservation = Action::new('rescheduleReservation', 'Replanifier la réservation', 'fa fa-calendar-alt')
             ->linkToCrudAction('rescheduleReservation')
             ->displayAsButton()
             ->setCssClass('btn btn-info');
 
+        $showInvoice = Action::new('showInvoice', 'Voir la facture', 'fa fa-file-invoice')
+            ->linkToCrudAction('showInvoice')
+            ->displayAsButton()
+            ->setCssClass('btn btn-success');
+
+        $downloadInvoice = Action::new('downloadInvoice', 'Télécharger la facture', 'fa fa-download')
+            ->linkToCrudAction('downloadInvoice')
+            ->displayAsButton()
+            ->setCssClass('btn btn-primary');
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+                return $action->setLabel('Voir');
+            })
+            ->disable(Action::EDIT)
             ->add(Crud::PAGE_INDEX, $viewDiscussions)
             ->add(Crud::PAGE_DETAIL, $viewDiscussions)
             ->add(Crud::PAGE_DETAIL, $cancelReservation)
             ->add(Crud::PAGE_DETAIL, $refundReservation)
             ->add(Crud::PAGE_DETAIL, $rescheduleReservation)
-            ->disable(Action::NEW);
+            ->add(Crud::PAGE_DETAIL, $showInvoice)
+            ->add(Crud::PAGE_DETAIL, $downloadInvoice)
+            ->disable(Action::NEW)
+            ->disable(Action::DELETE)
+            ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
+                return $action->setLabel('Retour');
+            });
     }
 
     public function viewDiscussions(Request $request): Response
@@ -175,6 +197,32 @@ class ReservationCrudController extends AbstractCrudController
 
         $this->addFlash('success', 'La réservation a été replanifiée avec succès.');
 
+        return $this->redirectToRoute('admin', [
+            'crudAction' => 'detail',
+            'crudControllerFqcn' => self::class,
+            'entityId' => $reservation->getId()
+        ]);
+    }
+
+    public function showInvoice(Reservation $reservation): Response
+    {
+        // TODO: Implémenter la logique d'affichage de la facture
+        // Par exemple, générer un PDF et l'afficher dans le navigateur
+        $this->addFlash('info', 'Affichage de la facture en cours de développement.');
+        
+        return $this->redirectToRoute('admin', [
+            'crudAction' => 'detail',
+            'crudControllerFqcn' => self::class,
+            'entityId' => $reservation->getId()
+        ]);
+    }
+
+    public function downloadInvoice(Reservation $reservation): Response
+    {
+        // TODO: Implémenter la logique de téléchargement de la facture
+        // Par exemple, générer un PDF et le télécharger
+        $this->addFlash('info', 'Téléchargement de la facture en cours de développement.');
+        
         return $this->redirectToRoute('admin', [
             'crudAction' => 'detail',
             'crudControllerFqcn' => self::class,

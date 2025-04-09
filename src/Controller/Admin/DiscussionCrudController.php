@@ -95,6 +95,12 @@ class DiscussionCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $disableFiles)
             ->update(Crud::PAGE_DETAIL, Action::INDEX, function (Action $action) {
                 return $action->setLabel('Retour');
+            })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+                return $action->setLabel('Modifier');
+            })
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
+                return $action->setLabel('Voir');
             });
     }
 

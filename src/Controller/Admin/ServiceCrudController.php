@@ -89,6 +89,7 @@ class ServiceCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action->setLabel('Modifier');
             })
+            ->disable(Action::DETAIL)
 
             /* NEW */
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_RETURN, function (Action $action) {

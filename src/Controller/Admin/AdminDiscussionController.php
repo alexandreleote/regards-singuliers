@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DiscussionController extends AbstractController
+class AdminDiscussionController extends AbstractController
 {
     #[Route('/admin/discussion/{id}/delete-message/{messageId}', name: 'admin_discussion_delete_message', methods: ['POST'])]
     public function deleteMessage(int $id, int $messageId, EntityManagerInterface $entityManager): Response
