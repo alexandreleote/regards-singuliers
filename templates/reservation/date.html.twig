@@ -2,11 +2,6 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('app') }}
-{% endblock %}
-
 {% block body %}
 
     {% if isProfileIncomplete %}
@@ -23,11 +18,15 @@
     {% else %}
     <article class="service-info">
         <h1 class="service-title">{{ service.title }}</h1>
-        <p class="service-description">{{ service.description|raw }}</p>
+        <p class="service-description">{{ service.smallDescription|raw }}</p>
         <aside class="price-info">
             <div class="price-row">
                 <span>Prix total :</span>
                 <span>{{ service.price|number_format(0, ',', ' ') }}€</span>
+            </div>
+            <div class="price-row">
+                <span>Acompte à verser :</span>
+                <span>{{ deposit_amount }}€</span>
             </div>
         </aside>
     </article>

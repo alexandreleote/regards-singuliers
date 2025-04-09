@@ -33,7 +33,7 @@ class ServiceRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.isActive = :active')
             ->setParameter('active', true)
-            ->orderBy('s.reference', 'ASC')
+            ->orderBy('s.price', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -88,7 +88,8 @@ class ServiceRepository extends ServiceEntityRepository
             ->andWhere('s.isActive = :active')
             ->setParameter('active', true)
             ->groupBy('s.id')
-            ->orderBy('COUNT(r.id)', 'DESC')
+            ->orderBy('s.price', 'ASC')
+            ->addOrderBy('COUNT(r.id)', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
