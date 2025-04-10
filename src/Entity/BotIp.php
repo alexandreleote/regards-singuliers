@@ -13,7 +13,7 @@ class BotIp
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 64)]
+    #[ORM\Column(length: 255)]
     private ?string $ip = null;
 
     #[ORM\Column]
@@ -42,7 +42,12 @@ class BotIp
 
     public function setIp(string $ip): static
     {
-        $this->ip = $ip;
+        // Hash l'IP avec Argon2i pour une meilleure sécurité
+        $this->ip = password_hash($ip, PASSWORD_ARGON2I, [
+            'memory_cost' => 1024,
+            'time_cost' => 2,
+            'threads' => 2
+        ]);
         return $this;
     }
 
@@ -64,7 +69,30 @@ class BotIp
 
     public function setUserAgent(?string $userAgent): static
     {
-        $this->userAgent = $userAgent;
+        // Parse le User-Agent pour extraire les informations pertinentes
+        if ($userAgent) {
+            $parsed = [];
+            
+            // Détection du navigateur principal
+            if (preg_match('/(Chrome|Firefox|Safari|Edge|Opera)[\/ ]([\d.]+)/', $userAgent, $matches)) {
+                $parsed[] = $matches[1] . ' ' . $matches[2];
+            }
+            
+            // Détection du système d'exploitation
+            if (preg_match('/(Windows NT|Mac OS X|Linux|Android|iOS)[\/ ]?([\d._]+)?/', $userAgent, $matches)) {
+                $parsed[] = $matches[1] . ($matches[2] ?? '');
+            }
+            
+            // Détection si c'est un mobile
+            if (preg_match('/(Mobile|iPhone|iPad|Android)/', $userAgent)) {
+                $parsed[] = 'Mobile';
+            }
+            
+            $this->userAgent = implode(' | ', $parsed);
+        } else {
+            $this->userAgent = null;
+        }
+        
         return $this;
     }
 

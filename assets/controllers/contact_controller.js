@@ -169,13 +169,23 @@ export default class extends Controller {
         this.clearErrors();
         
         // Vérification des champs honeypot
-        const mobilePhone = this.formTarget.querySelector('input[name="mobilePhone"]').value;
-        const workEmail = this.formTarget.querySelector('input[name="workEmail"]').value;
-        
-        if (mobilePhone || workEmail) {
-            // Si un champ honeypot est rempli, on ne soumet pas le formulaire
+        const honeypotFields = this.formTarget.querySelectorAll('.honeypot-field input');
+        const timestamp = parseInt(this.formTarget.querySelector('input[name="_timestamp"]').value);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const submissionTime = currentTime - timestamp;
+
+        // Vérifier le temps de soumission (minimum 2 secondes, maximum 1 heure)
+        if (submissionTime < 2 || submissionTime > 3600) {
             this.showErrorMessage('Message non envoyé');
             return;
+        }
+
+        // Vérifier si les champs honeypot sont remplis
+        for (const field of honeypotFields) {
+            if (field.value.trim() !== '') {
+                this.showErrorMessage('Message non envoyé');
+                return;
+            }
         }
         
         if (!this.formTarget.checkValidity()) {
@@ -188,19 +198,22 @@ export default class extends Controller {
 
         try {
             const formData = new FormData(this.formTarget);
-            const data = {
-                type: formData.get('type'),
-                civilite: formData.get('civilite'),
-                nom: formData.get('nom'),
-                prenom: formData.get('prenom'),
-                email: formData.get('email'),
-                telephone: formData.get('telephone').replace(/\s+/g, ''),
-                localisation: formData.get('localisation'),
-                description: formData.get('description')
-            };
-
-            if (formData.get('entreprise')) {
-                data.entreprise = formData.get('entreprise');
+            // Filtrer les champs honeypot et le timestamp
+            // Liste des champs attendus par le serveur
+            const expectedFields = ['type', 'civilite', 'nom', 'prenom', 'email', 'telephone', 'localisation', 'description'];
+            const data = {};
+            
+            // Ajouter uniquement les champs attendus
+            for (const field of expectedFields) {
+                const value = formData.get(field);
+                if (value !== null) {
+                    data[field] = field === 'telephone' ? value.replace(/\s+/g, '') : value;
+                }
+            }
+            
+            // Ajouter le champ entreprise seulement s'il est requis
+            if (this.typeTargets.find(target => target.checked)?.value === 'professionnel') {
+                data['entreprise'] = formData.get('entreprise') || '';  // Envoyer une chaîne vide si non rempli
             }
 
             const csrfToken = document.querySelector('input[name="_token"]').value;
@@ -209,7 +222,9 @@ export default class extends Controller {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify(data)
             });
@@ -217,6 +232,7 @@ export default class extends Controller {
             const result = await response.json();
             
             if (!response.ok) {
+                console.log('Réponse complète:', result);
                 if (result.errors) {
                     this.showErrors(result.errors);
                 } else {

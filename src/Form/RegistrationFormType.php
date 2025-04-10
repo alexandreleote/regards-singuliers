@@ -5,8 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use App\Form\FormExtension\HoneyPotType;
 use App\Service\AnonymizationService;
-use App\Repository\BotIpRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\SecurityService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
@@ -26,11 +25,10 @@ class RegistrationFormType extends HoneyPotType
     public function __construct(
         LoggerInterface $honeyPotLogger,
         RequestStack $requestStack,
-        EntityManagerInterface $entityManager,
-        BotIpRepository $botIpRepository,
+        SecurityService $securityService,
         private AnonymizationService $anonymizationService
     ) {
-        parent::__construct($honeyPotLogger, $requestStack, $entityManager, $botIpRepository);
+        parent::__construct($honeyPotLogger, $requestStack, $securityService);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
