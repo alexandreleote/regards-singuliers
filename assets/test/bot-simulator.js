@@ -24,24 +24,20 @@ async function simulateContactAttack() {
 
     // Envoi de la requête
     try {
-        const formData = new FormData();
-        
-        // Ajouter tous les champs au FormData
-        Object.entries(maliciousData).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
-
         // Récupérer le token CSRF
         const csrfToken = document.querySelector('input[name="_token"][value]');
         if (!csrfToken) {
             console.warn('Token CSRF non trouvé dans le formulaire');
             return;
         }
-        formData.append('_token', csrfToken.value);
+        maliciousData._token = csrfToken.value;
 
         const response = await fetch('/contact/', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(maliciousData)
         });
 
         let result;
@@ -65,10 +61,10 @@ async function simulateRegistrationAttack() {
     // Données malveillantes pour l'inscription
     const formData = new FormData();
 
-    // Champs normaux du formulaire
+    // Champs normaux du formulaire avec un mot de passe valide mais malicieux
     formData.append('registration_form[email]', 'bot@evil.com');
-    formData.append('registration_form[plainPassword][first]', '<script>alert(\'XSS\')</script>P@ssw0rd123');
-    formData.append('registration_form[plainPassword][second]', '<script>alert(\'XSS\')</script>P@ssw0rd123');
+    formData.append('registration_form[plainPassword][first]', 'Passw0rd!@#$%^&*');
+    formData.append('registration_form[plainPassword][second]', 'Passw0rd!@#$%^&*');
     formData.append('registration_form[agreeTerms]', '1');
 
     // Tentative de remplir les champs honeypot

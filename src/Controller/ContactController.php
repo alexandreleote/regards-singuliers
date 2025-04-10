@@ -49,7 +49,7 @@ class ContactController extends AbstractController
             $honeypotFields = ['contact_email', 'mobile_phone'];
             foreach ($honeypotFields as $field) {
                 if (!empty($data[$field])) {
-                    // Store bot IP
+                    // Enregistrer l'IP suspecte
                     $botIp = new BotIp();
                     $botIp->setIp($request->getClientIp());
                     $botIp->setUserAgent($request->headers->get('User-Agent'));

@@ -82,13 +82,13 @@ class RegistrationFormType extends HoneyPotType
                             'max' => 4096,
                         ]),
                         new Regex([
-                            'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/',
+                            'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{12,}$/',
                             'message' => 'Votre mot de passe doit contenir au minimum :
                             - 12 caractères
                             - Une majuscule
                             - Une minuscule
                             - Un chiffre
-                            - Un caractère spécial (@$!%*?&)'
+                            - Un caractère spécial (!@#$%^&*(),.?":{}|<>)'
                         ]),
                     ],
                     'label' => 'Mot de passe',

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\BotIp;
 use App\Entity\User;
 use App\Security\EmailVerifier;
 use App\Form\RegistrationFormType;
@@ -43,7 +44,33 @@ class RegistrationController extends AbstractController
         
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+
+        try {
+            $form->handleRequest($request);
+        } catch (\Exception $e) {
+            // Enregistrer l'IP du bot
+            $botIp = new BotIp();
+            $botIp->setIp($request->getClientIp());
+            $botIp->setUserAgent($request->headers->get('User-Agent'));
+            $botIp->setFormType('inscription');
+            
+            $entityManager->persist($botIp);
+            $entityManager->flush();
+
+            if ($request->isXmlHttpRequest()) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Inscription non autorisée'
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'inscription.');
+            return $this->render('registration/register.html.twig', [
+                'registrationForm' => $form,
+                'page_title' => 'Inscription - regards singuliers',
+                'meta_description' => 'Inscription - regards singuliers',
+            ]);
+        }
 
         if ($form->isSubmitted()) {
             // Vérifier d'abord si l'email existe déjà
