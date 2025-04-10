@@ -1,5 +1,9 @@
 {% extends 'auth_base.html.twig' %}
 
+{% block meta %}
+    <meta name="csrf-token" content="{{ csrf_token('registration_form') }}">
+{% endblock %}
+
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
@@ -9,6 +13,7 @@
                 {{ form_start(registrationForm, {
                     'attr': {
                         'class': 'auth-form',
+                        'name': 'registration_form',
                         'data-controller': 'honeypot',
                         'data-honeypot-hidden-class': 'hidden',
                         'data-action': 'submit->honeypot#submit'
@@ -26,15 +31,22 @@
                     {% endif %}
 
                     <!-- Champs honeypot -->
-                    <div data-honeypot-target="honeypot" style="position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; opacity: 0 !important; pointer-events: none !important;">
-                        <input type="text" name="mobilePhone" value="" aria-hidden="true" tabindex="-1">
-                        <input type="text" name="workEmail" value="" aria-hidden="true" tabindex="-1">
+                    <div style="position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; opacity: 0 !important; pointer-events: none !important;">
+                        <div data-honeypot-target="honeypot">
+                            <label for="phone">Téléphone</label>
+                            <input type="text" id="phone" name="phone" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div data-honeypot-target="honeypot">
+                            <label for="work_email">Email professionnel</label>
+                            <input type="email" id="work_email" name="work_email" tabindex="-1" autocomplete="off">
+                        </div>
+                        {{ form_errors(registrationForm.email) }}
                     </div>
 
                     <div class="form-group">
                         {{ form_label(registrationForm.email) }}
                         {{ form_widget(registrationForm.email) }}
-                        {{ form_errors(registrationForm.email) }}
                     </div>
 
                     <div class="form-group">
@@ -77,6 +89,6 @@
     </div>
 
     {% if app.environment == 'dev' %}
-        <script defer src="{{ asset('build/test/bot-simulator.js') }}"></script>
+        {{ encore_entry_script_tags('test/registration-bot') }}
     {% endif %}
 {% endblock %}

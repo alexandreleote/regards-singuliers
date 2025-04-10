@@ -52,7 +52,7 @@ class RegistrationController extends AbstractController
             $botIp = new BotIp();
             $botIp->setIp($request->getClientIp());
             $botIp->setUserAgent($request->headers->get('User-Agent'));
-            $botIp->setFormType('inscription');
+            $botIp->setFormType('registration_form');
             
             $entityManager->persist($botIp);
             $entityManager->flush();

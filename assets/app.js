@@ -3,9 +3,8 @@ import './bootstrap.js';
 import './controllers/menu-burger_controller.js';
 import './controllers/phone-toggle_controller.js';
 
-// Import des styles CSS
+// Import des styles
 import './styles/app.css';
-// import './styles/fonts.css';
 
 // Gestionnaire d'erreurs global pour les promesses non gérées
 window.addEventListener('unhandledrejection', function(event) {
