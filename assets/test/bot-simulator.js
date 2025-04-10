@@ -31,13 +31,15 @@ async function simulateContactAttack() {
             formData.append(key, value);
         });
 
-        // Récupérer le token CSRF s'il existe
-        const csrfToken = document.querySelector('input[name="_token"]');
-        if (csrfToken) {
-            formData.append('_token', csrfToken.value);
+        // Récupérer le token CSRF
+        const csrfToken = document.querySelector('input[name="_token"][value]');
+        if (!csrfToken) {
+            console.warn('Token CSRF non trouvé dans le formulaire');
+            return;
         }
+        formData.append('_token', csrfToken.value);
 
-        const response = await fetch('/contact', {
+        const response = await fetch('/contact/', {
             method: 'POST',
             body: formData
         });
@@ -77,8 +79,12 @@ async function simulateRegistrationAttack() {
     formData.append('registration_form[_timestamp]', Math.floor(Date.now() / 1000) - 1);
 
     // Récupérer le token CSRF
-    const csrfToken = document.querySelector('input[name="registration_form[_token]"]').value;
-    formData.append('registration_form[_token]', csrfToken);
+    const csrfToken = document.querySelector('input[name="registration_form[_token]"]');
+    if (!csrfToken) {
+        console.warn('Token CSRF non trouvé dans le formulaire d\'inscription');
+        return;
+    }
+    formData.append('registration_form[_token]', csrfToken.value);
 
     try {
         const response = await fetch('/inscription', {
@@ -102,15 +108,22 @@ async function simulateRegistrationAttack() {
     }
 }
 
-// Exécuter les attaques
+// Exécuter le test approprié
 async function runTests() {
     console.log('Début des tests de sécurité...');
     
-    console.log('Test 1: Attaque du formulaire de contact');
-    await simulateContactAttack();
+    // Déterminer quel formulaire tester en fonction de la page courante
+    const path = window.location.pathname;
     
-    console.log('Test 2: Attaque du formulaire d\'inscription');
-    await simulateRegistrationAttack();
+    if (path.startsWith('/contact')) {
+        console.log('Test : Attaque du formulaire de contact');
+        await simulateContactAttack();
+    } else if (path.startsWith('/inscription')) {
+        console.log('Test : Attaque du formulaire d\'inscription');
+        await simulateRegistrationAttack();
+    } else {
+        console.log('Aucun test disponible pour cette page');
+    }
     
     console.log('Tests terminés.');
 }
