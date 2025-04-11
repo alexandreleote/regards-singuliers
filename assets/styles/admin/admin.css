@@ -7,7 +7,7 @@
     --admin-warning: #f39c12;
     --admin-danger: #e74c3c;
     --admin-background: #f5f7fa;
-    --admin-card: #ffffff;
+    --admin-card: var(--color-white);
     --admin-text: #333333;
     --admin-text-light: #7f8c8d;
     --admin-border: #ecf0f1;
@@ -22,7 +22,7 @@
   .admin-sidebar {
     width: 250px;
     background-color: var(--admin-primary);
-    color: white;
+    color: var(--color-white);
     position: fixed;
     height: 100vh;
     overflow-y: auto;
@@ -69,7 +69,7 @@
   .admin-toggle {
     background: none;
     border: none;
-    color: white;
+    color: var(--color-white);
     cursor: pointer;
     font-size: var(--font-size-md);
   }
@@ -91,12 +91,12 @@
   }
   
   .admin-nav-link:hover {
-    color: white;
+    color: var(--color-white);
     background-color: rgba(255, 255, 255, 0.1);
   }
   
   .admin-nav-link.active {
-    color: white;
+    color: var(--color-white);
     background-color: var(--admin-accent);
   }
   
@@ -221,7 +221,7 @@
   
   .admin-btn-primary {
     background-color: var(--admin-accent);
-    color: white;
+    color: var(--color-white);
   }
   
   .admin-btn-primary:hover {
@@ -230,7 +230,7 @@
   
   .admin-btn-success {
     background-color: var(--admin-success);
-    color: white;
+    color: var(--color-white);
   }
   
   .admin-btn-success:hover {
@@ -239,7 +239,7 @@
   
   .admin-btn-warning {
     background-color: var(--admin-warning);
-    color: white;
+    color: var(--color-white);
   }
   
   .admin-btn-warning:hover {
@@ -248,7 +248,7 @@
   
   .admin-btn-danger {
     background-color: var(--admin-danger);
-    color: white;
+    color: var(--color-white);
   }
   
   .admin-btn-danger:hover {
@@ -335,7 +335,7 @@
     height: 36px;
     margin: 0 var(--spacing-xs);
     border-radius: var(--radius-sm);
-    background-color: white;
+    background-color: var(--color-white);
     color: var(--admin-text);
     font-size: var(--font-size-sm);
     cursor: pointer;
@@ -348,7 +348,7 @@
   
   .admin-pagination-item.active {
     background-color: var(--admin-accent);
-    color: white;
+    color: var(--color-white);
   }
   
   @media (max-width: 991.98px) {

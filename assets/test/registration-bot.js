@@ -25,7 +25,7 @@ class RegistrationBot {
         const button = document.createElement('button');
         button.type = 'button';
         button.textContent = 'Tester la protection anti-bot';
-        button.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 9999; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+        button.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 9999; padding: 10px; background: #4CAF50; color: var(--color-white); border: none; border-radius: 4px; cursor: pointer;';
         
         // Ajouter le bouton à la page
         document.body.appendChild(button);

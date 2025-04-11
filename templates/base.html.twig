@@ -1,3 +1,97 @@
+{# Macros de navigation #}
+{% macro main_nav(active_page = '') %}
+    <ul class="nav-list">
+        <li class="nav-item {% if active_page == 'studio' %}active{% endif %}">
+            <a href="{{ path('studio') }}" class="nav-link">Le Studio</a>
+        </li>
+        <li class="nav-item {% if active_page == 'realisations' %}active{% endif %}">
+            <a href="{{ path('realisations') }}" class="nav-link">Réalisations</a>
+        </li>
+        <li class="nav-item {% if active_page == 'prestations' %}active{% endif %}">
+            <a href="{{ path('prestations') }}" class="nav-link">Prestations</a>
+        </li>
+        <li class="nav-item {% if active_page == 'blog' %}active{% endif %}">
+            <a href="#" class="nav-link">Blog</a>
+        </li>
+        <li class="nav-item {% if active_page == 'contact' %}active{% endif %}">
+            <a href="{{ path('contact') }}" class="nav-link">Contact</a>
+        </li>
+    </ul>
+{% endmacro %}
+
+{% macro mobile_nav(active_page = '') %}
+    <ul class="nav-list-mobile">
+        <li class="nav-item-mobile {% if active_page == 'studio' %}active{% endif %}">
+            <a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a>
+        </li>
+        <li class="nav-item-mobile {% if active_page == 'realisations' %}active{% endif %}">
+            <a href="{{ path('realisations') }}" class="nav-link-mobile">Réalisations</a>
+        </li>
+        <li class="nav-item-mobile {% if active_page == 'prestations' %}active{% endif %}">
+            <a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a>
+        </li>
+        <li class="nav-item-mobile {% if active_page == 'blog' %}active{% endif %}">
+            <a href="#" class="nav-link-mobile">Blog</a>
+        </li>
+        <li class="nav-item-mobile {% if active_page == 'contact' %}active{% endif %}">
+            <a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a>
+        </li>
+    </ul>
+{% endmacro %}
+
+{% macro auth_nav(is_mobile = false) %}
+    {% if not app.user %}
+        {% if is_mobile %}
+            <li class="nav-item-mobile auth-mobile">
+                <a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a>
+            </li>
+        {% else %}
+            <a href="{{ path('login') }}" class="nav-link">Connexion</a>
+        {% endif %}
+    {% else %}
+        {% if is_granted('ROLE_ADMIN') %}
+            {% if is_mobile %}
+                <li class="nav-item-mobile auth-mobile">
+                    <a href="{{ path('admin') }}" class="nav-link-mobile">Admin</a>
+                </li>
+            {% else %}
+                <a href="{{ path('admin') }}" class="nav-link" target="_blank">Admin</a>
+            {% endif %}
+        {% endif %}
+        
+        {% if is_mobile %}
+            <li class="nav-item-mobile auth-mobile">
+                <a href="{{ path('profile') }}" class="nav-link-mobile">Mon Profil</a>
+            </li>
+            <li class="nav-item-mobile auth-mobile">
+                <a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a>
+            </li>
+        {% else %}
+            <a href="{{ path('profile') }}" class="nav-link">Mon Profil</a>
+            <a href="{{ path('logout') }}" class="nav-link">Déconnexion</a>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro social_links(class_prefix = '') %}
+    <a href="https://www.facebook.com/rs.regards.singuliers/" target="_blank" aria-label="Facebook" class="{{ class_prefix }}social-link">
+        <i class="fa-brands fa-facebook-f"></i>
+    </a>
+    <a href="https://www.instagram.com/regards_singuliers/" target="_blank" aria-label="Instagram" class="{{ class_prefix }}social-link">
+        <i class="fa-brands fa-instagram"></i>
+    </a>
+    <a href="https://fr.pinterest.com/rsregardssinguliers/" target="_blank" aria-label="Pinterest" class="{{ class_prefix }}social-link">
+        <i class="fa-brands fa-pinterest"></i>
+    </a>
+{% endmacro %}
+
+{# Macros de mise en page #}
+{% macro button(text, url, class = 'btn-primary', aria_label = '') %}
+    <a href="{{ url }}" class="btn {{ class }}" {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}>
+        {{ text }}
+    </a>
+{% endmacro %}
+
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -7,7 +101,7 @@
         {% if app.user %}
             <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
         {% endif %}
-        <meta name="description" content="{{ meta_description|default('Architecte d\'intérieur à Bordeaux - Aménagement, rénovation et décoration d\'intérieur pour particuliers et professionnels.') }}">
+        <meta name="description" content="{{ meta_description|default('Architecte d\'intérieur - Aménagement, rénovation et décoration d\'intérieur pour particuliers et professionnels.') }}">
         <title>{% block title %}{{ page_title|default('regards singuliers - Architecture d\'intérieur') }}{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         
@@ -25,17 +119,16 @@
                 const isUserConnected = {{ app.user ? 'true' : 'false' }};
                 const currentDiscussionId = {{ currentDiscussionId|default('null') }};
             </script>
-
-
         {% endblock %}
 
         {# Les polices sont chargées localement via fonts.css #}
     </head>
     <body>
+        
         <header class="header">
             <div class="container header-container">
                 <div class="logo">
-                    <a href="{{ path('home') }}">
+                    <a href="{{ path('home') }}" aria-label="Accueil regards singuliers">
                         <p>regards singuliers</p>
                         <span>Architecture d'intérieur</span>
                     </a>
@@ -43,7 +136,11 @@
                 
                 {# Menu burger pour la navigation (- 992px) #}
                 <div data-controller="menu-burger">
-                    <button data-action="click->menu-burger#toggle" class="burger-menu-btn" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="menu-mobile">
+                    <button data-action="click->menu-burger#toggle" 
+                            class="burger-menu-btn" 
+                            aria-label="Ouvrir le menu de navigation" 
+                            aria-expanded="false" 
+                            aria-controls="menu-mobile">
                         <div class="burger-menu">
                             <span class="burger-line"></span>
                             <span class="burger-line"></span>
@@ -53,47 +150,30 @@
 
                     {# Menu burger pour l'authentification (992px - 1200px) #}
                     {% if app.user %}
-                        <button data-action="click->menu-burger#toggleAuth" class="auth-burger-menu-btn" aria-label="Ouvrir le menu d'authentification" aria-expanded="false" aria-controls="auth-menu-mobile">
+                        <button data-action="click->menu-burger#toggleAuth" 
+                                class="auth-burger-menu-btn" 
+                                aria-label="Ouvrir le menu d'authentification" 
+                                aria-expanded="false" 
+                                aria-controls="auth-menu-mobile">
                             <i class="fas fa-user"></i>
                         </button>
                     {% endif %}
                     
                     {# Menu de navigation mobile #} 
-                    <div class="nav-mobile" data-menu-burger-target="mainMenu">
+                    <div class="nav-mobile" data-menu-burger-target="mainMenu" id="menu-mobile">
                         <nav class="mobile-nav" aria-label="Menu de navigation mobile">
-                            <ul class="nav-list-mobile">
-                                <li class="nav-item-mobile"><a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a></li>
-                                <li class="nav-item-mobile"><a href="{{ path('realisations') }}" class="nav-link-mobile">Réalisations</a></li>
-                                <li class="nav-item-mobile"><a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a></li>
-                                <li class="nav-item-mobile"><a href="#" class="nav-link-mobile">Blog</a></li>
-                                <li class="nav-item-mobile"><a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a></li>
-                                
-                                {% if not app.user %}
-                                    <li class="nav-item-mobile auth-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
-                                {% else %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <li class="nav-item-mobile auth-mobile"><a href="{{ path('admin') }}" class="nav-link-mobile">Admin</a></li>
-                                    {% endif %}
-                                    <li class="nav-item-mobile auth-mobile"><a href="{{ path('profile') }}" class="nav-link-mobile">Mon Profil</a></li>
-                                    <li class="nav-item-mobile auth-mobile"><a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a></li>
-                                {% endif %}
-                            </ul>
+                            {{ _self.mobile_nav(active_page|default('')) }}
+                            
+                            {# Ajouter les liens d'authentification au menu mobile #}
+                            {{ _self.auth_nav(true) }}
                         </nav>
                     </div>
 
                     {# Menu d'authentification mobile pour 992px - 1200px #}
-                    <div class="nav-mobile" data-menu-burger-target="authMenu">
+                    <div class="nav-mobile" data-menu-burger-target="authMenu" id="auth-menu-mobile">
                         <nav class="mobile-nav" aria-label="Menu d'authentification mobile">
                             <ul class="nav-list-mobile">
-                                {% if not app.user %}
-                                <li class="nav-item-mobile auth-mobile"><a href="{{ path('login') }}" class="nav-link-mobile">Connexion</a></li>
-                                {% else %}
-                                {% if is_granted('ROLE_ADMIN') %}
-                                <li class="nav-item-mobile auth-mobile"><a href="{{ path('admin') }}" class="nav-link-mobile">Admin</a></li>
-                                {% endif %}
-                                <li class="nav-item-mobile auth-mobile"><a href="{{ path('profile') }}" class="nav-link-mobile">Mon Profil</a></li>
-                                <li class="nav-item-mobile auth-mobile"><a href="{{ path('logout') }}" class="nav-link-mobile">Déconnexion</a></li>
-                                {% endif %}
+                                {{ _self.auth_nav(true) }}
                             </ul>
                         </nav>
                     </div>
@@ -103,65 +183,47 @@
 
                 {# Navigation principale Desktop #}
                 <nav class="navbar" aria-label="Navigation principale">
-                    <ul class="nav-list">
-                        <li class="nav-item"><a href="{{ path('studio') }}" class="nav-link">Le Studio</a></li>
-                        <li class="nav-item"><a href="{{ path('realisations') }}" class="nav-link">Réalisations</a></li>
-                        <li class="nav-item"><a href="{{ path('prestations') }}" class="nav-link">Prestations</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Blog</a></li>
-                        <li class="nav-item"><a href="{{ path('contact') }}" class="nav-link">Contact</a></li>
-                    </ul>
+                    {{ _self.main_nav(active_page|default('')) }}
                 </nav>
 
                 {# Navigation utilisateur Desktop #}
                 <div class="header-right">
                     {% if app.user %}
                         <nav class="header-auth" aria-label="Navigation utilisateur">
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('admin') }}" class="nav-link" target="_blank">Admin</a>
-                            {% endif %}
-                            <a href="{{ path('profile') }}" class="nav-link">Mon Profil</a>
-                            <a href="{{ path('logout') }}" class="nav-link">Déconnexion</a>
+                            {{ _self.auth_nav(false) }}
                         </nav>
                     {% else %}
                         <nav class="header-login" aria-label="Navigation connexion">
-                            <a href="{{ path('login') }}" class="nav-link">Connexion</a>
+                            {{ _self.auth_nav(false) }}
                         </nav>
                     {% endif %}
                 </div>
             </div>
         </header>
 
-        <main class="page-fullheight"> 
-            <section class="container page-content">
-                {% block body %}
-                {% endblock %}
-            </section>
+        <main class="page-container" id="main-content">
+            {% block body %}
+            {% endblock %}
         </main>
 
         <footer class="footer">
-            <section class="container footer-container">
-                <aside class="footer-col">
+
+            
+            <div class="container footer-container">
+                <div class="footer-col">
                     <div class="footer-logo">
-                        <a href="{{ path('home') }}">
+                        <a href="{{ path('home') }}" aria-label="Accueil regards singuliers">
                             <p>regards singuliers</p>
                             <p>Architecture d'intérieur</p>
                         </a>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.facebook.com/rs.regards.singuliers/" target="_blank" aria-label="Facebook" class="footer-social-link">
-                            <i class="fa-brands fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/regards_singuliers/" target="_blank" aria-label="Instagram" class="footer-social-link">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="https://fr.pinterest.com/rsregardssinguliers/" target="_blank" aria-label="Pinterest" class="footer-social-link">
-                            <i class="fa-brands fa-pinterest"></i>
-                        </a>
+                        {{ _self.social_links('footer-') }}
                     </div>
-                </aside>
+                </div>
 
-                <aside class="footer-col">
-                    <div class="footer-title">Navigation</div>
+                <nav class="footer-col" aria-labelledby="footer-nav-title">
+                    <h2 id="footer-nav-title" class="footer-title">Navigation</h2>
                     <ul class="footer-links">
                         <li class="footer-link-item"><a href="{{ path('studio') }}" class="footer-link">Le Studio</a></li>
                         <li class="footer-link-item"><a href="{{ path('realisations') }}" class="footer-link">Réalisations</a></li>
@@ -169,10 +231,10 @@
                         <li class="footer-link-item"><a href="#" class="footer-link">Blog</a></li>
                         <li class="footer-link-item"><a href="{{ path('contact') }}" class="footer-link">Contact</a></li>
                     </ul>
-                </aside>
+                </nav>
 
-                <aside class="footer-col">
-                    <div class="footer-title">Coordonnées</div>
+                <address class="footer-col">
+                    <h2 class="footer-title">Coordonnées</h2>
                     <div class="footer-contact-item">
                         <div class="footer-contact-text">regards singuliers</div>
                     </div>
@@ -190,23 +252,23 @@
                             <p id="phone-number" data-phone-toggle-target="input" class="hidden">Tél : 06 07 02 92 22</p>
                         </div>
                     </div>
-                </aside>
+                </address>
 
-                <aside class="footer-col">
-                    <div class="footer-title">Informations Légales</div>
+                <nav class="footer-col" aria-labelledby="footer-legal-title">
+                    <h2 id="footer-legal-title" class="footer-title">Informations Légales</h2>
                     <ul class="footer-links">
                         <li class="footer-link-item"><a href="{{ path('cgu') }}" class="footer-link">C.G.U</a></li>
                         <li class="footer-link-item"><a href="{{ path('cgv') }}" class="footer-link">C.G.V</a></li>
                         <li class="footer-link-item"><a href="{{ path('confidentialite') }}" class="footer-link">Confidentialité</a></li>
                         <li class="footer-link-item"><a href="{{ path('mentions_legales') }}" class="footer-link">Mentions légales</a></li>
                     </ul>
-                </aside>
-            </section>
+                </nav>
 
-            <section class="footer-bottom">
+            </div>
+            <div class="footer-bottom">
                 <p>&copy; 2019 - {{ "now"|date("Y") }} - regards singuliers - architecture d'intérieur</p>
                 <p>Tous droits réservés</p>
-            </section>
+            </div>
         </footer>
     </body>
 </html>

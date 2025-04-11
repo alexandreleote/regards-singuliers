@@ -7,7 +7,7 @@
   }
   
   .stat-card {
-    background-color: white;
+    background-color: var(--color-white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-md);
@@ -89,7 +89,7 @@
   }
   
   .chart-card {
-    background-color: white;
+    background-color: var(--color-white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-md);
@@ -125,7 +125,7 @@
   }
   
   .recent-card {
-    background-color: white;
+    background-color: var(--color-white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-md);

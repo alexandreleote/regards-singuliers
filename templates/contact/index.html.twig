@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 
+{# Définir la page active pour la navigation #}
+{% set active_page = 'contact' %}
+
 {% block javascripts %}
     {% if app.environment == 'dev' %}
         {{ parent() }}
@@ -10,33 +13,32 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<section class="contact-section">
-    <div class="container">
+<section class="contact-section" aria-labelledby="contact-title">
         <div {{ stimulus_controller('map') }} data-map-api-key-value="{{ google_maps_api_key|default('') }}">
             <div class="contact-container">
                 <div class="contact-grid">
                     <!-- Colonne de gauche (1/3) -->
-                    <div class="contact-info">
-                        <h2>Contactez-moi</h2>
+                    <aside class="contact-info">
+                        <h1 id="contact-title">Contactez-moi</h1>
                         <p>Prenons le temps d'établir vos besoins et de discuter de votre projet.</p>
                         
                         <div class="info-section">
-                            <h3>Informations de contact</h3>
+                            <h2>Informations de contact</h2>
                             <ul>
-                                <li><i class="fas fa-envelope"></i> <span>hello@regards-singuliers.com</span></li>
-                                <li><i class="fas fa-phone"></i> <span>06 07 02 92 22</span></li>
-                                <li><i class="fas fa-map-marker-alt"></i> <span>6 Le Bronz 56480 Saint-Aignan</span></li>
+                                <li><i class="fas fa-envelope" aria-hidden="true"></i> <span>hello@regards-singuliers.com</span></li>
+                                <li><i class="fas fa-phone" aria-hidden="true"></i> <span>06 07 02 92 22</span></li>
+                                <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span>6 Le Bronz 56480 Saint-Aignan</span></li>
                             </ul>
                         </div>
                         
                         <div class="info-section">
-                            <h3>Horaires</h3>
+                            <h2>Horaires</h2>
                             <ul>
-                                <li><i class="fas fa-clock"></i> <span>Lundi - Vendredi: 9h - 18h</span></li>
-                                <li><i class="fas fa-clock"></i> <span>Samedi: 10h - 14h</span></li>
+                                <li><i class="fas fa-clock" aria-hidden="true"></i> <span>Lundi - Vendredi: 9h - 18h</span></li>
+                                <li><i class="fas fa-clock" aria-hidden="true"></i> <span>Samedi: 10h - 14h</span></li>
                             </ul>
                         </div>
-                    </div>
+                    </aside>
 
                     <!-- Colonne de droite (2/3) -->
                     <form {{ stimulus_controller('contact') }}
@@ -44,7 +46,9 @@
                           {{ stimulus_controller('honeypot') }}
                           data-honeypot-hidden-class="hidden"
                           data-action="submit->contact#submit submit->honeypot#submit"
-                          class="contact-form">
+                          class="contact-form"
+                          aria-labelledby="form-title">
+                        <h2 id="form-title" class="visually-hidden">Formulaire de contact</h2>
                         <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
                         
                         <!-- Champs honeypot -->
@@ -54,7 +58,8 @@
                         </div>
                         <input type="hidden" name="_timestamp" value="{{ 'now'|date('U') }}" aria-hidden="true">
                         
-                        <div class="form-type">
+                        <fieldset class="form-type">
+                            <legend>Type de contact</legend>
                             <div class="switch-container">
                                 <input type="radio" id="type-particulier" name="type" value="particulier" 
                                        {{ stimulus_target('contact', 'type') }}
@@ -66,12 +71,12 @@
                                        data-action="change->contact#change">
                                 <label for="type-professionnel">Professionnel</label>
                             </div>
-                        </div>
+                        </fieldset>
 
                         <!-- Section commune initiale -->
                         <div class="form-section">
-                            <div class="form-group">
-                                <label>Civilité</label>
+                            <fieldset class="form-group">
+                                <legend>Civilité</legend>
                                 <div class="radio-group">
                                     <label for="civilite-monsieur">
                                         <input type="radio" id="civilite-monsieur" name="civilite" value="monsieur" 
@@ -84,19 +89,25 @@
                                         Madame
                                     </label>
                                 </div>
-                            </div>
+                            </fieldset>
 
                             <div class="form-display">
                                 <!-- Prénom -->
                                 <div class="form-group form-item">
                                     <label for="prenom">Prénom</label>
-                                    <input type="text" id="prenom" name="prenom" class="form-control" {{ stimulus_target('contact', 'prenom') }} required>
+                                    <input type="text" id="prenom" name="prenom" class="form-control" 
+                                           {{ stimulus_target('contact', 'prenom') }} 
+                                           required 
+                                           aria-required="true">
                                 </div>
 
                                 <!-- Nom -->
                                 <div class="form-group form-item">
                                     <label for="nom">Nom</label>
-                                    <input type="text" id="nom" name="nom" class="form-control" {{ stimulus_target('contact', 'nom') }} required>
+                                    <input type="text" id="nom" name="nom" class="form-control" 
+                                           {{ stimulus_target('contact', 'nom') }} 
+                                           required 
+                                           aria-required="true">
                                 </div>
                             </div>
 
@@ -104,20 +115,29 @@
                             <!-- Email -->
                                 <div class="form-group form-item">
                                     <label for="email">Email</label>
-                                    <input type="email" id="email" name="email" class="form-control" {{ stimulus_target('contact', 'email') }} required>
+                                    <input type="email" id="email" name="email" class="form-control" 
+                                           {{ stimulus_target('contact', 'email') }} 
+                                           required 
+                                           aria-required="true">
                                 </div>
 
                                 <!-- Téléphone -->
                                 <div class="form-group form-item">
                                     <label for="telephone">Téléphone</label>
-                                    <input type="tel" id="telephone" name="telephone" class="form-control" {{ stimulus_target('contact', 'telephone') }} required>
+                                    <input type="tel" id="telephone" name="telephone" class="form-control" 
+                                           {{ stimulus_target('contact', 'telephone') }} 
+                                           required 
+                                           aria-required="true">
                                 </div>
                             </div>
 
                             <!-- Localisation -->
                             <div class="form-group">
                                 <label for="localisation">Localisation</label>
-                                <input type="text" id="localisation" name="localisation" class="form-control" {{ stimulus_target('contact', 'localisation') }} required>
+                                <input type="text" id="localisation" name="localisation" class="form-control" 
+                                       {{ stimulus_target('contact', 'localisation') }} 
+                                       required 
+                                       aria-required="true">
                             </div>
                         </div>
 
@@ -136,20 +156,21 @@
                             <div class="form-group">
                                 <label for="description">Description du projet</label>
                                 <textarea id="description" name="description" class="form-control" rows="5" 
-                                          {{ stimulus_target('contact', 'description') }} required></textarea>
+                                          {{ stimulus_target('contact', 'description') }} 
+                                          required 
+                                          aria-required="true"></textarea>
                             </div>
 
-                            <button type="submit" class="submit-btn">Envoyer</button>
+                            <button type="submit" class="submit-btn" aria-label="Envoyer le formulaire de contact">Envoyer</button>
                         </div>
                     </form>
                 </div>
             </div>
 
             <div class="map-container">
-                <div id="map"></div>
+                <div id="map" aria-label="Carte de localisation" role="region"></div>
             </div>
         </div>
-    </div>
 </section>
 
 {% endblock %}

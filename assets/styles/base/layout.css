@@ -7,7 +7,7 @@
 
 /* Sélection */
 *::selection {
-  background-color: var(--color-primary);
+  background-color: var(--color-black);
   color: var(--color-border);
 }
  
@@ -20,13 +20,14 @@ body {
   font-family: var(--font-body);
   color: var(--color-text);
   line-height: 1.5;
-  background-color: var(--color-background);
+  background-color: var(--color-white);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-top: var(--header-height); /* Espace pour le header fixe */
+  overflow-x: hidden; /* Empêche le scroll horizontal */
 }
 
 /* Typographie */
@@ -54,7 +55,7 @@ p {
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-black);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
@@ -63,7 +64,7 @@ a:hover {
   color: var(--color-accent);
 }
 
-/* Layout */
+/* Layout principal */
 main {
   flex: 1 0 auto;
   width: 100%;
@@ -79,17 +80,36 @@ main {
   width: 100%;
 }
 
-.page-fullheight {
+/* Structure simplifiée */
+.page-container {
   min-height: calc(100vh - var(--header-height));
   display: flex;
   flex-direction: column;
+  flex: 1;
+  padding: 0;
+  width: 100%;
 }
 
-.page-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-lg) 0;
+/* Container pour le contenu standard (non pleine largeur) */
+.content-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--container-padding);
+  width: 100%;
+}
+
+/* Styles pour les sections principales */
+.page-container > section:not(.home-video-container):not(.home-contact-section),
+.page-container > article,
+.page-container > header,
+.home-content {
+  margin-bottom: var(--spacing-xl);
+  width: 100%;
+}
+
+/* Ajustement pour les titres de page */
+.page-title {
+  margin-bottom: var(--spacing-xl);
 }
 
 .section {
@@ -100,113 +120,130 @@ main {
   margin-bottom: var(--spacing-lg);
 }
 
-/* Grille simple */
-.row {
+/* Grilles et flexbox */
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.flex {
   display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-wrap {
   flex-wrap: wrap;
-  margin: 0 -1rem;
 }
 
-.col {
-  padding: 0 1rem;
-  flex: 1;
+.justify-center {
+  justify-content: center;
 }
 
-/* Classes utilitaires */
+.items-center {
+  align-items: center;
+}
+
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+/* Utilitaires */
 .text-center {
   text-align: center;
-}
-
-.text-left {
-  text-align: left;
 }
 
 .text-right {
   text-align: right;
 }
 
-.mb-1 { margin-bottom: var(--spacing-xs); }
-.mb-2 { margin-bottom: var(--spacing-sm); }
-.mb-3 { margin-bottom: var(--spacing-md); }
-.mb-4 { margin-bottom: var(--spacing-lg); }
-.mb-5 { margin-bottom: var(--spacing-xl); }
-
-.mt-1 { margin-top: var(--spacing-xs); }
-.mt-2 { margin-top: var(--spacing-sm); }
-.mt-3 { margin-top: var(--spacing-md); }
-.mt-4 { margin-top: var(--spacing-lg); }
-.mt-5 { margin-top: var(--spacing-xl); }
-
-/* Boutons */
-.btn {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border: 1px solid var(--color-primary);
-  background-color: transparent;
-  color: var(--color-primary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  align-items: center;
-  justify-content: center;
+.text-left {
+  text-align: left;
 }
 
-.btn:hover {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-.btn-primary {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-/* Alerte */
-.alert {
-  padding: var(--spacing-sm) var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-  border-radius: 0;
-  border-left: 3px solid;
-}
-
-.alert-success {
-  background-color: rgba(46, 204, 113, 0.1);
-  border-color: #2ecc71;
-  color: #27ae60;
-}
-
-.alert-info {
-  background-color: rgba(52, 152, 219, 0.1);
-  border-color: #3498db;
-  color: #2980b9;
-}
-
-.alert-warning {
-  background-color: rgba(243, 156, 18, 0.1);
-  border-color: #f39c12;
-  color: #e67e22;
-}
-
-.alert-danger {
-  background-color: rgba(231, 76, 60, 0.1);
-  border-color: #e74c3c;
-  color: #c0392b;
-}
-
-/* Curseur */
-.cursor-pointer {
-  cursor: pointer;
-}
-
-/* Visibilité */
 .hidden {
-  display: none !important;
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Espacement */
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.my-sm { margin-top: var(--spacing-sm); margin-bottom: var(--spacing-sm); }
+.my-md { margin-top: var(--spacing-md); margin-bottom: var(--spacing-md); }
+.my-lg { margin-top: var(--spacing-lg); margin-bottom: var(--spacing-lg); }
+.my-xl { margin-top: var(--spacing-xl); margin-bottom: var(--spacing-xl); }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+/* Media queries */
+@media (max-width: 1200px) {
+  .grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .grid-3, .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .content-container {
+    padding: var(--spacing-md) var(--container-padding);
+  }
+  
+  h1 {
+    font-size: var(--font-size-xl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-lg);
+  }
 }

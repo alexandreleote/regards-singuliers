@@ -1,6 +1,6 @@
 :root {
     /* Colors */
-    --color-primary: #050505;
+    --color-black: #050505;
     --color-secondary: #333333;
     --color-accent: #4c4c4c;
     --color-text: #333333;
@@ -10,8 +10,8 @@
     --color-success: #28A745;
     --color-warning: #FFC107;
     --color-info: #17A2B8;
-    --color-background: #FFFFFF;
-    --color-background-alt: #F8F9FA;
+    --color-white: #FCFCFC;
+    --color-white-alt: #F8F9FA;
     --color-overlay: rgba(0, 0, 0, 0.5);
 
     /* Typography */
@@ -26,6 +26,7 @@
     --font-size-2xl: 1.875rem; /* 30px */
     --font-size-3xl: 2.25rem;  /* 36px */
     --font-size-4xl: 3rem;     /* 48px */
+    --font-size-main: 5rem;     /* 80px */
     --font-weight-light: 300;
     --font-weight-normal: 400;
     --font-weight-medium: 500;

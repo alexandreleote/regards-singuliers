@@ -7,19 +7,24 @@
         "@symfony/webpack-encore": "^5.0.0",
         "autoprefixer": "^10.4.21",
         "core-js": "^3.38.0",
+        "css-minimizer-webpack-plugin": "^7.0.2",
         "ffmpeg-static": "^5.2.0",
         "file-loader": "^6.2.0",
         "image-webpack-loader": "^8.1.0",
+        "imagemin": "^9.0.1",
         "imagemin-mozjpeg": "^10.0.0",
         "imagemin-pngquant": "^10.0.0",
         "imagemin-svgo": "^11.0.1",
+        "imagemin-webp": "^8.0.0",
         "imagemin-webpack-plugin": "^2.4.2",
         "postcss-loader": "^7.3.4",
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.86.0",
         "sass-loader": "^16.0.5",
+        "terser-webpack-plugin": "^5.3.14",
         "webpack": "^5.74.0",
         "webpack-cli": "^5.1.0",
+        "webpack-image-resize-loader": "^5.0.0",
         "webpack-notifier": "^1.15.0"
     },
     "license": "UNLICENSED",
@@ -28,7 +33,10 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "convert-to-webp": "node scripts/convert-to-webp.js",
+        "optimize-videos": "node scripts/optimize-videos.js",
+        "optimize-assets": "npm run convert-to-webp && npm run optimize-videos",
+        "build": "npm run optimize-assets && encore production --progress"
     },
     "dependencies": {
         "@hotwired/stimulus": "^3.2.2"

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Pages principales -->
+    <url>
+        <loc>https://regards-singuliers.fr/</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/studio</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/service</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/realisation</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/contact</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Pages légales -->
+    <url>
+        <loc>https://regards-singuliers.fr/mentions-legales</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/conditions-generales-utilisation</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/conditions-generales-vente</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/politique-confidentialite</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/faq</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <!-- Pages d'authentification -->
+    <url>
+        <loc>https://regards-singuliers.fr/login</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://regards-singuliers.fr/register</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <!-- Pages de réservation -->
+    <url>
+        <loc>https://regards-singuliers.fr/reservation</loc>
+        <lastmod>2025-04-11</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.7</priority>
+    </url>
+</urlset>

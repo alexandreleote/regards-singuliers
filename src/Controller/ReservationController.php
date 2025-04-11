@@ -63,10 +63,14 @@ class ReservationController extends AbstractController
         $user = $this->getUser();
         $isProfileIncomplete = empty($user->getName()) || empty($user->getFirstName()) || empty($user->getAddress());
 
+        // Calcul de l'acompte (50% du prix total)
+        $depositAmount = $service->getPrice() * 0.5;
+        
         return $this->render('reservation/date.html.twig', [
             'page_title' => 'Choisir une date - regards singuliers',
             'meta_description' => 'Sélectionnez votre date de rendez-vous avec notre architecte d\'intérieur.',
             'service' => $service,
+            'deposit_amount' => number_format($depositAmount, 0, ',', ' '),
             'calendly_url' => $this->getParameter('calendly.url'),
             'isProfileIncomplete' => $isProfileIncomplete
         ]);

@@ -1,0 +1,86 @@
+{#
+    Composants pour les médias accessibles
+    - Images responsives avec WebP et fallback
+    - Vidéos avec WebM et fallback
+#}
+
+{# Macro pour générer une balise picture accessible avec WebP et fallback #}
+{% macro picture(src, alt, options = {}) %}
+    {% set defaults = {
+        class: '',
+        width: '',
+        height: '',
+        loading: 'lazy',
+        title: '',
+        aria_hidden: false,
+        role: '',
+        original_ext: 'jpg'
+    } %}
+    
+    {% set opts = defaults|merge(options) %}
+    
+    <picture 
+        {% if opts.class %}class="{{ opts.class }}"{% endif %}
+        {% if opts.role %}role="{{ opts.role }}"{% endif %}
+        {% if opts.aria_hidden %}aria-hidden="true"{% endif %}>
+        {# Source WebP #}
+        <source srcset="{{ src }}.webp" type="image/webp">
+        {# Source originale (fallback) #}
+        <source srcset="{{ src }}.{{ opts.original_ext }}" type="image/{{ opts.original_ext }}">
+        {# Image de fallback avec attributs d'accessibilité #}
+        <img 
+            src="{{ src }}.{{ opts.original_ext }}" 
+            alt="{{ alt }}" 
+            {% if opts.width %}width="{{ opts.width }}"{% endif %}
+            {% if opts.height %}height="{{ opts.height }}"{% endif %}
+            loading="{{ opts.loading }}"
+            {% if opts.title %}title="{{ opts.title|e('html_attr') }}"{% endif %}
+            {% if opts.aria_hidden %}aria-hidden="true"{% endif %}>
+    </picture>
+{% endmacro %}
+
+{# Macro pour générer une balise vidéo accessible avec WebM et fallback #}
+{% macro video(src, options = {}) %}
+    {% set defaults = {
+        class: '',
+        width: '',
+        height: '',
+        autoplay: false,
+        muted: false,
+        loop: false,
+        controls: true,
+        playsinline: false,
+        poster: '',
+        aria_label: '',
+        aria_hidden: false,
+        role: '',
+        title: '',
+        tabindex: '',
+        description: 'Votre navigateur ne supporte pas la lecture de vidéos.'
+    } %}
+    
+    {% set opts = defaults|merge(options) %}
+    
+    <video 
+        {% if opts.class %}class="{{ opts.class }}"{% endif %}
+        {% if opts.width %}width="{{ opts.width }}"{% endif %}
+        {% if opts.height %}height="{{ opts.height }}"{% endif %}
+        {% if opts.autoplay %}autoplay{% endif %}
+        {% if opts.muted %}muted{% endif %}
+        {% if opts.loop %}loop{% endif %}
+        {% if opts.controls %}controls{% endif %}
+        {% if opts.playsinline %}playsinline{% endif %}
+        {% if opts.poster %}poster="{{ opts.poster }}"{% endif %}
+        {% if opts.aria_label %}aria-label="{{ opts.aria_label|e('html_attr') }}"{% endif %}
+        {% if opts.aria_hidden %}aria-hidden="true"{% endif %}
+        {% if opts.role %}role="{{ opts.role|e('html_attr') }}"{% endif %}
+        {% if opts.title %}title="{{ opts.title|e('html_attr') }}"{% endif %}
+        {% if opts.tabindex %}tabindex="{{ opts.tabindex }}"{% endif %}>
+        {# Source WebM #}
+        <source src="{{ src }}.webm" type="video/webm">
+        {# Source MP4 (fallback) #}
+        <source src="{{ src }}.mp4" type="video/mp4">
+        {# Message pour les navigateurs qui ne supportent pas la vidéo #}
+        <p>{{ opts.description }}</p>
+    </video>
+{% endmacro %}

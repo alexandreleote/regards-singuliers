@@ -1,7 +1,7 @@
 .email-container {
   max-width: 600px;
   margin: 0 auto;
-  background-color: white;
+  background-color: var(--color-white);
 }
 
 .email-header {
@@ -33,8 +33,8 @@
 .email-button {
   display: inline-block;
   padding: 0.5rem 1rem;
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--color-black);
+  color: var(--color-white);
   font-size: var(--font-size-sm);
   text-decoration: none;
   margin: var(--spacing-md) 0;

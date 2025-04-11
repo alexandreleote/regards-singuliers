@@ -1,30 +1,42 @@
 {% extends 'base.html.twig' %}
+{% import 'components/media.html.twig' as media %}
+
+{# Définir la page active pour la navigation #}
+{% set active_page = 'realisations' %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="page-container">
-        <h2>{{ page_title }}</h2>
+    <h1 id="realisations-title">{{ page_title }}</h1>
 
-        <div class="realisations-container">
+    <section class="realisations-container" role="list" aria-labelledby="realisations-title">
             {% for realisation in realisations %}
-                <a href="{{ path('realisation_show', {'id': realisation.id}) }}" class="realisation-item">
-                    <div class="realisation-image">
-                        <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
-                             alt="{{ realisation.title }}"
-                             class="image-item">
-                    </div>
-                    <div class="realisation-content">
-                        <h3>{{ realisation.title }}</h3>
-                        <p>
-                            {{ realisation.content|striptags|length > 150 ? 
-                               realisation.content|striptags|slice(0, 150) ~ '...' : 
-                               realisation.content|striptags }}
-                        </p>
-                        <p>Voir le projet</p>
-                    </div>
-                </a>
+                <article class="realisation-item" role="listitem">
+                    <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
+                       class="realisation-link"
+                       aria-labelledby="realisation-title-{{ realisation.id }}">
+                        <div class="realisation-image">
+                            {% if realisation.mainImage %}
+                                <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
+                                     alt="{{ realisation.title }} - Image principale du projet" 
+                                     class="image-item">
+                            {% else %}
+                                <div class="image-placeholder" aria-hidden="true"></div>
+                            {% endif %}
+                        </div>
+                        <div class="realisation-content">
+                            <h2 id="realisation-title-{{ realisation.id }}" class="realisation-title">{{ realisation.title }}</h2>
+                            <p>
+                                {{ realisation.content|striptags|length > 150 ? 
+                                   realisation.content|striptags|slice(0, 150) ~ '...' : 
+                                   realisation.content|striptags }}
+                            </p>
+                            <p class="realisation-cta">Voir le projet</p>
+                        </div>
+                    </a>
+                </article>
+            {% else %}
+                <p class="no-results">Aucune réalisation disponible pour le moment.</p>
             {% endfor %}
-        </div>
-    </div>
+    </section>
 {% endblock %}

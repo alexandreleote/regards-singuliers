@@ -34,3 +34,7 @@ yarn-error.log
 /assets/fonts/*
 !assets/fonts/.gitkeep
 ###< custom ###
+
+###> db ###
+db-rs.sql
+###< db ###

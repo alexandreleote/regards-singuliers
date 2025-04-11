@@ -2,7 +2,7 @@
 
 /* Styles pour les informations de service */
 .service-info {
-    background: white;
+    background: var(--color-white);
     padding: 2.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -23,7 +23,7 @@
 }
 
 .price-info {
-    background: var(--color-background-light);
+    background: var(--color-white-light);
     padding: 1.5rem;
     border-radius: 6px;
     margin-top: 2rem;
@@ -45,7 +45,7 @@
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background: white;
+    background: var(--color-white);
 }
 
 .calendly-container iframe {

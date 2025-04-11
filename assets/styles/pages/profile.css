@@ -1,11 +1,11 @@
 /* Variables spécifiques au profil */
 :root {
-    --profile-primary: var(--color-primary);
+    --profile-primary: var(--color-black);
     --profile-secondary: var(--color-secondary);
     --profile-accent: var(--color-accent);
     --profile-text: var(--color-text);
     --profile-text-light: var(--color-text-light);
-    --profile-background: var(--color-background);
+    --profile-background: var(--color-white);
     --profile-border: var(--color-border);
     --profile-success: #2ecc71;
     --profile-warning: #f1c40f;
@@ -16,7 +16,7 @@
 /* Layout de base */
 .profile-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--color-background) 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--color-white) 0%, #ffffff 100%);
     padding: var(--spacing-lg) 0;
 }
 
@@ -28,7 +28,7 @@
 
 /* Cartes */
 .card {
-    background: var(--color-background);
+    background: var(--color-white);
     border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: var(--spacing-lg);
@@ -53,11 +53,11 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    background: linear-gradient(135deg, var(--color-black) 0%, var(--color-secondary) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--color-white);
     font-size: var(--font-size-xl);
     font-family: var(--font-text);
 }
@@ -102,7 +102,7 @@
 
 /* Sections */
 .section {
-    background: var(--color-background);
+    background: var(--color-white);
     border-radius: 1rem;
     padding: var(--spacing-md);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -138,25 +138,11 @@
 }
 
 /* Boutons et liens */
-.btn {
+/* Les styles de boutons ont été déplacés vers components/buttons.css */
+.profile-btn {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: 0.75rem;
-    text-decoration: none;
-    transition: var(--transition-fast);
-    font-size: var(--font-size-sm);
-}
-
-.btn-secondary {
-    background-color: rgba(52, 152, 219, 0.1);
-    color: var(--color-accent);
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Formulaires */

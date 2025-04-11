@@ -1,64 +1,73 @@
 {% extends 'base.html.twig' %}
+{% import 'components/media.html.twig' as media %}
+
+{# Définir la page active pour la navigation #}
+{% set active_page = 'home' %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
     <!-- Section vidéo d'accueil -->
-    <div class="home-video-container">
-        <div class="home-video-overlay"></div>
-        <video class="home-video-background" autoplay muted loop playsinline>
-            <source src="/videos/home-video.mp4" type="video/mp4">
-            Votre navigateur ne supporte pas la lecture de vidéos.
-        </video>
-        <div class="home-video-content">
-            <h1 class="home-video-title">regards singuliers</h1>
-            <a href="{{ path('realisations') }}" class="btn btn-primary">
-                Découvrir nos réalisations
-            </a>
+    <section class="home-video-container" role="banner" aria-label="Vidéo d'accueil">
+        <div class="home-video-overlay" aria-hidden="true"></div>
+        {{ media.video('/videos/home-video', {
+            class: 'home-video-background',
+            autoplay: true,
+            muted: true,
+            loop: true,
+            playsinline: true,
+            controls: false,
+            aria_label: "Vidéo d'arrière-plan de la page d'accueil",
+            role: 'presentation',
+            aria_hidden: false,
+            tabindex: '-1',
+            title: "Vidéo d'ambiance regards singuliers",
+            description: 'Votre navigateur ne supporte pas la lecture de vidéos. Cette vidéo est une vidéo d\'ambiance décorative pour la page d\'accueil.'
+        }) }}
+        <div class="home-video-content" role="region" aria-labelledby="home-title">
+            <h1 id="home-title" class="home-video-title">regards singuliers</h1>
+            {{ _self.button('Découvrir nos réalisations', path('realisations'), 'btn-primary', 'Découvrir nos réalisations photographiques') }}
         </div>
+    </section>
+
+    <div class="content-container">
+        <section class="home-content" aria-labelledby="prestations-title">
+            <!-- Section des prestations -->
+            <h2 id="prestations-title" class="home-section-title">Nos prestations</h2>
+            <p class="home-section-text">Parce que chaque projet est unique, nous proposons des prestations adaptées à vos besoins, votre espace et vos envies. 
+            Du simple rendez-vous conseil à l'accompagnement complet avec suivi de chantier, découvrez nos formules pensées pour transformer votre intérieur avec créativité, méthode et exigence.</p>
+            <div class="home-services-grid">
+                {% for service in services %}
+                    <article class="home-service-card">
+                        <div class="home-service-content">
+                            <h3 class="home-service-title">{{ service.title }}</h3>
+                            <p class="home-service-description">{{ service.smallDescription|raw }}</p>
+                            <p class="home-service-price">
+                                {% if service.price > 450.01 %}
+                                    À partir de {{ service.price|format_price }} €
+                                {% else %}
+                                    Tarif : {{ service.price|format_price }} €
+                                {% endif %}
+                            </p>
+                            {{ _self.button('En savoir plus', path('prestation_show', {'slug': service.slug}), 'home-service-link', 'En savoir plus sur ' ~ service.title) }}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
     </div>
 
-    <div class="home-content">
-        <!-- Section des prestations -->
-        <h2 class="home-section-title">Nos prestations</h2>
-        <p class="home-section-text">Parce que chaque projet est unique, nous proposons des prestations adaptées à vos besoins, votre espace et vos envies. 
-        Du simple rendez-vous conseil à l'accompagnement complet avec suivi de chantier, découvrez nos formules pensées pour transformer votre intérieur avec créativité, méthode et exigence.</p>
-        <div class="home-services-grid">
-            {% for service in services %}
-                <div class="home-service-card">
-                    <div class="home-service-content">
-                        <h3 class="home-service-title">{{ service.title }}</h3>
-                        <p class="home-service-description">{{ service.smallDescription|raw }}</p>
-                        <p class="home-service-price">
-                            {% if service.price > 450.01 %}
-                                À partir de {{ service.price|format_price }} €
-                            {% else %}
-                                Tarif : {{ service.price|format_price }} €
-                            {% endif %}
-                        </p>
-                        <a href="{{ path('prestation_show', {'slug': service.slug}) }}" 
-                           class="home-service-link">
-                            En savoir plus
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="home-contact-section">
+    <section class="home-contact-section" aria-labelledby="contact-title">
         <div class="home-contact-parallax">
-            <div class="home-contact-overlay"></div>
+            <div class="home-contact-overlay" aria-hidden="true"></div>
             <div class="home-contact-content">
-                <h2 class="home-section-title">Contactez-nous</h2>
+                <h2 id="contact-title" class="home-section-title">Contactez-nous</h2>
                 <p class="home-contact-text">
                     Vous souhaitez discuter de votre projet ?
                     Nous sommes là pour vous aider.
                 </p>
-                <a href="{{ path('contact') }}" class="btn btn-primary">
-                    Contactez-nous
-                </a>
+                {{ _self.button('Contactez-nous', path('contact'), 'btn-primary', 'Accéder au formulaire de contact') }}
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %}
