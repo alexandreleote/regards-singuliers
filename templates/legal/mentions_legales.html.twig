@@ -3,66 +3,84 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<div class="legal-container">
-    <div class="legal-content">
-        <h1 class="legal-title">Mentions Légales</h1>
+    <div class="content-container">
+        <header class="page-header">
+            <h1 id="mentions-legales-title" class="page-title">Mentions Légales</h1>
+        </header>
         
-        <section class="legal-section">
-            <h2>1. Informations légales</h2>
-            <p>Le site web <em>regards singuliers</em> est édité par :</p>
-            <p>EI Priscilia Leote - regards singuliers<br>
-            Adresse du siège : 6 Le Bronz 56480 Saint-Aignan - France</p>
-            <p>Téléphone : 06 07 02 92 22<br>
-            Email : <a href="mailto:hello@regards-singuliers.com">hello@regards-singuliers.com</a></p><br>
-            <p>SIRET : 87852370300030<br>
-            Entreprise Individuelle : TVA non applicable selon l'article 293 B du CGI</p>
+        <section class="legal-container" aria-labelledby="mentions-legales-title">
+            <div class="legal-section">
+                <h2 class="section-title">1. Informations légales</h2>
+                <div class="section-content">
+                    <p>Le site web <em>regards singuliers</em> est édité par :</p>
+                    <p>EI Priscilia Leote - regards singuliers<br>
+                    Adresse du siège : 6 Le Bronz 56480 Saint-Aignan - France</p>
+                    <p>Téléphone : 06 07 02 92 22<br>
+                    Email : <a href="mailto:hello@regards-singuliers.com" class="text-link">hello@regards-singuliers.com</a></p>
+                    <p>SIRET : 87852370300030<br>
+                    Entreprise Individuelle : TVA non applicable selon l'article 293 B du CGI</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">2. Création du site web</h2>
+                <div class="section-content">
+                    <p>EI Priscilia Leote - regards singuliers<br>
+                    Adresse du siège : 6 Le Bronz 56480 Saint-Aignan - France</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">3. Hébergement</h2>
+                <div class="section-content">
+                    <p>Le site est hébergé par :</p>
+                    <p>SAS OVH<br>
+                    Adresse du siège : 2 rue Kellermann 59100 Roubaix - France</p>
+                    <p><a href="https://www.ovhcloud.com/fr/" target="_blank" class="text-link">Site internet</a></p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">4. Propriété intellectuelle</h2>
+                <div class="section-content">
+                    <p>L'ensemble du contenu de ce site (structure, textes, images, graphismes, logo, icônes, sons, logiciels, etc.) est la propriété exclusive de Priscilia Leote, à l'exception des éléments émanant de partenaires ou fournisseurs.</p>
+                    <p>Toute reproduction, représentation, modification, publication, adaptation totale ou partielle des éléments du site, par quelque procédé que ce soit, sans l'autorisation expresse et écrite de Priscilia Leote, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">5. Liens hypertextes</h2>
+                <div class="section-content">
+                    <p>Le site <em>regards singuliers</em> peut contenir des liens hypertextes vers d'autres sites internet. La présence de ces liens n'engage pas la responsabilité de Priscilia Leote quant au contenu de ces sites. Priscilia Leote n'est pas responsable des liens hypertextes pointant vers son site et interdit à toute personne de mettre en place un tel lien sans son autorisation expresse et préalable.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">6. Données personnelles</h2>
+                <div class="section-content">
+                    <p>Pour plus d'informations sur la collecte et le traitement de vos données personnelles, veuillez consulter les informations détaillées dans notre <a href="{{ path('confidentialite') }}" class="text-link">Politique de Confidentialité</a>.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">7. Cookies</h2>
+                <div class="section-content">
+                    <p>Le site <em>regards singuliers</em> utilise des cookies pour améliorer l'expérience utilisateur. Pour plus d'informations sur l'utilisation des cookies, veuillez consulter notre Politique de Cookies.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">8. Droit applicable et juridiction compétente</h2>
+                <div class="section-content">
+                    <p>Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+                <p>Pour toute question concernant nos mentions légales :</p>
+                <a href="mailto:hello@regards-singuliers.com" class="contact-btn">hello@regards-singuliers.com</a>
+            </div>
         </section>
-        
-        <section class="legal-section">
-            <h2>2. Création du site web</h2>
-            <p>EI Priscilia Leote - regards singuliers<br>
-            Adresse du siège : 6 Le Bronz 56480 Saint-Aignan - France</p>     
-        </section>
-        
-        <section class="legal-section">
-            <h2>3. Hébergement</h2>
-            <p>Le site est hébergé par :</p>
-            <p>SAS OVH<br>
-            Adresse du siège : 2 rue Kellermann 59100 Roubaix - France</p>
-            <p><a href="https://www.ovhcloud.com/fr/" target="_blank">Site internet</a></p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>4. Propriété intellectuelle</h2>
-            <p>L'ensemble du contenu de ce site (structure, textes, images, graphismes, logo, icônes, sons, logiciels, etc.) est la propriété exclusive de Priscilia Leote, à l'exception des éléments émanant de partenaires ou fournisseurs.</p>
-            <p>Toute reproduction, représentation, modification, publication, adaptation totale ou partielle des éléments du site, par quelque procédé que ce soit, sans l'autorisation expresse et écrite de Priscilia Leote, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>5. Liens hypertextes</h2>
-            <p>Le site <em>regards singuliers</em> peut contenir des liens hypertextes vers d'autres sites internet. La présence de ces liens n'engage pas la responsabilité de Priscilia Leote quant au contenu de ces sites. Priscilia Leote n'est pas responsable des liens hypertextes pointant vers son site et interdit à toute personne de mettre en place un tel lien sans son autorisation expresse et préalable.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>6. Données personnelles</h2>
-            <p>Pour plus d'informations sur la collecte et le traitement de vos données personnelles, veuillez consulter les informations détaillées dans notre <a href="{{ path('confidentialite') }}">Politique de Confidentialité</a>.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>7. Cookies</h2>
-            <p>Le site <em>regards singuliers</em> utilise des cookies pour améliorer l'expérience utilisateur. Pour plus d'informations sur l'utilisation des cookies, veuillez consulter notre Politique de Cookies.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>8. Droit applicable et juridiction compétente</h2>
-            <p>Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
-        </section>
-        
-        <div class="legal-footer">
-            <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
-            <p>Pour toute question concernant nos mentions légales, veuillez nous contacter à :</p>
-            <a href="mailto:hello@regards-singuliers.com">hello@regards-singuliers.com</a>
-        </div>
     </div>
-</div>
 {% endblock %}

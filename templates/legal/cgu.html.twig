@@ -3,62 +3,80 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<div class="legal-container">
-    <div class="legal-content">
-        <h1>Conditions générales d'utilisation</h1>
+    <div class="content-container">
+        <header class="page-header">
+            <h1 id="cgu-title" class="page-title">Conditions Générales d'Utilisation</h1>
+        </header>
         
-        <section>
-            <h2>1. Objet</h2>
-            <p>Les présentes conditions générales d'utilisation (ci-après "CGU") ont pour objet de définir les modalités et conditions d'utilisation des services proposés sur le site regards singuliers (ci-après "le Site"), ainsi que de définir les droits et obligations des parties dans ce cadre.</p>
-        </section>
+        <section class="legal-container" aria-labelledby="cgu-title">
+            <div class="legal-section">
+                <h2 class="section-title">1. Objet</h2>
+                <div class="section-content">
+                    <p>Les présentes conditions générales d'utilisation (ci-après "CGU") ont pour objet de définir les modalités et conditions d'utilisation des services proposés sur le site regards singuliers (ci-après "le Site"), ainsi que de définir les droits et obligations des parties dans ce cadre.</p>
+                </div>
+            </div>
 
-        <section>
-            <h2>2. Acceptation</h2>
-            <p>L'accès et l'utilisation du Site sont soumis à l'acceptation et au respect des présentes CGU. En accédant au Site, l'utilisateur accepte, sans réserve, les présentes CGU.</p>
-        </section>
+            <div class="legal-section">
+                <h2 class="section-title">2. Acceptation</h2>
+                <div class="section-content">
+                    <p>L'accès et l'utilisation du Site sont soumis à l'acceptation et au respect des présentes CGU. En accédant au Site, l'utilisateur accepte, sans réserve, les présentes CGU.</p>
+                </div>
+            </div>
 
-        <section class="legal-section">
-            <h2>3. Services proposés</h2>
-            <p>regards singuliers propose des services d'architecture d'intérieur, de décoration et de conseil en aménagement d'espace. Ces services peuvent inclure :</p>
-            <ul>
-                <li>Consultation et conseil en décoration</li>
-                <li>Conception et réalisation de projets d'aménagement</li>
-                <li>Suivi de chantier</li>
-                <li>Accompagnement dans le choix de mobilier et d'accessoires</li>
-            </ul>
-        </section>
+            <div class="legal-section">
+                <h2 class="section-title">3. Services proposés</h2>
+                <div class="section-content">
+                    <p>regards singuliers propose des services d'architecture d'intérieur, de décoration et de conseil en aménagement d'espace. Ces services peuvent inclure :</p>
+                    <ul>
+                        <li>Consultation et conseil en décoration</li>
+                        <li>Conception et réalisation de projets d'aménagement</li>
+                        <li>Suivi de chantier</li>
+                        <li>Accompagnement dans le choix de mobilier et d'accessoires</li>
+                    </ul>
+                </div>
+            </div>
  
-        <section class="legal-section">
-            <h2>7. Propriété intellectuelle</h2>
-            <p>Tous les contenus présents sur le Site (textes, images, logos, etc.) sont la propriété exclusive de regards singuliers et sont protégés par les lois françaises et internationales relatives à la propriété intellectuelle.</p>
-            <p>Les projets, plans, croquis et autres documents créés dans le cadre de nos prestations restent la propriété intellectuelle de regards singuliers jusqu'au paiement intégral de la prestation.</p>
+            <div class="legal-section">
+                <h2 class="section-title">4. Propriété intellectuelle</h2>
+                <div class="section-content">
+                    <p>Tous les contenus présents sur le Site (textes, images, logos, etc.) sont la propriété exclusive de regards singuliers et sont protégés par les lois françaises et internationales relatives à la propriété intellectuelle.</p>
+                    <p>Les projets, plans, croquis et autres documents créés dans le cadre de nos prestations restent la propriété intellectuelle de regards singuliers jusqu'au paiement intégral de la prestation.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">5. Protection des données personnelles</h2>
+                <div class="section-content">
+                    <p>Les données personnelles collectées sur le Site sont traitées conformément à notre Politique de Confidentialité, accessible <a href="{{ path('confidentialite') }}" class="text-link">ici</a>.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">6. Responsabilité</h2>
+                <div class="section-content">
+                    <p>regards singuliers s'engage à fournir ses services avec diligence et professionnalisme. Toutefois, notre responsabilité ne saurait être engagée en cas de retard ou d'inexécution lorsque la cause du retard ou de l'inexécution serait due à un cas de force majeure.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">7. Droit applicable et juridiction compétente</h2>
+                <div class="section-content">
+                    <p>Les présentes CGU sont soumises au droit français. En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. À défaut, les tribunaux français seront seuls compétents.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">8. Modification des CGU</h2>
+                <div class="section-content">
+                    <p>Nous nous réservons le droit de modifier les présentes CGU à tout moment. Les modifications prendront effet dès leur publication sur le Site. Il est de votre responsabilité de consulter régulièrement les CGU pour vous tenir informé des éventuelles modifications.</p>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+                <p>Pour toute question concernant nos CGU :</p>
+                <a href="mailto:hello@regards-singuliers.com" class="contact-btn">hello@regards-singuliers.com</a>
+            </div>
         </section>
-        
-        <section class="legal-section">
-            <h2>8. Protection des données personnelles</h2>
-            <p>Les données personnelles collectées sur le Site sont traitées conformément à notre Politique de Confidentialité, accessible <a href="{{ path('confidentialite') }}">ici</a>.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>9. Responsabilité</h2>
-            <p>regards singuliers s'engage à fournir ses services avec diligence et professionnalisme. Toutefois, notre responsabilité ne saurait être engagée en cas de retard ou d'inexécution lorsque la cause du retard ou de l'inexécution serait due à un cas de force majeure.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>10. Droit applicable et juridiction compétente</h2>
-            <p>Les présentes CGU sont soumises au droit français. En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. À défaut, les tribunaux français seront seuls compétents.</p>
-        </section>
-        
-        <section class="legal-section">
-            <h2>11. Modification des CGU</h2>
-            <p>Nous nous réservons le droit de modifier les présentes CGU à tout moment. Les modifications prendront effet dès leur publication sur le Site. Il est de votre responsabilité de consulter régulièrement les CGU pour vous tenir informé des éventuelles modifications.</p>
-        </section>
-        
-        <div class="legal-footer">
-            <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
-            <p>Pour toute question concernant nos CGU, veuillez nous contacter à :</p>
-            <a href="mailto:hello@regards-singuliers.com">hello@regards-singuliers.com</a>
-        </div>
     </div>
-</div>
 {% endblock %}
