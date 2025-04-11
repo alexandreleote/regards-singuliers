@@ -149,15 +149,13 @@
                     </button>
 
                     {# Menu burger pour l'authentification (992px - 1200px) #}
-                    {% if app.user %}
-                        <button data-action="click->menu-burger#toggleAuth" 
-                                class="auth-burger-menu-btn" 
-                                aria-label="Ouvrir le menu d'authentification" 
-                                aria-expanded="false" 
-                                aria-controls="auth-menu-mobile">
-                            <i class="fas fa-user"></i>
-                        </button>
-                    {% endif %}
+                    <button data-action="click->menu-burger#toggleAuth" 
+                            class="auth-burger-menu-btn" 
+                            aria-label="Ouvrir le menu d'authentification" 
+                            aria-expanded="false" 
+                            aria-controls="auth-menu-mobile">
+                        <i class="fas {% if app.user %}fa-user{% else %}fa-sign-in-alt{% endif %}"></i>
+                    </button>
                     
                     {# Menu de navigation mobile #} 
                     <div class="nav-mobile" data-menu-burger-target="mainMenu" id="menu-mobile">
