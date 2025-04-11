@@ -217,33 +217,4 @@ main {
 
 .mx-auto { margin-left: auto; margin-right: auto; }
 
-/* Media queries */
-@media (max-width: 1200px) {
-  .grid-4 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .grid-3, .grid-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .grid-2, .grid-3, .grid-4 {
-    grid-template-columns: 1fr;
-  }
-  
-  .content-container {
-    padding: var(--spacing-md) var(--container-padding);
-  }
-  
-  h1 {
-    font-size: var(--font-size-xl);
-  }
-  
-  h2 {
-    font-size: var(--font-size-lg);
-  }
-}
+/* Media queries ont été déplacées vers responsive.css */

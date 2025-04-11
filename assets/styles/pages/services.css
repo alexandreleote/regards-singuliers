@@ -1,53 +1,68 @@
+/**
+ * Styles spécifiques à la page Services
+ * Utilise les classes utilitaires de layout.css et les composants de cards.css
+ */
+
+/* Styles spécifiques au titre de service - utilise les variables CSS */
 .service-title {
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 2em;
-    color: #333;
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
 }
 
+/* Styles spécifiques à l'intro de service */
 .service-intro {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: var(--spacing-xl);
 }
 
+/* Style spécifique pour le texte principal */
 .service-lead {
-    font-size: 1.2em;
-    color: #555;
+    font-size: var(--font-size-md);
+    color: var(--color-text-light);
 }
 
+/* Liste de services - utilise les classes flex de layout.css */
 .service-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: var(--spacing-md);
 }
 
 .service-card {
-    background-color: #fff;
+    background-color: var(--color-white);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 15px;
+    margin: var(--spacing-sm);
     width: 300px;
     text-align: center;
 }
 
 .service-card-body {
-    padding: 20px;
+    padding: var(--spacing-md);
 }
 
 .service-card-title {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
 }
 
 .service-card-text {
-    color: #666;
-    margin-bottom: 15px;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
 }
 
 .service-card-footer {
-    padding: 10px;
-    background-color: #f8f8f8;
-    border-top: 1px solid #eee;
+    padding: var(--spacing-sm);
+    background-color: var(--color-bg-light);
+    border-top: 1px solid var(--color-border);
+}
+
+/* Styles spécifiques qui ne sont pas couverts par les composants génériques */
+.service-detail {
+    margin-top: var(--spacing-lg);
 }
 
 /* Utiliser les classes du système de boutons global */

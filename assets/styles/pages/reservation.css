@@ -61,27 +61,4 @@
     height: 850px !important;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .service-info {
-        padding: 1.5rem;
-    }
-
-    .service-title {
-        font-size: 1.5rem;
-    }
-
-    .service-description {
-        font-size: 1rem;
-    }
-
-    .calendly-container {
-        min-height: 700px;
-    }
-    
-    .calendly-container iframe,
-    .calendly-inline-widget {
-        min-height: 700px !important;
-        height: 700px !important;
-    }
-} 
+/* Responsive styles ont été déplacés vers responsive.css */ 

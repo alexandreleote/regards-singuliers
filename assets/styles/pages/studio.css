@@ -150,21 +150,4 @@
   border: 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .studio-intro {
-    grid-template-columns: 1fr;
-  }
-  
-  .studio-more-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .studio-more-images.image-left {
-    max-width: 100%;
-  }
-  
-  .cta-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* Responsive styles ont été déplacés vers responsive.css */

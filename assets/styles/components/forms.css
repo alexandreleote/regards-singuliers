@@ -126,13 +126,4 @@ textarea.form-control {
   background-color: var(--color-accent);
 }
 
-@media (max-width: 767.98px) {
-  .form-row {
-    flex-direction: column;
-  }
-  
-  .form-col {
-    width: 100%;
-    margin-bottom: var(--spacing-sm);
-  }
-}
+/* Responsive styles ont été déplacés vers responsive.css */

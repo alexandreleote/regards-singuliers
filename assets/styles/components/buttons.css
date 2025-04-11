@@ -65,34 +65,9 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .btn {
-        padding: 0.7rem 1.4rem;
-    }
-    
-    .btn-large {
-        padding: 0.85rem 1.7rem;
-    }
-    
-    .home-video-content .btn {
-        padding: 0.75rem 1.5rem;
-    }
-}
+/* Responsive styles ont été déplacés vers responsive.css */
 
-@media (max-width: 480px) {
-    .btn {
-        padding: 0.65rem 1.3rem;
-        font-size: var(--font-size-sm);
-    }
-    
-    .btn-large {
-        padding: 0.75rem 1.5rem;
-        font-size: var(--font-size-base);
-    }
-    
-    .home-video-content .btn {
-        padding: 0.65rem 1.3rem;
-        margin-top: var(--spacing-sm);
-    }
+.home-video-content .btn {
+    padding: 0.65rem 1.3rem;
+    margin-top: var(--spacing-sm);
 }

@@ -2,14 +2,17 @@
   padding: var(--spacing-lg) 0;
   border-top: 1px solid var(--color-border);
   margin-top: auto;
+  background-color: var(--color-white);
 }
 
 .footer-container {
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   width: 100%;
-  color: var(--color-secondary) !important;
+  color: var(--color-text);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
 }
 
 .footer-col {
@@ -17,6 +20,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: var(--spacing-lg);
+  padding-right: var(--spacing-sm);
 }
 
 .footer-col:first-child {
@@ -31,6 +35,7 @@
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
   margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
 }
 
 .footer-logo a {
@@ -51,7 +56,6 @@
 
 .footer-logo p:last-child {
   font-size: var(--font-size-xs);
-  color: var(--color-text-light);
 }
 
 .footer-contact-item {
@@ -62,16 +66,12 @@
 
 .footer-contact-text {
   font-size: var(--font-size-sm);
+  color: var(--color-text-light);
 }
 
 .footer-contact-text .cursor-pointer {
   cursor: pointer;
-  color: var(--color-black);
   transition: color var(--transition-fast);
-}
-
-.footer-contact-text .cursor-pointer:hover {
-  color: var(--color-accent);
 }
 
 .footer-contact-text .hidden {
@@ -92,9 +92,6 @@
   transition: color var(--transition-fast);
 }
 
-.footer-link:hover {
-  color: var(--color-accent);
-}
 
 .footer-social {
   display: flex;
@@ -103,11 +100,8 @@
 }
 
 .footer-social-link {
-  transition: color var(--transition-fast);
-}
 
-.footer-social-link:hover {
-  color: var(--color-accent);
+  transition: color var(--transition-fast);
 }
 
 .footer-bottom {
@@ -117,19 +111,16 @@
   margin-top: var(--spacing-lg);
   text-align: center;
   font-size: var(--font-size-xs);
+
+}
+
+/* Règle pour tous les liens dans le footer sauf le logo */
+.footer a:not(.footer-logo a) {
   color: var(--color-text-light);
 }
 
-@media (min-width: 768px) {
-  .footer-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .footer-col {
-    flex: 1;
-    min-width: 250px;
-    padding-right: var(--spacing-md);
-  }
+/* Règle générale pour tous les effets de survol dans le footer sauf le logo */
+.footer a:not(.footer-logo a):hover {
+  color: var(--color-black);
+  text-decoration: none;
 }

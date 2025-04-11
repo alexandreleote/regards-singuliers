@@ -1,0 +1,51 @@
+/* 
+ * Composants de cartes réutilisables
+ * Ces styles définissent les différents types de cartes utilisées sur le site
+ */
+
+/* Carte de base */
+.card {
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: var(--spacing-sm);
+    transition: all 0.3s ease;
+}
+
+.card-body {
+    padding: var(--spacing-md);
+}
+
+.card-title {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.card-text {
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.card-footer {
+    padding: var(--spacing-sm);
+    background-color: var(--color-bg-light);
+    border-top: 1px solid var(--color-border);
+}
+
+/* Variante pour les cartes de service */
+.service-card {
+    width: 300px;
+    text-align: center;
+}
+
+/* Variante pour les cartes de la page d'accueil */
+.home-service-card {
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.home-service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+}

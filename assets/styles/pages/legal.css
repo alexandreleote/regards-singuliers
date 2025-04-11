@@ -83,17 +83,4 @@
   border-radius: 4px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .legal-container {
-    padding: 0 var(--spacing-md);
-  }
-  
-  .legal-content {
-    padding: var(--spacing-md);
-  }
-  
-  .legal-title {
-    font-size: var(--font-size-lg);
-  }
-}
+/* Responsive styles ont été déplacés vers responsive.css */

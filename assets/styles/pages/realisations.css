@@ -106,12 +106,4 @@
     object-fit: cover;
   }
   
-  @media (max-width: 991.98px) {
-    .projects-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .gallery-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+  /* Responsive styles ont été déplacés vers responsive.css */

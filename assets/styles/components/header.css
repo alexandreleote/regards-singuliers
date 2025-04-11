@@ -246,42 +246,7 @@ nav {
 }
 
 /* Tablette */
-@media (max-width: 991.98px) {
-  .nav-list {
-    display: none;
-  }
-  
-  .header-auth {
-    display: none;
-  }
-  
-  .burger-menu-btn {
-    display: block;
-  }
-  
-  .nav-mobile {
-    display: block;
-  }
-}
-
-/* Mobile */
-@media (max-width: 767.98px) {
-  .header {
-    padding: var(--spacing-xs) 0;
-  }
-  
-  .logo h1 {
-    font-size: var(--font-size-md);
-  }
-  
-  .logo span {
-    font-size: var(--font-size-xs);
-  }
-
-  .burger-menu-btn {
-    margin-left: auto;
-  }
-}
+/* Les media queries ont été déplacées vers responsive.css */
 
 /* Styles pour le menu utilisateur */
 .user-menu-btn {
@@ -377,22 +342,4 @@ nav {
 }
 
 /* Laptop */
-@media (max-width: 1199.98px) {
-  .header-auth {
-    display: none;
-  }
-  
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-  }
-
-  .user-menu-btn {
-    display: block;
-  }
-  
-  .user-nav-mobile {
-    display: block;
-  }
-}
+/* Les media queries ont été déplacées vers responsive.css */
