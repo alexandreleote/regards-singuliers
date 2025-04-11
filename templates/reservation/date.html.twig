@@ -3,43 +3,58 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-
     {% if isProfileIncomplete %}
-        <article class="alert alert-warning d-flex align-items-center justify-content-between mb-0">
-            <div>
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Veuillez compléter votre profil (nom, prénom et adresse) avant de faire une réservation.
+        <section class="alert-section" role="alert" aria-labelledby="profile-alert-title">
+            <div class="alert alert-warning">
+                <div class="alert-content">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    <p id="profile-alert-title">Veuillez compléter votre profil (nom, prénom et adresse) avant de faire une réservation.</p>
+                </div>
+                <div class="alert-action">
+                    <a href="{{ path('profile_edit') }}" class="btn btn-warning">
+                        <i class="fas fa-user-edit" aria-hidden="true"></i>
+                        <span>Compléter mon profil</span>
+                    </a>
+                </div>
             </div>
-            <a href="{{ path('profile_edit') }}" class="btn btn-warning">
-                <i class="fas fa-user-edit me-2"></i>
-                Compléter mon profil
-            </a>
-        </article>
+        </section>
     {% else %}
-    <article class="service-info">
-        <h1 class="service-title">{{ service.title }}</h1>
-        <p class="service-description">{{ service.smallDescription|raw }}</p>
-        <aside class="price-info">
-            <div class="price-row">
-                <span>Prix total :</span>
-                <span>{{ service.price|number_format(0, ',', ' ') }}€</span>
-            </div>
-            <div class="price-row">
-                <span>Acompte à verser :</span>
-                <span>{{ deposit_amount }}€</span>
-            </div>
-        </aside>
-    </article>
+        <section class="content-container">
+            <div class="reservation-date">
+                <header>
+                    <h1 class="service-title">{{ service.title }}</h1>
+                </header>
+            
+                <article class="service-summary">
+                    <div class="service-description">
+                        {{ service.smallDescription|raw }}
+                    </div>
+                    
+                    <aside class="price-info">
+                        <div class="price-row">
+                            <span class="price-label">Prix total :</span>
+                            <span class="price-value">{{ service.price|number_format(0, ',', ' ') }}€</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Acompte à verser :</span>
+                            <span class="price-value">{{ deposit_amount }}€</span>
+                        </div>
+                    </aside>
+                </article>
 
-    <div id="calendly-container" class="calendly-container"></div>
+                <div class="calendar-section">
+                    <div id="calendly-container" class="calendly-container" aria-label="Sélecteur de date de rendez-vous"></div>
+                </div>
 
-    <div data-controller="reservation" 
-         data-reservation-type-value="date" 
-         data-reservation-calendly-url-value="{{ calendly_url }}"
-         data-reservation-service-slug-value="{{ service.slug }}"
-         data-reservation-service-id-value="{{ service.id }}">
-        <div data-reservation-target="messageElement" class="message hidden"></div>
-    </div>
+                <div data-controller="reservation" 
+                    data-reservation-type-value="date" 
+                    data-reservation-calendly-url-value="{{ calendly_url }}"
+                    data-reservation-service-slug-value="{{ service.slug }}"
+                    data-reservation-service-id-value="{{ service.id }}">
+                    <div data-reservation-target="messageElement" class="message hidden" role="alert"></div>
+                </div>
+            </div>
+        </section>
     {% endif %}
 {% endblock %}
 

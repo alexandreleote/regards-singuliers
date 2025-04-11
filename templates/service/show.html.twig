@@ -3,16 +3,30 @@
 {% block title %}{{ service.title }}{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto px-4 py-8">
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <h1 class="text-3xl font-bold mb-4">{{ service.title }}</h1>
-            <p class="text-gray-600 mb-4">{{ service.description|raw }}</p>
-            <p class="text-2xl font-semibold mb-6">Prix : {{ service.price|number_format(0, ',', ' ') }} €</p>
-            <p class="text-sm text-gray-500 mb-4">Un acompte de 50% sera demandé pour confirmer votre réservation.</p>
-            <a href="{{ path('reservation_payment', {'slug': service.slug}) }}" 
-               class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                Réserver cette prestation
-            </a>
+    <section class="content-container">
+        <div class="service-detail">
+            <header>
+                <h1 class="service-title">{{ service.title }}</h1>
+            </header>
+            
+            <article class="service-content">
+                <div class="service-description">
+                    {{ service.description|raw }}
+                </div>
+                
+                <div class="service-pricing">
+                    <p class="price">Prix : <strong>{{ service.price|number_format(0, ',', ' ') }} €</strong></p>
+                    <p class="deposit-info">Un acompte de 50% sera demandé pour confirmer votre réservation.</p>
+                </div>
+                
+                <div class="service-actions">
+                    <a href="{{ path('reservation_payment', {'slug': service.slug}) }}" 
+                    class="btn btn-primary" 
+                    aria-label="Réserver la prestation {{ service.title }}">
+                        Réserver cette prestation
+                    </a>
+                </div>
+            </article>
         </div>
-    </div>
+    </section>
 {% endblock %}

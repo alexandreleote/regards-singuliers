@@ -2,21 +2,26 @@
 
 {# Définir la page active pour la navigation #}
 {% set active_page = 'contact' %}
-
+{#         <script defer src="{{ asset('build/test/contact-bot.js') }}"></script> #}
 {% block javascripts %}
     {% if app.environment == 'dev' %}
         {{ parent() }}
-        <script defer src="{{ asset('build/test/contact-bot.js') }}"></script>
+
     {% endif %}
 {% endblock %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-<section class="contact-section" aria-labelledby="contact-title">
-        <div {{ stimulus_controller('map') }} data-map-api-key-value="{{ google_maps_api_key|default('') }}">
-            <div class="contact-container">
-                <div class="contact-grid">
+<!-- Conteneur pour les notifications -->
+<div {{ stimulus_controller('notifications') }} data-notifications-timeout-value="5000">
+    <div {{ stimulus_target('notifications', 'container') }} class="notification-container"></div>
+</div>
+
+<section class="contact-form-section" aria-labelledby="contact-title" {{ stimulus_controller('map') }} data-map-api-key-value="{{ google_maps_api_key|default('') }}">
+    <div class="container">
+        <div class="contact-container">
+            <div class="contact-grid">
                     <!-- Colonne de gauche (1/3) -->
                     <aside class="contact-info">
                         <h1 id="contact-title">Contactez-moi</h1>
@@ -41,11 +46,11 @@
                     </aside>
 
                     <!-- Colonne de droite (2/3) -->
-                    <form {{ stimulus_controller('contact') }}
+                    <form {{ stimulus_controller('contact', { notifications: 'notifications' }) }}
                           {{ stimulus_target('contact', 'form') }}
                           {{ stimulus_controller('honeypot') }}
                           data-honeypot-hidden-class="hidden"
-                          data-action="submit->contact#submit submit->honeypot#submit"
+                          data-action="submit->contact#submit"
                           class="contact-form"
                           aria-labelledby="form-title">
                         <h2 id="form-title" class="visually-hidden">Formulaire de contact</h2>
@@ -59,7 +64,7 @@
                         <input type="hidden" name="_timestamp" value="{{ 'now'|date('U') }}" aria-hidden="true">
                         
                         <fieldset class="form-type">
-                            <legend>Type de contact</legend>
+                            <legend class="visually-hidden">Type de contact</legend>
                             <div class="switch-container">
                                 <input type="radio" id="type-particulier" name="type" value="particulier" 
                                        {{ stimulus_target('contact', 'type') }}
@@ -161,16 +166,19 @@
                                           aria-required="true"></textarea>
                             </div>
 
-                            <button type="submit" class="submit-btn" aria-label="Envoyer le formulaire de contact">Envoyer</button>
+                            <button type="submit" class="submit-btn btn btn-primary" aria-label="Envoyer le formulaire de contact">Envoyer</button>
                         </div>
                     </form>
                 </div>
             </div>
-
-            <div class="map-container">
-                <div id="map" aria-label="Carte de localisation" role="region"></div>
-            </div>
         </div>
+    </div>
+    
+    <div class="container">
+        <div class="map-container">
+            <div id="map" aria-label="Carte de localisation" role="region"></div>
+        </div>
+    </div>
 </section>
 
 {% endblock %}

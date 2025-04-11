@@ -3,38 +3,45 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="payment-container">
-        <div class="payment-content">
-            <div class="service-info">
+    <section class="content-container">
+        <div class="payment-section">
+            <header>
                 <h1 class="service-title">{{ service.title }}</h1>
-                <p class="service-description">{{ service.smallDescription|raw }}</p>
+            </header>
+            
+            <article class="service-summary">
+                <div class="service-description">
+                    {{ service.smallDescription|raw }}
+                </div>
+                
                 <aside class="price-info">
                     <div class="price-row">
-                        <span>Prix total :</span>
-                        <span>{{ service.price|number_format(0, ',', ' ') }}€</span>
+                        <span class="price-label">Prix total :</span>
+                        <span class="price-value">{{ service.price|number_format(0, ',', ' ') }}€</span>
                     </div>
                     <div class="price-row">
-                        <span>Acompte à verser :</span>
-                        <span>{{ deposit_amount }}€</span>
+                        <span class="price-label">Acompte à verser :</span>
+                        <span class="price-value">{{ deposit_amount }}€</span>
                     </div>
                 </aside>
-            </div>
+            </article>
 
-            <div data-controller="reservation"
-                 data-reservation-type-value="payment"
-                 data-reservation-stripe-key-value="{{ stripe_public_key }}"
-                 data-reservation-client-secret-value="{{ client_secret }}">
-                <form data-reservation-target="form" class="payment-form">
-                    <div data-reservation-target="paymentElement"></div>
-                    <button data-reservation-target="submitButton" class="payment-button">
+            <div class="payment-container" data-controller="reservation"
+                data-reservation-type-value="payment"
+                data-reservation-stripe-key-value="{{ stripe_public_key }}"
+                data-reservation-client-secret-value="{{ client_secret }}">
+                <form data-reservation-target="form" class="payment-form" aria-labelledby="payment-form-title">
+                    <h2 id="payment-form-title" class="sr-only">Formulaire de paiement</h2>
+                    <div data-reservation-target="paymentElement" aria-label="Élément de paiement Stripe"></div>
+                    <button data-reservation-target="submitButton" class="btn btn-primary payment-button" type="submit">
                         <span data-reservation-target="loadingElement" class="loading hidden">Chargement...</span>
-                        Payer l'acompte
+                        <span>Payer l'acompte</span>
                     </button>
-                    <div data-reservation-target="messageElement" class="message hidden"></div>
+                    <div data-reservation-target="messageElement" class="message hidden" role="alert"></div>
                 </form>
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %}
 
 {% block javascripts %}

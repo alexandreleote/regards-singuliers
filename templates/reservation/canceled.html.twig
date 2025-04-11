@@ -3,21 +3,26 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="canceled-container">
-        <div class="canceled-content">
-            <div class="error-icon">✕</div>
-            <h1 class="canceled-title">Paiement annulé</h1>
-            <p class="canceled-message">
-                Le paiement a été annulé. Vous pouvez réessayer ou revenir à l'accueil.
-            </p>
-            <div>
-                <a href="{{ path('reservation_payment', {slug: service.slug}) }}" class="retry-button">
+    <section class="content-container">
+        <div class="payment-status-section payment-canceled">
+            <div class="status-icon error-icon" aria-hidden="true">✕</div>
+            
+            <header>
+                <h1 class="status-title">Paiement annulé</h1>
+            </header>
+            
+            <div class="status-message">
+                <p>Le paiement a été annulé. Vous pouvez réessayer ou revenir à l'accueil.</p>
+            </div>
+            
+            <div class="status-actions">
+                <a href="{{ path('reservation_payment', {slug: service.slug}) }}" class="btn btn-primary" aria-label="Réessayer le paiement pour {{ service.title }}">
                     Réessayer le paiement
                 </a>
-                <a href="{{ path('home') }}" class="home-button">
+                <a href="{{ path('home') }}" class="btn btn-secondary">
                     Retour à l'accueil
                 </a>
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %} 

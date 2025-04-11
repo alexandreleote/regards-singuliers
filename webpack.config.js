@@ -1,10 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
-const ImageminPlugin = require('imagemin-webpack-plugin').default;
-const imageminMozjpeg = require('imagemin-mozjpeg');
-const imageminPngquant = require('imagemin-pngquant');
-const imageminSvgo = require('imagemin-svgo');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+// Removed imagemin plugins that were causing issues
 
 // Manually configure the runtime environment if not already configured yet.
 // This's useful when you use tools like `symfony var:export` on your production server or require a specific Node.js version.
@@ -169,27 +166,8 @@ if (Encore.isProduction()) {
         })
     );
     
-    // Add Imagemin plugin for image compression
-    config.plugins.push(
-        new ImageminPlugin({
-            test: /\.(jpe?g|png|gif|svg)$/i,
-            plugins: [
-                imageminMozjpeg({
-                    quality: 75,
-                    progressive: true
-                }),
-                imageminPngquant({
-                    quality: [0.65, 0.90]
-                }),
-                imageminSvgo({
-                    plugins: [{
-                        name: 'removeViewBox',
-                        active: false
-                    }]
-                })
-            ]
-        })
-    );
+    // Image optimization is now handled by the image-webpack-loader
+    // which was configured earlier in the config
 }
 
 module.exports = config; 

@@ -2,23 +2,28 @@
  * Styles spécifiques à la page Contact
  */
 
-.contact-section {
+.contact-form-section {
   padding: var(--spacing-lg) 0;
+  background-color: var(--color-white);
+  width: 100%;
 }
 
 .contact-container {
   margin-bottom: var(--spacing-xl);
+  background-color: var(--color-white);
 }
 
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: var(--spacing-xl);
+  background-color: var(--color-white);
 }
 
 /* Colonne d'informations */
 .contact-info {
   padding-right: var(--spacing-lg);
+  background-color: var(--color-white);
 }
 
 .contact-info h2 {
@@ -68,6 +73,31 @@
 }
 
 .form-type {
+  margin-bottom: var(--spacing-md);
+  border: none;
+}
+
+/* Tous les legends dans les fieldsets de type sont masqués visuellement */
+.form-type legend {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+fieldset.form-group {
   margin-bottom: var(--spacing-md);
 }
 
@@ -211,6 +241,14 @@ textarea.form-control {
   width: 100%;
   max-width: 300px;
   margin: var(--spacing-lg) auto 0;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .submit-btn:disabled {
@@ -223,11 +261,20 @@ textarea.form-control {
 .map-container {
   height: 400px;
   margin-top: var(--spacing-map);
+  margin-bottom: var(--spacing-lg);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-white);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
 }
 
 #map {
   width: 100%;
   height: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Responsive styles ont été déplacés vers responsive.css */

@@ -65,13 +65,12 @@ class ContactController extends AbstractController
                 }
             }
 
-            // Nettoyage et validation des données
+            // Nettoyage et validation des données - sans échapper les caractères spéciaux pour l'email
             $data = array_map(function($value) {
                 if (is_string($value)) {
                     // Supprimer les caractères non imprimables et les balises HTML
-                    $value = preg_replace('/[\x00-\x1F\x7F]/u', '', strip_tags($value));
-                    // Échapper les caractères spéciaux
-                    return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    return preg_replace('/[\x00-\x1F\x7F]/u', '', strip_tags($value));
+                    // Ne pas échapper les caractères spéciaux pour permettre leur affichage correct dans l'email
                 }
                 return $value;
             }, $data);

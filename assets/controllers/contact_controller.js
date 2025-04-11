@@ -29,8 +29,6 @@ export default class extends Controller {
 
         const isProfessionnel = this.typeTargets.find(target => target.checked)?.value === 'professionnel';
         this.toggleProfessionnelSection(isProfessionnel);
-
-        this.formTarget.addEventListener('submit', this.submit.bind(this));
     }
 
     change(event) {
@@ -252,47 +250,55 @@ export default class extends Controller {
         }
     }
 
-    sanitizeInput(value) {
-        if (typeof value !== 'string') return value;
-        
-        return value
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#x27;')
-            .replace(/\//g, '&#x2F;');
-    }
-
     showSuccessMessage() {
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-success';
-        alert.textContent = 'Votre message a été envoyé avec succès.';
-        this.formTarget.insertAdjacentElement('beforebegin', alert);
-        setTimeout(() => alert.remove(), 5000);
+        // Utiliser le contrôleur de notifications global
+        const notificationsController = this.application.getControllerForElementAndIdentifier(
+            document.querySelector('[data-controller="notifications"]'),
+            'notifications'
+        );
+        
+        if (notificationsController) {
+            notificationsController.show('Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.', 'success');
+        }
     }
 
     showErrorMessage(message = 'Une erreur est survenue') {
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-danger';
-        alert.textContent = message;
-        this.formTarget.insertAdjacentElement('beforebegin', alert);
-        setTimeout(() => alert.remove(), 5000);
+        // Utiliser le contrôleur de notifications global
+        const notificationsController = this.application.getControllerForElementAndIdentifier(
+            document.querySelector('[data-controller="notifications"]'),
+            'notifications'
+        );
+        
+        if (notificationsController) {
+            notificationsController.show(message, 'error');
+        }
     }
 
     showErrors(errors) {
-        this.formTarget.querySelectorAll('.error-message').forEach(el => el.remove());
+        // Supprimer les erreurs existantes
         this.formTarget.querySelectorAll('.form-control.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
+        // Afficher chaque erreur dans le champ correspondant
         errors.forEach(error => {
             const field = this.formTarget.querySelector(`[name="${error.field}"]`);
             if (field) {
                 field.classList.add('is-invalid');
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message';
-                errorDiv.textContent = error.message;
-                field.parentNode.appendChild(errorDiv);
+                
+                // Supprimer les messages d'erreur existants
+                const existingError = field.parentNode.querySelector('.invalid-feedback');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Ajouter le nouveau message d'erreur
+                const errorElement = document.createElement('div');
+                errorElement.className = 'invalid-feedback';
+                errorElement.textContent = error.message;
+                field.parentNode.appendChild(errorElement);
             }
         });
+        
+        // Afficher un message d'erreur global
+        this.showErrorMessage('Veuillez corriger les erreurs dans le formulaire.');
     }
 }

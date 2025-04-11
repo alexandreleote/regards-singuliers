@@ -6,11 +6,16 @@ export default class extends Controller {
     }
 
     connect() {
-        if (document.getElementById('map') && !window.google?.maps) {
+        // Ensure the map element exists and Google Maps isn't already loaded
+        if (document.getElementById('map')) {
+            // Force reload of Google Maps API to ensure it's properly initialized
             if (!document.querySelector('script[src*="maps.googleapis.com"]')) {
                 window.initMap = () => {
+                    // Coordonnées de Saint-Aignan (6 Le Bronz 56480 Saint-Aignan)
+                    const studioLocation = { lat: 48.0686, lng: -2.9630 };
+                    
                     const map = new google.maps.Map(document.getElementById('map'), {
-                        center: { lat: 48.0686, lng: -2.9630 }, // Coordonnées de Pontivy
+                        center: studioLocation,
                         zoom: 8,
                         styles: [
                             {
@@ -122,11 +127,21 @@ export default class extends Controller {
                         keyboardShortcuts: false
                     });
 
-                    // Créer le marqueur standard
-                    new google.maps.Marker({
+                    // Créer un marqueur personnalisé pour le studio
+                    const marker = new google.maps.Marker({
                         map,
-                        position: { lat: 48.0686, lng: -2.9630 },
-                        title: 'regards singuliers'
+                        position: studioLocation,
+                        title: 'Regards Singuliers',
+                        animation: google.maps.Animation.DROP
+                    });
+                    
+                    // Ajouter une info window au marqueur
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: '<div style="padding: 10px; max-width: 200px;"><strong>Regards Singuliers</strong><br>6 Le Bronz<br>56480 Saint-Aignan</div>'
+                    });
+                    
+                    marker.addListener('click', () => {
+                        infoWindow.open(map, marker);
                     });
                 };
 
