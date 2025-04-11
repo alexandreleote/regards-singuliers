@@ -3,17 +3,19 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <section class="page-container">
-        <h1>Foire Aux Questions</h1>
+    <div class="content-container">
+        <header class="page-header">
+            <h1 id="faq-title" class="page-title">Foire Aux Questions</h1>
+        </header>
         
-        <div class="faq-container">
+        <section class="faq-container" aria-labelledby="faq-title">
             <!-- Question 1 -->
-            <div class="faq-item">
-                <div class="faq-question">
+            <div class="faq-item" data-controller="accordion">
+                <div class="faq-question" data-accordion-target="title" data-action="click->accordion#toggle">
                     <h3>Comment se déroule un projet d'architecture d'intérieur ?</h3>
                     <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
                 </div>
-                <div class="faq-answer">
+                <div class="faq-answer hidden" data-accordion-target="content" aria-hidden="true">
                     <p>Un projet d'architecture d'intérieur se déroule généralement en plusieurs étapes :</p>
                     <ol>
                         <li><strong>Première rencontre</strong> : Nous discutons de vos besoins, vos envies et votre budget.</li>
@@ -27,12 +29,12 @@
             </div>
             
             <!-- Question 2 -->
-            <div class="faq-item">
-                <div class="faq-question">
+            <div class="faq-item" data-controller="accordion">
+                <div class="faq-question" data-accordion-target="title" data-action="click->accordion#toggle">
                     <h3>Quel est le coût d'un projet d'architecture d'intérieur ?</h3>
                     <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
                 </div>
-                <div class="faq-answer">
+                <div class="faq-answer hidden" data-accordion-target="content" aria-hidden="true">
                     <p>Le coût d'un projet d'architecture d'intérieur varie en fonction de plusieurs facteurs :</p>
                     <ul>
                         <li>La taille de l'espace à aménager</li>
@@ -46,12 +48,12 @@
             </div>
                 
             <!-- Question 3 -->
-            <div class="faq-item">
-                <div class="faq-question">
+            <div class="faq-item" data-controller="accordion">
+                <div class="faq-question" data-accordion-target="title" data-action="click->accordion#toggle">
                     <h3>Combien de temps dure un projet d'architecture d'intérieur ?</h3>
                     <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
                 </div>
-                <div class="faq-answer">
+                <div class="faq-answer hidden" data-accordion-target="content" aria-hidden="true">
                     <p>La durée d'un projet dépend de son ampleur et de sa complexité. Voici un calendrier indicatif :</p>
                     <ul>
                         <li><strong>Petits projets</strong> (réaménagement d'une pièce) : 1 à 3 mois</li>
@@ -63,12 +65,12 @@
             </div>
                 
             <!-- Question 4 -->
-            <div class="faq-item">
-                <div class="faq-question">
+            <div class="faq-item" data-controller="accordion">
+                <div class="faq-question" data-accordion-target="title" data-action="click->accordion#toggle">
                     <h3>Travaillez-vous avec des particuliers ou des professionnels ?</h3>
                     <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
                 </div>
-                <div class="faq-answer">
+                <div class="faq-answer hidden" data-accordion-target="content" aria-hidden="true">
                     <p>Nous travaillons aussi bien avec des particuliers que des professionnels :</p>
                     <ul>
                         <li><strong>Particuliers</strong> : Maisons, appartements, résidences secondaires</li>
@@ -79,15 +81,15 @@
             </div>
                 
             <!-- Question 5 -->
-            <div class="faq-item">
-                <div class="faq-question">
+            <div class="faq-item" data-controller="accordion">
+                <div class="faq-question" data-accordion-target="title" data-action="click->accordion#toggle">
                     <h3>Comment prendre rendez-vous pour un premier entretien ?</h3>
                     <span class="faq-icon"><i class="fa-solid fa-chevron-down"></i></span>
                 </div>
-                <div class="faq-answer">
+                <div class="faq-answer hidden" data-accordion-target="content" aria-hidden="true">
                     <p>Pour prendre rendez-vous, vous pouvez :</p>
                     <ul>
-                        <li>Nous contacter via notre <a href="/contact">formulaire de contact</a></li>
+                        <li>Nous contacter via notre <a href="{{ path('contact') }}">formulaire de contact</a></li>
                         <li>Nous appeler directement</li>
                         <li>Nous envoyer un email</li>
                     </ul>
@@ -97,23 +99,9 @@
             
             <div class="contact-section">
                 <p>Vous avez d'autres questions ?</p>
-                <a href="/contact" class="contact-btn">Contactez-nous</a>
+                <a href="{{ path('contact') }}" class="contact-btn">Contactez-nous</a>
             </div>
-        </div>
-    </section>
-
-    <div class="faq-section">
-        <h2>Questions fréquentes</h2>
-        <div class="faq-list">
-            <div class="faq-item">
-                <h3>Comment puis-je vous contacter ?</h3>
-                <p>Vous pouvez nous contacter par email à l'adresse : <a href="mailto:contact@regards-singuliers.fr">contact@regards-singuliers.fr</a></p>
-            </div>
-        </div>
+        </section>
     </div>
 
-    <div class="info-section">
-        <h2>Besoin d'informations supplémentaires ?</h2>
-        <p>N'hésitez pas à nous contacter par email pour toute question complémentaire.</p>
-    </div>
 {% endblock %}

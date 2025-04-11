@@ -3,24 +3,107 @@
  * Utilise les classes utilitaires de layout.css et les composants de cards.css
  */
 
+/* Page header */
+.page-header {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
 /* Styles spécifiques au titre de service - utilise les variables CSS */
 .service-title {
     text-align: center;
     margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-2xl);
+    font-family: var(--title-font);
     color: var(--color-text);
 }
 
 /* Styles spécifiques à l'intro de service */
 .service-intro {
-    text-align: center;
     margin-bottom: var(--spacing-xl);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Style spécifique pour le texte principal */
 .service-lead {
     font-size: var(--font-size-md);
     color: var(--color-text-light);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Style pour le texte justifié */
+.text-justified {
+    text-align: justify;
+    hyphens: auto;
+}
+
+/* Accordion styles */
+.accordion-container {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.accordion-title {
+  cursor: pointer;
+  font-family: var(--title-font);
+  font-size: var(--font-size-lg);
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  transition: color 0.3s ease;
+  color: var(--color-text);
+}
+
+.accordion-title:hover {
+  color: var(--color-text-light);
+}
+
+.accordion-title::after {
+  content: '+';
+  position: absolute;
+  right: -1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+
+.accordion-title.active::after {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.service-more-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 2000px;
+  overflow: hidden;
+  opacity: 1;
+  transition: all 0.5s ease;
+  margin-top: 2rem;
+  text-align: left;
+  background-color: var(--color-secondary);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+}
+
+.service-more-content p {
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+  color: var(--color-white);
+}
+
+.service-more-content.hidden {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* Liste de services - utilise les classes flex de layout.css */
@@ -37,27 +120,47 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: var(--spacing-sm);
     width: 300px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 350px; /* Minimum height for consistency */
 }
 
 .service-card-body {
     padding: var(--spacing-md);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .service-card-title {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-md);
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+    font-family: var(--title-font);
+    color: var(--color-text);
 }
 
 .service-card-text {
     color: var(--color-text-light);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    flex: 1;
+}
+
+.service-card-price {
+    font-weight: var(--font-weight-medium);
+    margin-top: auto; /* Push to bottom of flex container */
+    padding-top: var(--spacing-md);
+    color: var(--color-text);
+    text-align: center;
 }
 
 .service-card-footer {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
     background-color: var(--color-bg-light);
     border-top: 1px solid var(--color-border);
+    text-align: center;
 }
 
 /* Styles spécifiques qui ne sont pas couverts par les composants génériques */
@@ -73,4 +176,64 @@
 
 .icon-star, .icon-info-circle {
     margin-right: 5px;
+}
+
+/* Section de contact */
+.service-contact {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg) 0;
+    background-color: var(--color-bg-alt);
+    border-radius: 8px;
+}
+
+.service-contact-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.service-contact-title {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text);
+    text-align: center;
+    font-family: var(--title-font);
+}
+
+.service-contact-text {
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-lg);
+}
+
+.service-contact-cta {
+    text-align: center;
+}
+
+.service-contact-cta {
+    margin-top: var(--spacing-md);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .service-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .service-lead {
+        font-size: var(--font-size-base);
+    }
+    
+    .accordion-title {
+        font-size: var(--font-size-md);
+    }
+    
+    .service-contact-title {
+        font-size: var(--font-size-md);
+    }
+    
+    .service-contact-text {
+        font-size: var(--font-size-sm);
+    }
 }

@@ -178,7 +178,7 @@
                         </nav>
                     </div>
                     
-                    <div data-menu-burger-target="overlay" class="menu-overlay"></div>
+                    <div data-menu-burger-target="overlay" data-action="click->menu-burger#closeMenu" class="menu-overlay"></div>
                 </div>
 
                 {# Navigation principale Desktop #}
@@ -261,6 +261,7 @@
                         <li class="footer-link-item"><a href="{{ path('cgv') }}" class="footer-link">C.G.V</a></li>
                         <li class="footer-link-item"><a href="{{ path('confidentialite') }}" class="footer-link">Confidentialité</a></li>
                         <li class="footer-link-item"><a href="{{ path('mentions_legales') }}" class="footer-link">Mentions légales</a></li>
+                        <li class="footer-link-item"><a href="{{ path('faq') }}" class="footer-link">FAQ</a></li>
                     </ul>
                 </nav>
 

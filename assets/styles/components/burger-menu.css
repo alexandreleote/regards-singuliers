@@ -1,4 +1,17 @@
 /* Styles pour le menu burger principal */
+.burger-menu-btn {
+    display: none; /* Par défaut caché, affiché via media queries */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    z-index: 1001;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .burger-menu {
     width: 24px;
     height: 18px;
@@ -61,7 +74,7 @@
     font-size: var(--font-size-lg);
     transition: color var(--transition-fast);
     position: absolute;
-    right: var(--container-padding);
+    right: 60px;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -72,23 +85,56 @@
 
   /* Menu d'authentification */
   .nav-mobile[data-menu-burger-target="authMenu"] {
-    display: none; /* Par défaut, le menu est caché */
+    display: block; /* Toujours présent dans le DOM */
     position: fixed;
     top: var(--header-height);
-    right: -100%;
+    right: 0;
     width: 250px;
     height: auto;
     max-height: calc(100vh - var(--header-height));
     background-color: var(--color-white);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     z-index: 999;
-    transition: all var(--transition-fast);
+    transition: transform var(--transition-fast), opacity var(--transition-fast), visibility var(--transition-fast);
     padding: var(--spacing-md);
     overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
   }
 
   .nav-mobile[data-menu-burger-target="authMenu"].active {
-    right: 0;
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
   }
 
-  /* Media queries ont été déplacées vers responsive.css */
+  /* Media queries pour les menus burger */
+  @media (max-width: 991.98px) {
+    .burger-menu-btn {
+      display: block;
+    }
+    
+    /* Masquer le menu auth burger sur mobile */
+    .auth-burger-menu-btn {
+      display: none !important;
+    }
+  }
+  
+  @media (min-width: 992px) and (max-width: 1199.98px) {
+    /* Afficher le menu auth burger sur tablette/petit desktop */
+    .auth-burger-menu-btn {
+      display: block !important;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1001;
+    }
+    
+    /* Masquer les liens d'authentification dans la navigation principale */
+    .header-right {
+      display: none !important;
+    }
+  }

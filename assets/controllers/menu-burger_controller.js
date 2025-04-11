@@ -23,6 +23,15 @@ export default class extends Controller {
 
     toggleAuth(event) {
         event.preventDefault();
+        
+        // Fermer le menu principal s'il est ouvert
+        if (this.isMenuOpen) {
+            this.isMenuOpen = false;
+            this.mainMenuTarget.classList.remove('active');
+            document.querySelector('.burger-menu-btn').classList.remove('active');
+        }
+        
+        // Toggle le menu d'authentification
         this.isAuthMenuOpen = !this.isAuthMenuOpen;
         this.authMenuTarget.classList.toggle('active');
         
@@ -31,6 +40,8 @@ export default class extends Controller {
         
         // Toggle le bouton du auth menu
         event.currentTarget.classList.toggle('active');
+        
+        console.log('Auth menu toggled:', this.isAuthMenuOpen);
     }
 
     // Méthode pour gérer l'état de l'overlay et du scroll body

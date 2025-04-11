@@ -136,7 +136,7 @@
 
 /* Large devices only (desktops, 992px to 1199.98px) */
 @media (min-width: 992px) and (max-width: 1199.98px) {
-  /* Burger Menu */
+  /* Burger Menu pour l'authentification */
   .auth-burger-menu-btn {
     display: block;
   }
@@ -145,13 +145,9 @@
     display: block;
   }
 
-  /* Masquer le menu principal */
-  .burger-menu-btn {
-    display: none;
-  }
-
-  .nav-mobile[data-menu-burger-target="mainMenu"] {
-    display: none;
+  /* Afficher la navigation principale en desktop */
+  .navbar {
+    display: flex !important;
   }
 }
 
@@ -181,8 +177,13 @@
     display: none;
   }
   
+  /* Afficher le menu burger */
   .burger-menu-btn {
-    display: block;
+    display: block !important;
+    position: absolute;
+    right: var(--container-padding);
+    top: 50%;
+    transform: translateY(-50%);
   }
   
   .nav-mobile {
@@ -331,18 +332,34 @@
   /* Studio page */
   .studio-intro {
     grid-template-columns: 1fr;
+    margin: 1rem 0 2rem;
   }
   
   .studio-more-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   
   .studio-more-images.image-left {
     max-width: 100%;
   }
   
+  .studio-more-images.image-left img,
+  .studio-more-images.image-left picture {
+    aspect-ratio: 16/9;
+  }
+  
   .cta-grid {
     grid-template-columns: 1fr;
+    padding: 0 var(--spacing-md);
+  }
+  
+  .page-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .accordion-title {
+    font-size: var(--font-size-lg);
   }
   
   /* Reservation page */

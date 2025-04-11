@@ -3,35 +3,71 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="page-container">
-        <h2 class="service-title">Nos prestations sur mesure</h2>
+    <div class="content-container">
+        <header class="page-header">
+            <h1 class="service-title">Nos prestations sur mesure</h1>
+        </header>
 
-        <div class="service-intro">
-            <p class="service-lead">
-                Chez Regards Singuliers, chaque projet est unique, pensé avec sensibilité et créativité pour révéler le potentiel de votre intérieur. Que vous soyez en phase de réflexion, en pleine rénovation ou dans une optique de transformation complète, nous vous accompagnons à chaque étape avec professionnalisme et passion.
-            </p>
-        </div>
+        <section class="service-intro">
+            <div class="service-lead">
+                <p class="text-justified">
+                    Chez Regards Singuliers, chaque projet est unique, pensé avec sensibilité et créativité pour révéler le potentiel de votre intérieur. Que vous soyez en phase de réflexion, en pleine rénovation ou dans une optique de transformation complète, nous vous accompagnons à chaque étape avec professionnalisme et passion.
+                </p>
+            </div>
+            
+            <div class="accordion-container" data-controller="accordion">
+                <h2 class="accordion-title" data-action="click->accordion#toggle" data-accordion-target="title">Notre approche personnalisée...</h2>
+                
+                <div class="service-more-content hidden" aria-hidden="true" data-accordion-target="content">
+                    <p class="text-justified">
+                        Architecte d'intérieur passionnée, je m'engage à créer des espaces qui vous ressemblent et dans lesquels vous vous sentirez bien. Ma démarche repose sur l'écoute attentive de vos besoins, l'analyse approfondie de votre espace et la proposition de solutions créatives et fonctionnelles.
+                    </p>
+                    <p class="text-justified">
+                        Je privilégie les matériaux durables, naturels et respectueux de l'environnement, tout en veillant à respecter votre budget. Chaque prestation est adaptable et peut être personnalisée selon vos attentes spécifiques.
+                    </p>
+                    <p class="text-justified">
+                        Découvrez ci-dessous mes différentes formules d'accompagnement, du simple conseil à la réalisation complète de votre projet.
+                    </p>
+                </div>
+            </div>
+        </section>
 
         <div class="service-list">
             {% for service in services %}
                 <div class="service-card">
                     <div class="service-card-body">
-                        <h5 class="service-card-title">
-                            <i class="icon-star"></i> {{ service.title }}
-                        </h5>
-                        <p class="service-card-text">{{ service.smallDescription|raw }}</p>
-                        <p class="service-card-text">
-                            <strong>Prix :</strong> {{ service.price|number_format(0, ',', ' ') }} €
+                        <h3 class="service-card-title">
+                            {{ service.title }}
+                        </h3>
+                        <div class="service-card-text text-justified">{{ service.smallDescription|raw }}</div>
+                        <p class="service-card-price">
+                            {% if service.price > 450.01 %}
+                                À partir de {{ service.price|number_format(0, ',', ' ') }} €
+                            {% else %}
+                                Tarif : {{ service.price|number_format(0, ',', ' ') }} €
+                            {% endif %}
                         </p>
                     </div>
                     <div class="service-card-footer">
                         <a href="{{ path('prestation_show', {'slug': service.slug}) }}" 
-                           class="service-btn">
-                            <i class="icon-info-circle"></i> Voir les détails
+                           class="btn btn-primary">
+                            Voir les détails
                         </a>
                     </div>
                 </div>
             {% endfor %}
         </div>
+
+        <section class="service-contact">
+            <div class="service-contact-content">
+                <h2 class="service-contact-title">Vous ne trouvez pas ce qui vous correspond ?</h2>
+                <p class="service-contact-text text-justified">
+                    Si aucune de ces prestations ne répond exactement à vos besoins, n'hésitez pas à me contacter. Je vous propose un premier échange téléphonique gratuit pour discuter de votre projet et vous orienter vers la solution la plus adaptée.
+                </p>
+                <div class="service-contact-cta">
+                    <a href="{{ path('contact') }}" class="btn btn-primary">Prendre contact</a>
+                </div>
+            </div>
+        </section>
     </div>
 {% endblock %}
