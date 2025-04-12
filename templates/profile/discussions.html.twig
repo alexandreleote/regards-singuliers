@@ -3,111 +3,147 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <div class="toast-container" id="toastContainer"></div>
-    <section class="profile-content">
-        <a href="{{ path('profile') }}" class="back-link">
-            <i class="fas fa-arrow-left"></i>
-            Retour
-        </a>
-        <article class="discussion-container" data-controller="discussions" data-discussions-discussion-id-value="{{ currentDiscussion ? currentDiscussion.id : '0' }}" data-discussions-is-user-connected-value="{{ app.user ? 'true' : 'false' }}">
-            {% if is_granted('ROLE_ADMIN') %}
-                {% if discussions is defined and discussions|length > 0 %}
-                    <div class="discussions-list">
+    <section class="content-container">
+        <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+        
+        <div class="profile-content">
+            <header class="section-header">
+                <a href="{{ path('profile') }}" class="back-link" aria-label="Retour au profil">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    Retour
+                </a>
+                <h1 class="section-title">Messagerie</h1>
+            </header>
+            
+            <div class="discussion-container" data-controller="discussions" data-discussions-discussion-id-value="{{ currentDiscussion ? currentDiscussion.id : '0' }}" data-discussions-is-user-connected-value="{{ app.user ? 'true' : 'false' }}">
+                {% if is_granted('ROLE_ADMIN') and discussions is defined and discussions|length > 0 %}
+                    <aside class="discussions-list" aria-label="Liste des discussions">
                         <h2>Discussions actives</h2>
-                        <ul>
+                        <ul class="discussions-list-items">
                             {% for discussion in discussions %}
                                 <li class="discussion-item {% if discussion.id == currentDiscussion.id %}active{% endif %}">
-                                    <a href="{{ path('admin_discussion', {'id': discussion.id}) }}">
-                                        {% if 'ROLE_DELETED' in discussion.reservation.user.roles %}
-                                            profil anonymisé
-                                        {% elseif not discussion.reservation.user.personalInformationComplete %}
-                                            {{ discussion.reservation.user.email }}
-                                        {% else %}
-                                            {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
-                                        {% endif %}
+                                    <a href="{{ path('admin_discussion', {'id': discussion.id}) }}" {% if discussion.id == currentDiscussion.id %}aria-current="page"{% endif %}>
+                                        <span class="discussion-name">
+                                            {% if 'ROLE_DELETED' in discussion.reservation.user.roles %}
+                                                profil anonymisé
+                                            {% elseif not discussion.reservation.user.personalInformationComplete %}
+                                                {{ discussion.reservation.user.email }}
+                                            {% else %}
+                                                {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
+                                            {% endif %}
+                                        </span>
                                         <span class="discussion-date">{{ discussion.createdAt|date('d/m/Y') }}</span>
                                     </a>
                                 </li>
                             {% endfor %}
                         </ul>
-                    </div>
+                    </aside>
                 {% endif %}
-            {% endif %}
 
-            {% if app.user.reservations|length > 0 or (is_granted('ROLE_ADMIN') and discussions|length > 0) %}
-                <article>
-                    <h1>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            {% if 'ROLE_DELETED' in currentDiscussion.reservation.user.roles %}
-                                profil anonymisé
-                            {% elseif not currentDiscussion.reservation.user.personalInformationComplete %}
-                                {{ currentDiscussion.reservation.user.email }}
-                            {% else %}
-                                {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
-                            {% endif %}
-                            <button 
-                                id="toggleLockBtn" 
-                                class="btn btn-secondary" 
-                                data-discussion-id="{{ currentDiscussion.id }}"
-                                data-is-locked="{{ currentDiscussion.isLocked ? 'true' : 'false' }}"
-                            >
-                                {% if currentDiscussion.isLocked %}
-                                    <i class="fas fa-lock"></i> Déverrouiller
-                                {% else %}
-                                    <i class="fas fa-unlock"></i> Verrouiller
-                                {% endif %}
-                            </button>
-                        {% else %}
-                            Votre discussion avec l'architecte
-                        {% endif %}
-                    </h1>
-
-                    <div class="messages-container" id="messagesContainer" data-discussions-target="messageList">
-                        {% for message in messages %}
-                            <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}">
-                                <div class="message-content">
-                                    {% if message.isDeleted %}
-                                        <em>Message supprimé</em>
+                {% if app.user.reservations|length > 0 or (is_granted('ROLE_ADMIN') and discussions|length > 0) %}
+                    <article class="discussion-content">
+                        <header class="discussion-header">
+                            <h2 class="discussion-title">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    {% if 'ROLE_DELETED' in currentDiscussion.reservation.user.roles %}
+                                        profil anonymisé
+                                    {% elseif not currentDiscussion.reservation.user.personalInformationComplete %}
+                                        {{ currentDiscussion.reservation.user.email }}
                                     {% else %}
-                                        {{ message.content }}
+                                        {{ currentDiscussion.reservation.user.firstName }} {{ currentDiscussion.reservation.user.name }}
                                     {% endif %}
-                                </div>
-                                <div class="message-time">
-                                    {{ message.sentAt|date('d/m/Y H:i') }}
-                                    {% if message.user.id == app.user.id and not message.isDeleted %}
-                                        <form action="{{ path('user_discussion_delete_message', {id: currentDiscussion.id, messageId: message.id}) }}" method="post" class="d-inline">
-                                            <a href="#" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce message ?')){this.closest('form').submit();return false;}">Supprimer</a>
-                                        </form>
+                                {% else %}
+                                    Votre discussion avec l'architecte
+                                {% endif %}
+                            </h2>
+                            
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <button 
+                                    id="toggleLockBtn" 
+                                    class="btn btn-secondary" 
+                                    data-discussion-id="{{ currentDiscussion.id }}"
+                                    data-is-locked="{{ currentDiscussion.isLocked ? 'true' : 'false' }}"
+                                    aria-label="{% if currentDiscussion.isLocked %}Déverrouiller{% else %}Verrouiller{% endif %} la discussion"
+                                >
+                                    {% if currentDiscussion.isLocked %}
+                                        <i class="fas fa-lock" aria-hidden="true"></i> Déverrouiller
+                                    {% else %}
+                                        <i class="fas fa-unlock" aria-hidden="true"></i> Verrouiller
                                     {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
+                                </button>
+                            {% endif %}
+                        </header>
+
+                        <div class="messages-container" id="messagesContainer" data-discussions-target="messageList" aria-label="Messages">
+                            {% if messages|length > 0 %}
+                                {% for message in messages %}
+                                    <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}" role="listitem">
+                                        <div class="message-content">
+                                            {% if message.isDeleted %}
+                                                <em>Message supprimé</em>
+                                            {% else %}
+                                                {{ message.content }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="message-time">
+                                            <time datetime="{{ message.sentAt|date('Y-m-d\TH:i:s') }}">{{ message.sentAt|date('d/m/Y H:i') }}</time>
+                                            {% if message.user.id == app.user.id and not message.isDeleted %}
+                                                <form action="{{ path('user_discussion_delete_message', {id: currentDiscussion.id, messageId: message.id}) }}" method="post" class="delete-message-form">
+                                                    <button type="button" class="delete-message-btn" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce message ?')){this.closest('form').submit();}">
+                                                        <i class="fas fa-trash-alt" aria-hidden="true"></i> Supprimer
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-messages">Aucun message pour le moment. Commencez la conversation !</div>
+                            {% endif %}
+                        </div>
+
+                        <form id="messageForm" class="message-form" data-discussions-target="form" action="{{ path('send_message') }}" method="post" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
+                            {% if currentDiscussion is defined %}
+                                <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
+                            {% endif %}
+                            <textarea 
+                                name="content" 
+                                class="message-input" 
+                                data-discussions-target="messageInput"
+                                placeholder="{% if currentDiscussion.isLocked %}Cette discussion est verrouillée{% else %}Écrivez votre message...{% endif %}"
+                                required
+                                {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}
+                                aria-label="Votre message"
+                            ></textarea>
+                            <button type="submit" class="send-button" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
+                                <i class="fas fa-paper-plane" aria-hidden="true"></i> Envoyer
+                            </button>
+                        </form>
+                    </article>
+                {% else %}
+                    <article class="discussion-empty">
+                        <div class="empty-state">
+                            <i class="fas fa-comment-slash empty-icon" aria-hidden="true"></i>
+                            <h2>Aucune discussion</h2>
+                            <p>Vous n'avez pas encore réservé de prestations.</p>
+                            <p>Prenez connaissance de nos <a href="{{ path('prestations') }}" class="btn btn-primary">services</a></p>
+                        </div>
+                    </article>
+                {% endif %}
+            </div>
+            
+            <footer class="discussion-footer">
+                <div class="info-note">
+                    <div class="info-note-icon">
+                        <i class="fas fa-info-circle" aria-hidden="true"></i>
                     </div>
-
-                    <form id="messageForm" class="message-form" data-discussions-target="form" action="{{ path('send_message') }}" method="post" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
-                        {% if currentDiscussion is defined %}
-                            <input type="hidden" name="discussionId" value="{{ currentDiscussion.id }}">
-                        {% endif %}
-                        <textarea 
-                            name="content" 
-                            class="message-input" 
-                            data-discussions-target="messageInput"
-                            placeholder="{% if currentDiscussion.isLocked %}Cette discussion est verrouillée{% else %}Écrivez votre message...{% endif %}"
-                            required
-                            {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}
-                        ></textarea>
-                        <button type="submit" class="send-button" {% if currentDiscussion.isLocked %}disabled="disabled"{% endif %}>
-                            Envoyer
-                        </button>
-                    </form>
-                </article>
-            {% else %}
-                <article>
-                    <p>Vous n'avez pas encore réservé de prestations.</p>
-                    <p>Prenez connaissance de nos <a href="{{ path('prestations') }}">services</a></p>
-                </article>
-            {% endif %}
-        </article>
+                    <div class="info-note-content">
+                        <h3 class="info-note-title">Note d'information</h3>
+                        <p>Les informations échangées dans cette messagerie ne sont utilisées que dans le cadre de votre prestation. Pour en savoir plus sur le traitement de vos données, consultez nos <a href="{{ path('cgu') }}" class="text-link">Conditions Générales d'Utilisation</a>.</p>
+                        <p>Pour toute question supplémentaire, n'hésitez pas à <a href="{{ path('contact') }}" class="text-link">nous contacter</a>.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </section>
-
 {% endblock %}
