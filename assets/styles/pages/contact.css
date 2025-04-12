@@ -17,7 +17,6 @@
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: var(--spacing-xl);
-  background-color: var(--color-white);
 }
 
 /* Colonne d'informations */
