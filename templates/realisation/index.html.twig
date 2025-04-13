@@ -7,36 +7,34 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <h1 id="realisations-title">{{ page_title }}</h1>
-
-    <section class="realisations-container" role="list" aria-labelledby="realisations-title">
+    <section class="content-container">
+        <h1 id="realisations-title">{{ page_title }}</h1>
+        
+        <div class="realisations-gallery" role="list" aria-labelledby="realisations-title">
             {% for realisation in realisations %}
-                <article class="realisation-item" role="listitem">
-                    <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
-                       class="realisation-link"
-                       aria-labelledby="realisation-title-{{ realisation.id }}">
-                        <div class="realisation-image">
-                            {% if realisation.mainImage %}
-                                <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
-                                     alt="{{ realisation.title }} - Image principale du projet" 
-                                     class="image-item">
-                            {% else %}
-                                <div class="image-placeholder" aria-hidden="true"></div>
-                            {% endif %}
-                        </div>
-                        <div class="realisation-content">
-                            <h2 id="realisation-title-{{ realisation.id }}" class="realisation-title">{{ realisation.title }}</h2>
-                            <p>
-                                {{ realisation.content|striptags|length > 150 ? 
-                                   realisation.content|striptags|slice(0, 150) ~ '...' : 
-                                   realisation.content|striptags }}
-                            </p>
-                            <p class="realisation-cta">Voir le projet</p>
-                        </div>
-                    </a>
-                </article>
+                <a href="{{ path('realisation_show', {'id': realisation.id}) }}" 
+                   class="realisation-card" 
+                   role="listitem"
+                   aria-labelledby="realisation-title-{{ realisation.id }}">
+                    
+                    {% if realisation.mainImage %}
+                        <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
+                             alt="{{ realisation.title }} - Image principale du projet" 
+                             class="realisation-image">
+                    {% else %}
+                        <div class="image-placeholder" aria-hidden="true"></div>
+                    {% endif %}
+                    
+                    <div class="realisation-overlay">
+                        <h2 id="realisation-title-{{ realisation.id }}" class="realisation-title">
+                            {{ realisation.title }}
+                        </h2>
+                        <p class="realisation-cta">Voir le projet</p>
+                    </div>
+                </a>
             {% else %}
                 <p class="no-results">Aucune réalisation disponible pour le moment.</p>
             {% endfor %}
+        </div>
     </section>
 {% endblock %}

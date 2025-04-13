@@ -1,9 +1,16 @@
 {% extends 'base.html.twig' %}
+{% import 'components/media.html.twig' as media %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
-    <section class="page-container">
+    <section class="content-container">
+        <div class="page-navigation">
+            <a href="{{ path('realisations') }}">
+                <i class="fas fa-arrow-left"></i> Retour aux réalisations
+            </a>
+        </div>
+
         <div class="realisation-header">
             <h2>{{ realisation.title }}</h2>
             <p class="realisation-date">
@@ -11,34 +18,34 @@
             </p>
         </div>
 
-        <div class="realisation-main-image">
+        <picture class="realisation-main-image">
             <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
-                 alt="{{ realisation.title }}"
+                 alt="{{ realisation.title }}" 
                  class="image-item">
-        </div>
+        </picture>
 
-        <div class="realisation-content">
+        <article class="realisation-content">
             {{ realisation.content|raw }}
-        </div>
+        </article>
 
         {% if realisation.additionalImages|length > 0 %}
-            <div class="realisation-gallery">
-                <h3>Galerie photos</h3>
+            <aside class="realisation-gallery">
+                <h3 class="gallery-title">Galerie photos</h3>
                 <div class="gallery-container">
                     {% for imagePath in realisation.additionalImages %}
-                        <div class="gallery-item">
+                        <picture class="gallery-item">
                             <img src="{{ asset('uploads/realisations/' ~ imagePath) }}" 
-                                 alt="Image supplémentaire"
+                                 alt="Image supplémentaire du projet {{ realisation.title }}" 
                                  class="image-item">
-                        </div>
+                        </picture>
                     {% endfor %}
                 </div>
-            </div>
+            </aside>
         {% endif %}
 
-        <div class="realisation-footer">
-            <a href="{{ path('realisations') }}" class="back-link">
-                Retour aux réalisations
+        <div class="page-navigation">
+            <a href="{{ path('realisations') }}">
+                <i class="fas fa-arrow-left"></i> Retour aux réalisations
             </a>
         </div>
     </section>

@@ -467,3 +467,207 @@
     font-size: var(--font-size-base);
   }
 }
+
+/* ==========================================================================
+   PAGE-SPECIFIC RESPONSIVE STYLES
+   ========================================================================== */
+
+/* Réalisations Page */
+@media (max-width: 768px) {
+  /* Galerie de réalisations */
+  .realisations-gallery {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* Galerie d'images supplémentaires */
+  .gallery-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Services Page */
+@media (max-width: 768px) {
+  .service-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .service-lead {
+    font-size: var(--font-size-base);
+  }
+  
+  .accordion-title {
+    font-size: var(--font-size-md);
+  }
+  
+  .service-contact-title {
+    font-size: var(--font-size-md);
+  }
+  
+  .service-contact-text {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Discussion Page */
+/* Extra small devices */
+@media (max-width: 575.98px) {
+  /* Notes d'information */
+  .info-note {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+  }
+  
+  .info-note-icon {
+    text-align: center;
+  }
+  
+  .info-note-title {
+    text-align: center;
+  }
+  
+  /* Notifications */
+  .toast-container {
+    width: auto;
+    max-width: 80%;
+    right: 10px;
+  }
+  
+  .toast {
+    width: auto;
+    max-width: 100%;
+  }
+  
+  .toast-message {
+    max-width: 180px;
+  }
+  
+  /* Discussion container */
+  .discussion-container {
+    flex-direction: column;
+    margin: var(--spacing-xs);
+    border-radius: 6px;
+  }
+  
+  .discussions-list {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-sm);
+    max-height: 250px;
+  }
+  
+  .discussion-content {
+    padding: var(--spacing-sm);
+  }
+  
+  .discussion-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .discussion-title {
+    font-size: var(--font-size-md);
+  }
+  
+  .messages-container {
+    padding: var(--spacing-sm);
+    min-height: 250px;
+    max-height: 350px;
+  }
+  
+  .message {
+    max-width: 90%;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .message-form {
+    flex-direction: column;
+  }
+  
+  .message-input {
+    min-height: 80px;
+  }
+  
+  .send-button {
+    width: 100%;
+    height: auto;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+/* Small devices (landscape phones, 576px to 767.98px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .discussion-container {
+    flex-direction: column;
+    max-width: 540px;
+    margin: var(--spacing-sm) auto;
+  }
+  
+  .discussions-list {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-md);
+    max-height: 300px;
+  }
+  
+  .discussion-item a {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .discussion-date {
+    margin-bottom: 0;
+  }
+  
+  .discussion-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  #toggleLockBtn {
+    align-self: flex-end;
+  }
+}
+
+/* Medium devices (tablets, 768px to 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .discussion-container {
+    max-width: 720px;
+    margin: var(--spacing-md) auto;
+  }
+  
+  .discussions-list {
+    width: 220px;
+  }
+  
+  .message {
+    max-width: 85%;
+  }
+}
+
+/* Large devices (desktops, 992px to 1199.98px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .discussion-container {
+    max-width: 960px;
+    margin: var(--spacing-md) auto;
+  }
+  
+  .discussions-list {
+    width: 250px;
+  }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .discussion-container {
+    max-width: var(--container-max-width);
+    margin: var(--spacing-lg) auto;
+  }
+}

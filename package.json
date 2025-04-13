@@ -33,10 +33,7 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "convert-to-webp": "node scripts/convert-to-webp.js",
-        "optimize-videos": "node scripts/optimize-videos.js",
-        "optimize-assets": "npm run convert-to-webp && npm run optimize-videos",
-        "build": "npm run optimize-assets && encore production --progress"
+        "build": "encore production --progress"
     },
     "dependencies": {
         "@hotwired/stimulus": "^3.2.2"

@@ -108,6 +108,12 @@ main {
   width: 100%;
 }
 
+/* Ajustement pour les conteneurs spécifiques */
+.realisations-container,
+.contact-section {
+  width: 100%;
+}
+
 /* Ajustement pour les titres de page */
 .page-title {
   margin-bottom: var(--spacing-xl);

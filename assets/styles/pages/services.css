@@ -215,25 +215,4 @@
     margin-top: var(--spacing-md);
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-    .service-title {
-        font-size: var(--font-size-xl);
-    }
-    
-    .service-lead {
-        font-size: var(--font-size-base);
-    }
-    
-    .accordion-title {
-        font-size: var(--font-size-md);
-    }
-    
-    .service-contact-title {
-        font-size: var(--font-size-md);
-    }
-    
-    .service-contact-text {
-        font-size: var(--font-size-sm);
-    }
-}
+/* Les styles responsive ont été déplacés vers responsive.css */
