@@ -12,6 +12,7 @@ import ReservationController from './controllers/reservation_controller.js';
 import AuthController from './controllers/auth_controller.js';
 import PhoneToggleController from './controllers/phone-toggle_controller.js';
 import AccordionController from './controllers/accordion_controller.js';
+// Le contrôleur de vérification des messages est maintenant intégré dans NotificationsController
 
 // Registers Stimulus controllers from controllers.json and in the controllers/ directory
 export const app = Application.start();
@@ -31,3 +32,4 @@ app.register('reservation', ReservationController);
 app.register('auth', AuthController);
 app.register('phone-toggle', PhoneToggleController);
 app.register('accordion', AccordionController);
+// Le contrôleur de vérification des messages est maintenant intégré dans NotificationsController

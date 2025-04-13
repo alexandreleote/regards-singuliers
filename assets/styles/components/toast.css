@@ -1,8 +1,7 @@
 /**
- * Styles unifiés pour les notifications et toasts
+ * Styles pour les toasts (notifications)
  */
 
-/* Conteneur principal des notifications */
 .notifications-container {
   position: fixed;
   top: 20px;
@@ -13,15 +12,14 @@
   max-width: 90%;
 }
 
-/* Conteneur des toasts */
 .toast-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-width: 350px;
   width: 100%;
 }
 
-/* Style de base pour les toasts */
 .toast {
   background-color: var(--color-white);
   border-radius: 8px;
@@ -43,7 +41,6 @@
   transform: translateX(0);
 }
 
-/* Styles pour les différents types de toasts */
 .toast.success {
   border-left: 4px solid var(--color-success);
   background-color: var(--color-white);
@@ -59,7 +56,6 @@
   background-color: var(--color-white);
 }
 
-/* Icônes des toasts */
 .toast-icon {
   margin-right: 12px;
   display: flex;
@@ -83,71 +79,18 @@
   color: var(--color-info);
 }
 
-/* Message du toast */
 .toast-message {
   flex: 1;
   font-size: 14px;
   color: var(--color-text);
 }
 
-/* Support des anciennes classes pour rétrocompatibilité */
-.notification-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  max-width: 400px;
-  width: 100%;
-}
-
-.notification {
-  background-color: var(--color-white);
-  border-left: 4px solid var(--color-info);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-sm) var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
-  animation: slideIn 0.3s ease-out;
-  max-width: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Animations */
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
 /* Responsive */
 @media (max-width: 576px) {
-  .notifications-container,
-  .notification-container {
+  .notifications-container {
     top: 10px;
     right: 10px;
     left: 10px;
-    max-width: 100%;
-    width: auto;
   }
   
   .toast-container {

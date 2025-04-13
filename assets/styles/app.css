@@ -11,7 +11,7 @@
 @import './components/buttons.css';
 @import './components/email.css';
 @import './components/burger-menu.css';
-@import './components/notifications.css';
+@import './components/notifications.css'; /* Contient également les styles des toasts */
 
 /* Pages */
 @import './pages/home.css';

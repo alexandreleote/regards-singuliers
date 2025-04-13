@@ -124,6 +124,16 @@
         {# Les polices sont chargées localement via fonts.css #}
     </head>
     <body>
+        {% if app.user %}
+        {# Conteneur de notifications global avec vérification des messages #}
+        <div data-controller="notifications" 
+             class="notifications-container" 
+             data-notifications-timeout-value="5000"
+             data-notifications-check-messages-value="true"
+             data-notifications-check-interval-value="30000">
+            <div data-notifications-target="container" class="toast-container"></div>
+        </div>
+        {% endif %}
         
         <header class="header">
             <div class="container header-container">

@@ -185,7 +185,12 @@ final class DiscussionController extends AbstractController
             $message->setUser($user);
             $message->setDiscussion($discussion);
             $message->setSentAt(new \DateTimeImmutable());
+            
+            // Important : le message est déjà lu pour l'expéditeur, mais pas pour le destinataire
             $message->setIsRead(false);
+            
+            // Débogage
+            error_log('New message created by user ID: ' . $user->getId() . ' in discussion ID: ' . $discussion->getId());
 
             $em->persist($message);
             $em->flush();
@@ -219,12 +224,43 @@ final class DiscussionController extends AbstractController
             $user = $this->getUser();
             $discussionId = $request->query->get('discussionId');
 
-            // Si aucun ID de discussion n'est fourni, on vérifie tous les messages non lus
+            // Si aucun ID de discussion n'est fourni, on vérifie tous les messages non lus (pour toutes les discussions)
             if (!$discussionId) {
+                // Forcer le comptage des messages non lus
                 $unreadCount = $messageRepository->countUnreadForUser($user);
+                
+                // Débogage
+                error_log('Check new messages for user ID: ' . $user->getId() . ', unread count: ' . $unreadCount);
+                
+                // Si on demande juste le nombre de messages non lus
+                if ($request->query->get('countOnly') === 'true') {
+                    return new JsonResponse([
+                        'newMessages' => $unreadCount > 0,
+                        'unreadCount' => $unreadCount,
+                        'userId' => $user->getId(),
+                        'timestamp' => (new \DateTime())->format('Y-m-d H:i:s')
+                    ]);
+                }
+                
+                // Sinon, on récupère les discussions avec des messages non lus
+                $discussions = $discussionRepository->findWithUnreadMessages($user);
+                $unreadDiscussions = [];
+                
+                foreach ($discussions as $discussion) {
+                    $unreadMessages = $messageRepository->findUnreadByDiscussionForUser($discussion, $user);
+                    if (count($unreadMessages) > 0) {
+                        $unreadDiscussions[] = [
+                            'id' => $discussion->getId(),
+                            'title' => $discussion->getTitle() ?: 'Discussion #' . $discussion->getId(),
+                            'unreadCount' => count($unreadMessages)
+                        ];
+                    }
+                }
+                
                 return new JsonResponse([
                     'newMessages' => $unreadCount > 0,
-                    'unreadCount' => $unreadCount
+                    'unreadCount' => $unreadCount,
+                    'unreadDiscussions' => $unreadDiscussions
                 ]);
             }
 
@@ -245,24 +281,35 @@ final class DiscussionController extends AbstractController
                 return new JsonResponse(['error' => 'Discussion non trouvée'], Response::HTTP_NOT_FOUND);
             }
 
+            // Trouver les messages non lus pour cet utilisateur dans cette discussion
             $newMessages = $messageRepository->findUnreadByDiscussionForUser($discussion, $user);
+            $hasNewMessages = count($newMessages) > 0;
             $messages = [];
             
+            // Préparer les données des messages pour le front-end
             foreach ($newMessages as $message) {
-                $message->setIsRead(true);
+                // Ne pas marquer comme lu immédiatement pour permettre l'affichage de la notification
+                // $message->setIsRead(true);
                 $messages[] = [
+                    'id' => $message->getId(),
                     'content' => $message->getContent(),
                     'sentAt' => $message->getSentAt()->format('d/m/Y H:i'),
+                    'sender' => $message->getUser()->getUsername(),
                 ];
             }
 
-            if (!empty($messages)) {
+            // Si l'utilisateur a explicitement demandé à marquer comme lu
+            if ($request->query->get('markAsRead') === 'true' && !empty($messages)) {
+                foreach ($newMessages as $message) {
+                    $message->setIsRead(true);
+                }
                 $em->flush();
             }
 
             return new JsonResponse([
-                'newMessages' => !empty($messages),
-                'messages' => $messages
+                'newMessages' => $hasNewMessages,
+                'messages' => $messages,
+                'count' => count($messages)
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(
