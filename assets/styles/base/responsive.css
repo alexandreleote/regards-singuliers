@@ -451,6 +451,18 @@
 
 /* Extra small devices (mobile phones, 480px and down) */
 @media (max-width: 480px) {
+  /* Cookie Consent pour écrans très étroits */
+  .cc-compliance {
+    flex-wrap: wrap;
+  }
+  
+  .cc-btn {
+    margin-bottom: 0.25rem;
+  }
+  
+  .cc-compact-mode {
+    padding: 0.5rem;
+  }
   /* Home page */
   .home-video-title {
     font-size: var(--font-size-2xl);
@@ -557,6 +569,40 @@
 /* Discussion Page */
 /* Extra small devices */
 @media (max-width: 575.98px) {
+  /* Cookie Consent pour très petits écrans */
+  .cc-window {
+    flex-direction: column;
+    padding: 0.75rem 1rem;
+  }
+  
+  .cc-message {
+    margin-bottom: 0.75rem;
+    margin-right: 0;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+  
+  .cc-compliance {
+    flex: 1 1 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .cc-btn {
+    flex: 1;
+    padding: 0.4em 0.6em;
+    font-size: 0.7em;
+    text-align: center;
+    white-space: nowrap;
+  }
+  
+  .cc-compact-mode .cc-message {
+    margin-bottom: 0;
+    text-align: left;
+  }
   /* Notes d'information */
   .info-note {
     flex-direction: column;
