@@ -485,10 +485,38 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-}
 
-/* Services Page */
-@media (max-width: 768px) {
+  /* Cookie Consent */
+
+  .cc-window {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .cc-message {
+      margin-bottom: 0;
+      margin-right: 1rem;
+      font-size: 0.8rem;
+  }
+
+  .cc-compliance {
+      flex: 0 0 auto;
+      margin-top: 0;
+  }
+
+  .cc-categories.cc-show {
+      display: flex;
+      flex-wrap: wrap;
+  }
+
+  .cc-category {
+      flex: 0 0 48%;
+      margin-right: 2%;
+  }
+
+  /* Services Page */
+
   .service-title {
     font-size: var(--font-size-xl);
   }

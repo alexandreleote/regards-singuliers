@@ -83,4 +83,6 @@
   border-radius: 4px;
 }
 
-/* Responsive styles ont été déplacés vers responsive.css */
+.browser-cookies {
+  margin-top: 1rem;
+}
