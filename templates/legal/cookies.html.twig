@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+    <div class="content-container">
+        <header class="page-header">
+            <h1 id="cookies-title" class="page-title">Gestion des Cookies</h1>
+        </header>
+        
+        <section class="legal-container" aria-labelledby="cookies-title">
+            <div class="legal-section">
+                <h2 class="section-title">1. Qu'est-ce qu'un cookie ?</h2>
+                <div class="section-content">
+                    <p>Un cookie est un petit fichier texte déposé sur votre ordinateur, tablette ou smartphone lorsque vous visitez un site web. Les cookies permettent au site de vous reconnaître, de mémoriser vos préférences et de vous offrir une expérience personnalisée.</p>
+                    <p>Les cookies sont essentiels au bon fonctionnement de nombreux sites web et applications. Ils peuvent être utilisés pour diverses raisons, comme mémoriser vos préférences, analyser votre utilisation du site ou personnaliser les publicités.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">2. Les cookies que nous utilisons</h2>
+                <div class="section-content">
+                    <p>Sur le site regards singuliers, nous utilisons différents types de cookies :</p>
+                    <ul>
+                        <li><strong>Cookies essentiels</strong> : Nécessaires au fonctionnement du site, ils vous permettent d'utiliser ses fonctionnalités principales (comme l'accès à votre compte).</li>
+                        <li><strong>Cookies de préférences</strong> : Permettent de mémoriser vos choix et préférences pour améliorer votre expérience.</li>
+                        <li><strong>Cookies statistiques</strong> : Nous aident à comprendre comment les visiteurs interagissent avec le site en collectant des informations anonymes.</li>
+                        <li><strong>Cookies de session</strong> : Temporaires, ils sont supprimés lorsque vous fermez votre navigateur.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">3. Gestion de vos préférences</h2>
+                <div class="section-content">
+                    <p>Vous pouvez à tout moment modifier vos préférences concernant les cookies utilisés sur notre site. Pour cela, cliquez sur le bouton ci-dessous pour faire apparaître à nouveau le bandeau de consentement :</p>
+                    
+                    <div class="cookie-management">
+                        <button id="show-cookie-banner" class="btn btn-primary">Gérer mes préférences de cookies</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">4. Supprimer les cookies</h2>
+                <div class="section-content">
+                    <p>Vous pouvez supprimer tous les cookies stockés sur votre appareil en cliquant sur le bouton ci-dessous. Cela réinitialisera toutes vos préférences et vous devrez à nouveau donner votre consentement lors de votre prochaine visite.</p>
+                    
+                    <div class="cookie-management">
+                        <button id="delete-cookies" class="btn btn-secondary">Supprimer tous les cookies</button>
+                        <div id="delete-cookies-message" class="mt-3" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="browser-cookies mt-4">
+                        <h3>Supprimer les cookies via votre navigateur</h3>
+                        <p>Vous pouvez également supprimer les cookies directement via les paramètres de votre navigateur :</p>
+                        <ul>
+                            <li><strong>Google Chrome</strong> : Menu > Paramètres > Confidentialité et sécurité > Cookies et autres données des sites > Afficher tous les cookies et données des sites > Tout supprimer</li>
+                            <li><strong>Mozilla Firefox</strong> : Menu > Options > Vie privée et sécurité > Cookies et données de sites > Gérer les données > Supprimer tout</li>
+                            <li><strong>Safari</strong> : Préférences > Confidentialité > Gérer les données de sites web > Supprimer tout</li>
+                            <li><strong>Microsoft Edge</strong> : Menu > Paramètres > Confidentialité, recherche et services > Effacer les données de navigation > Cookies et autres données de sites > Effacer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">5. Durée de conservation des cookies</h2>
+                <div class="section-content">
+                    <p>La durée de conservation des cookies varie selon leur type :</p>
+                    <ul>
+                        <li>Les cookies de session sont temporaires et sont supprimés lorsque vous fermez votre navigateur.</li>
+                        <li>Les cookies persistants restent sur votre appareil jusqu'à leur expiration ou jusqu'à ce que vous les supprimiez manuellement.</li>
+                    </ul>
+                    <p>Sur notre site, les cookies de consentement sont conservés pendant 6 mois. Après cette période, votre consentement vous sera à nouveau demandé.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2 class="section-title">6. Mise à jour de notre politique</h2>
+                <div class="section-content">
+                    <p>Nous nous réservons le droit de modifier cette politique à tout moment. Toute modification sera publiée sur cette page. Nous vous encourageons à consulter régulièrement cette page pour rester informé des mises à jour.</p>
+                    <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bouton pour afficher à nouveau le bandeau de cookies
+            const showBannerBtn = document.getElementById('show-cookie-banner');
+            if (showBannerBtn) {
+                showBannerBtn.addEventListener('click', function() {
+                    // Supprimer le cookie de consentement pour forcer l'affichage du bandeau
+                    document.cookie = "cookieconsent_status=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    // Recharger la page pour afficher le bandeau
+                    window.location.reload();
+                });
+            }
+            
+            // Bouton pour supprimer tous les cookies
+            const deleteCookiesBtn = document.getElementById('delete-cookies');
+            const deleteMessage = document.getElementById('delete-cookies-message');
+            
+            if (deleteCookiesBtn) {
+                deleteCookiesBtn.addEventListener('click', function() {
+                    // Fonction pour supprimer tous les cookies
+                    const cookies = document.cookie.split(";");
+                    let count = 0;
+                    
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i];
+                        const eqPos = cookie.indexOf("=");
+                        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                        
+                        if (name) {
+                            count++;
+                            // Supprimer le cookie du domaine
+                            document.cookie = name + "=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                            document.cookie = name + "=; domain=" + window.location.hostname + "; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                            document.cookie = name + "=; domain=." + window.location.hostname + "; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        }
+                    }
+                    
+                    // Afficher un message de confirmation
+                    if (deleteMessage) {
+                        deleteMessage.style.display = 'block';
+                        if (count > 0) {
+                            deleteMessage.innerHTML = '<div class="alert alert-success">' + count + ' cookie(s) supprimé(s) avec succès. La page va se recharger.</div>';
+                        } else {
+                            deleteMessage.innerHTML = '<div class="alert alert-info">Aucun cookie à supprimer.</div>';
+                        }
+                        
+                        // Recharger la page après 2 secondes si des cookies ont été supprimés
+                        if (count > 0) {
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

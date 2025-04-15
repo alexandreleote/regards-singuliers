@@ -52,4 +52,14 @@ class LegalController extends AbstractController
             'meta_description' => 'Trouvez les réponses à vos questions fréquentes concernant les services, le processus et les modalités de collaboration avec regards singuliers.',
         ]);
     }
+    
+    #[Route('/mentions-legales/gestion-cookies', name: 'cookies')]
+    public function cookies(): Response
+    {
+        return $this->render('legal/cookies.html.twig', [
+            'page_title' => 'Gestion des cookies - regards singuliers',
+            'meta_description' => 'Gérez vos préférences en matière de cookies sur le site regards singuliers. Apprenez comment nous utilisons les cookies et comment les supprimer.',
+            'active_page' => 'cookies'
+        ]);
+    }
 }

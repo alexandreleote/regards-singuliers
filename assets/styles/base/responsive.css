@@ -508,6 +508,22 @@
   .service-contact-text {
     font-size: var(--font-size-sm);
   }
+  
+  /* Cookie Consent */
+  .cc-window.cc-floating {
+    max-width: calc(100% - 2rem);
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .cc-compliance {
+      flex-direction: column;
+  }
+
+  .cc-btn {
+      width: 100%;
+      text-align: center;
+  }
 }
 
 /* Discussion Page */

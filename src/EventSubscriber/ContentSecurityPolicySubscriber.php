@@ -28,8 +28,8 @@ class ContentSecurityPolicySubscriber implements EventSubscriberInterface
         
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://calendly.com https://js.stripe.com https://maps.googleapis.com https://maps.gstatic.com https://api-adresse.data.gouv.fr https://api.stripe.com",
-            "style-src 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://api-adresse.data.gouv.fr",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.calendly.com https://*.calendly.com https://calendly.com https://js.stripe.com https://maps.googleapis.com https://maps.gstatic.com https://api-adresse.data.gouv.fr https://api.stripe.com https://cdn.jsdelivr.net",
+            "style-src 'self' 'unsafe-inline' https://assets.calendly.com https://*.calendly.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://api-adresse.data.gouv.fr https://cdn.jsdelivr.net",
             "img-src 'self' data: blob: https://*.calendly.com https://maps.gstatic.com https://maps.googleapis.com https://api-adresse.data.gouv.fr",
             "font-src 'self' data: https://assets.calendly.com https://fonts.gstatic.com https://maps.googleapis.com https://cdnjs.cloudflare.com https://api-adresse.data.gouv.fr",
             "connect-src 'self' wss://127.0.0.1:8000 https://127.0.0.1:8000 http://127.0.0.1:8000 https://*.calendly.com https://calendly.com https://maps.googleapis.com https://maps.gstatic.com https://api-adresse.data.gouv.fr https://api.stripe.com",

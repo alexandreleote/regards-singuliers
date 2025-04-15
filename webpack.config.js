@@ -26,6 +26,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('test/contact-bot', './assets/test/contact-bot.js')
     .addEntry('test/registration-bot', './assets/test/registration-bot.js')
+    .addEntry('js/cookieconsent', './assets/js/cookieconsent.js')
 
     // enables the Symfony UX Stimulus bridge
     .enableStimulusBridge('./assets/controllers.json')
