@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Form\FormExtension\HoneyPotType;
+use Symfony\Component\Form\AbstractType;
 use App\Service\AnonymizationService;
 use App\Service\SecurityService;
 use Psr\Log\LoggerInterface;
@@ -20,20 +21,20 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RegistrationFormType extends HoneyPotType
+class RegistrationFormType extends AbstractType // Temporairement désactivé HoneyPotType
 {
     public function __construct(
-        LoggerInterface $honeyPotLogger,
-        RequestStack $requestStack,
-        SecurityService $securityService,
+        private LoggerInterface $honeyPotLogger,
+        private RequestStack $requestStack,
+        private SecurityService $securityService,
         private AnonymizationService $anonymizationService
     ) {
-        parent::__construct($honeyPotLogger, $requestStack, $securityService);
+        // Constructeur modifié pour ne plus appeler le parent
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        parent::buildForm($builder, $options);
+        // Temporairement désactivé parent::buildForm($builder, $options);
         $builder
             ->add('email', EmailType::class, [
                 'attr' => [
@@ -120,7 +121,7 @@ class RegistrationFormType extends HoneyPotType
         $errors = [];
         
         // Vérifier si l'IP est bannie
-        $request = $this->getRequestStack()->getCurrentRequest();
+        $request = $this->requestStack->getCurrentRequest();
         if ($request && $this->anonymizationService->isIpBanned($request->getClientIp())) {
             $errors[] = 'Cette adresse IP est associée à un compte banni. L\'inscription n\'est pas possible.';
         }

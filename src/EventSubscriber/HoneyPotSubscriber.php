@@ -95,19 +95,29 @@ class HoneyPotSubscriber implements EventSubscriberInterface
         // Vérifie les caractères suspects et les motifs d'injection
         $suspiciousPatterns = [
             '/[<>]/', // Tags HTML
-            '/\\x[0-9a-f]{2}/i', // Caractères hexadécimaux
-            '/\\u[0-9a-f]{4}/i', // Unicode escape sequences
-            '/\\n|\\r|\\t/', // Caractères d'échappement
-            '/[\x00-\x1F\x7F]/', // Caractères de contrôle
+            '/[0-9a-f]{2}/i', // Caractères hexadécimaux (sans \x)
+            '/[0-9a-f]{4}/i', // Unicode (sans \u)
+            '/\n|\r|\t/', // Caractères d'échappement
+            // Caractères de contrôle - supprimé car problématique
             '/\b(SELECT|INSERT|UPDATE|DELETE|UNION|DROP|OR|AND)\b/i', // Mots-clés SQL
             '/(javascript|vbscript):/i', // Scripts
             '/on\w+\s*=/', // Event handlers
             '/data:\s*\w+\/\w+;/', // Data URIs
         ];
 
+        // Vérification de sécurité - si la valeur est vide, pas besoin de vérifier
+        if (empty($value)) {
+            return false;
+        }
+        
         foreach ($suspiciousPatterns as $pattern) {
-            if (preg_match($pattern, $value)) {
-                return true;
+            try {
+                if (@preg_match($pattern, $value)) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                // En cas d'erreur avec l'expression régulière, on continue
+                continue;
             }
         }
 

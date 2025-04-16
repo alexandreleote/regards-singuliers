@@ -45,9 +45,11 @@ class RegistrationController extends AbstractController
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
 
-        try {
-            $form->handleRequest($request);
-        } catch (\Exception $e) {
+        // Vérifier si les champs honeypot sont remplis (détection de bot)
+        if ($request->isMethod('POST') && 
+            ($request->request->has('phone') && !empty($request->request->get('phone')) || 
+             $request->request->has('work_email') && !empty($request->request->get('work_email')))) {
+            
             // Enregistrer l'IP du bot
             $botIp = new BotIp();
             $botIp->setIp($request->getClientIp());
@@ -71,6 +73,9 @@ class RegistrationController extends AbstractController
                 'meta_description' => 'Inscription - regards singuliers',
             ]);
         }
+        
+        // Traitement normal du formulaire
+        $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             // Vérifier d'abord si l'email existe déjà

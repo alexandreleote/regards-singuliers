@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Vérifier si l'utilisateur a déjà fait un choix concernant les cookies
-    const hasConsent = document.cookie.indexOf('cookieconsent_status=') !== -1;
-    const isCompactMode = hasConsent;
     
     // Fonction pour récupérer la valeur d'un cookie
     function getCookie(name) {
@@ -16,29 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
         return null;
-    }
-    
-    // Récupérer les catégories de cookies acceptées
-    function getAcceptedCategories() {
-        const categoriesStr = getCookie('cookieconsent_categories');
-        if (categoriesStr) {
-            try {
-                return JSON.parse(decodeURIComponent(categoriesStr));
-            } catch (e) {
-                console.error('Erreur lors du parsing des catégories de cookies:', e);
-                return ['necessary'];
-            }
-        }
-        
-        // Si aucune catégorie n'est définie mais que le statut est 'allow', toutes les catégories sont acceptées
-        const status = getCookie('cookieconsent_status');
-        if (status === 'allow') {
-            return ['necessary', 'analytics', 'targeting', 'personalization', 'social'];
-        } else if (status === 'deny') {
-            return ['necessary'];
-        }
-        
-        return ['necessary'];
     }
     
     // Initialisation du bandeau de cookies uniquement s'il n'est pas déjà présent
@@ -58,8 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             theme: "edgeless",
             type: "opt-in",
-            // Ajouter une classe CSS conditionnelle pour le mode compact
-            classContent: isCompactMode ? 'cc-compact-mode' : '',
+            classContent: '',
             layout: 'categories',
             layouts: {
                 'categories': '{{messagelink}}{{categories}}{{compliance}}'
@@ -77,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dismissOnScroll: false,
             dismissOnTimeout: false,
             content: {
-                "message": isCompactMode ? "Préférences cookies" : "Pour améliorer votre expérience, nous (et nos partenaires) stockons et/ou accédons à des informations sur votre terminal (cookie ou équivalent) avec votre accord pour tous nos sites et applications, sur vos terminaux mobiles.",
+                "message": "Pour améliorer votre expérience, nous (et nos partenaires) stockons et/ou accédons à des informations sur votre terminal (cookie ou équivalent) avec votre accord pour tous nos sites et applications, sur vos terminaux mobiles.",
                 "allow": "Accepter tout",
                 "deny": "Continuer sans accepter",
                 "link": "En savoir plus",
@@ -184,33 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialisation de Cookie Consent
         const cookiePopup = window.cookieconsent.initialise(cookieOptions);
         
-        // Ajouter un gestionnaire d'événements pour le mode compact
-        if (isCompactMode) {
-            // Attendre que le bandeau soit affiché
-            setTimeout(function() {
-                const messageElement = document.querySelector('.cc-message');
-                if (messageElement) {
-                    messageElement.style.cursor = 'pointer';
-                    messageElement.title = 'Cliquez pour gérer vos préférences de cookies';
-                    messageElement.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        try {
-                            window.location.href = '/mentions-legales/gestion-cookies';
-                        } catch (error) {
-                            console.error('Erreur lors de la redirection:', error);
-                        }
-                        return false;
-                    });
-                }
-                
-                // Ajuster la taille et le style du bandeau en mode compact
-                const banner = document.querySelector('.cc-window');
-                if (banner && isCompactMode) {
-                    banner.style.padding = '0.5rem 1rem';
-                }
-            }, 500);
-        }
+
     }
     
     // Vérification du statut des cookies au chargement
