@@ -170,6 +170,17 @@
 
 /* Small devices (mobile phones, 767.98px and down) */
 @media (max-width: 767.98px) {
+  /* Alertes responsive */
+  .alert {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .alert-action {
+    width: 100%;
+    justify-content: flex-start;
+  }
   /* Header - Small devices */
   .header {
     padding: var(--spacing-xs) 0;

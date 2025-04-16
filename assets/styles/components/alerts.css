@@ -1,0 +1,121 @@
+/* Styles pour les alertes */
+
+/* Variables pour les couleurs d'alerte */
+:root {
+  --color-warning: #f39c12;
+  --color-warning-bg: rgba(243, 156, 18, 0.1);
+  --color-warning-border: rgba(243, 156, 18, 0.2);
+}
+
+/* Style standard pour les sections d'alerte */
+.alert-section {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--container-padding);
+}
+
+/* Style centré pour l'alerte de profil */
+.alert-section[aria-labelledby="profile-alert-title"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: var(--spacing-xl) var(--container-padding);
+}
+
+.alert-section[aria-labelledby="profile-alert-title"] .alert {
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+  text-align: center;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.alert-section[aria-labelledby="profile-alert-title"] .alert-content {
+  justify-content: center;
+}
+
+.alert-section[aria-labelledby="profile-alert-title"] .alert-content i {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.alert-section[aria-labelledby="profile-alert-title"] .alert-action {
+  justify-content: center;
+  width: 100%;
+}
+
+.alert {
+  padding: var(--spacing-md);
+  border-radius: 4px;
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+}
+
+.alert-content i {
+  font-size: var(--font-size-lg);
+}
+
+.alert-content p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.alert-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Types d'alertes */
+.alert-warning {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning-border);
+}
+
+.alert-error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--color-error);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+.alert-success {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.alert-info {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--color-info);
+  border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+/* Boutons d'alerte */
+.btn-warning {
+  background-color: var(--color-warning);
+  color: white;
+  border: 1px solid var(--color-warning);
+}
+
+.btn-warning:hover {
+  background-color: transparent;
+  color: var(--color-warning);
+}

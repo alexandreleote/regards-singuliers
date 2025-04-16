@@ -13,6 +13,7 @@
 @import './components/burger-menu.css';
 @import './components/notifications.css'; /* Contient également les styles des toasts */
 @import './components/cookie-consent.css';
+@import './components/alerts.css';
 
 /* Pages */
 @import './pages/home.css';
