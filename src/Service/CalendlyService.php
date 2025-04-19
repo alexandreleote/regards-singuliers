@@ -29,8 +29,8 @@ class CalendlyService
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-                'start_time' => $reservation->getAppointmentDatetime()->format('Y-m-d\TH:i:s\Z'),
-                'end_time' => $reservation->getAppointmentDatetime()->modify('+90 minutes')->format('Y-m-d\TH:i:s\Z'),
+                'start_time' => $reservation->getAppointmentDatetime()->format('Y-m-dTH:i:s\Z'),
+                'end_time' => $reservation->getAppointmentDatetime()->modify('+90 minutes')->format('Y-m-dTH:i:s\Z'),
                 'event_type' => 'https://api.calendly.com/event_types/' . $this->organizationUrl,
                 'location' => [
                     'type' => 'custom',

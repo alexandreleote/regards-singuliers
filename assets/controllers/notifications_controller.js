@@ -81,11 +81,45 @@ export default class extends Controller {
     playNotificationSound() {
         try {
             // Créer un élément audio et jouer un son de notification
-            const audio = new Audio('/sounds/notification.mp3');
+            const audio = new Audio('/build/sounds/notification.mp3');
             audio.volume = 0.5;
-            audio.play().catch(e => console.log('Impossible de jouer le son de notification:', e));
+            
+            // Vérifier si l'utilisateur a interagi avec la page
+            const hasInteracted = document.documentElement.hasAttribute('data-user-interacted');
+            
+            if (hasInteracted) {
+                audio.play().catch(e => {
+                    console.log('Impossible de jouer le son de notification:', e);
+                    // Stocker l'intention de jouer le son pour plus tard
+                    this.pendingSound = true;
+                });
+            } else {
+                // Stocker l'intention de jouer le son pour plus tard
+                this.pendingSound = true;
+                
+                // Ajouter un écouteur d'événement unique pour jouer le son après interaction
+                if (!this.hasSetupInteractionListener) {
+                    this.hasSetupInteractionListener = true;
+                    const playPendingSound = () => {
+                        if (this.pendingSound) {
+                            audio.play().catch(e => console.log('Impossible de jouer le son de notification:', e));
+                            this.pendingSound = false;
+                        }
+                    };
+                    
+                    // Liste des événements d'interaction utilisateur
+                    const interactionEvents = ['click', 'touchstart', 'keydown'];
+                    
+                    interactionEvents.forEach(eventType => {
+                        document.addEventListener(eventType, () => {
+                            document.documentElement.setAttribute('data-user-interacted', 'true');
+                            playPendingSound();
+                        }, { once: true });
+                    });
+                }
+            }
         } catch (error) {
-            console.log('Son de notification non disponible');
+            console.log('Son de notification non disponible:', error);
         }
     }
 

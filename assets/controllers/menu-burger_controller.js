@@ -17,7 +17,7 @@ export default class extends Controller {
         // Gérer l'overlay et le scroll du body
         this.updateOverlayAndBodyScroll();
         
-        // Toggle le bouton du burger menu
+        // Toggle la navigation du burger menu
         event.currentTarget.classList.toggle('active');
     }
 
@@ -28,7 +28,7 @@ export default class extends Controller {
         if (this.isMenuOpen) {
             this.isMenuOpen = false;
             this.mainMenuTarget.classList.remove('active');
-            document.querySelector('.burger-menu-btn').classList.remove('active');
+            document.querySelector('.burger-nav').classList.remove('active');
         }
         
         // Toggle le menu d'authentification
@@ -38,10 +38,8 @@ export default class extends Controller {
         // Gérer l'overlay et le scroll du body
         this.updateOverlayAndBodyScroll();
         
-        // Toggle le bouton du auth menu
+        // Toggle la navigation du auth menu
         event.currentTarget.classList.toggle('active');
-        
-        console.log('Auth menu toggled:', this.isAuthMenuOpen);
     }
 
     // Méthode pour gérer l'état de l'overlay et du scroll body
@@ -62,13 +60,13 @@ export default class extends Controller {
         if (this.isMenuOpen) {
             this.isMenuOpen = false;
             this.mainMenuTarget.classList.remove('active');
-            document.querySelector('.burger-menu-btn').classList.remove('active');
+            document.querySelector('.burger-nav').classList.remove('active');
         }
         
         if (this.isAuthMenuOpen) {
             this.isAuthMenuOpen = false;
             this.authMenuTarget.classList.remove('active');
-            document.querySelector('.auth-burger-menu-btn').classList.remove('active');
+            document.querySelector('.auth-burger-nav').classList.remove('active');
         }
         
         // Mettre à jour l'overlay et le scroll body

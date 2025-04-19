@@ -1,5 +1,5 @@
 /* Styles pour le menu burger principal */
-.burger-menu-btn {
+.burger-nav {
     display: none; /* Par défaut caché, affiché via media queries */
     background: none;
     border: none;
@@ -21,30 +21,35 @@
     flex-direction: column;
     justify-content: space-between;
     transition: all var(--transition-fast);
-  }
-  
-  .burger-line {
+}
+
+.burger-line {
     width: 100%;
     height: 2px;
     background-color: var(--color-black);
     transition: all var(--transition-fast);
     transform-origin: center;
-  }
-  
-  .burger-menu-btn.active .burger-line:nth-child(1) {
+    border-radius: 2px;
+}
+
+.burger-nav:hover .burger-line {
+    background-color: var(--color-accent);
+}
+
+.burger-nav.active .burger-line:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
-  }
-  
-  .burger-menu-btn.active .burger-line:nth-child(2) {
+}
+
+.burger-nav.active .burger-line:nth-child(2) {
     opacity: 0;
-  }
-  
-  .burger-menu-btn.active .burger-line:nth-child(3) {
+}
+
+.burger-nav.active .burger-line:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg);
-  }
-  
-  /* Overlay commun aux deux menus */
-  .menu-overlay {
+}
+
+/* Overlay commun aux deux menus */
+.menu-overlay {
     position: fixed;
     top: var(--header-height);
     left: 0;
@@ -55,15 +60,15 @@
     opacity: 0;
     visibility: hidden;
     transition: all var(--transition-fast);
-  }
-  
-  .menu-overlay.active {
+}
+
+.menu-overlay.active {
     opacity: 1;
     visibility: visible;
-  }
+}
 
-  /* Menu burger d'authentification */
-  .auth-burger-menu-btn {
+/* Menu burger d'authentification */
+.auth-burger-nav {
     display: none;
     background: none;
     border: none;
@@ -77,14 +82,14 @@
     right: 60px;
     top: 50%;
     transform: translateY(-50%);
-  }
+}
 
-  .auth-burger-menu-btn:hover {
+.auth-burger-nav:hover {
     color: var(--color-accent);
-  }
+}
 
-  /* Menu d'authentification */
-  .nav-mobile[data-menu-burger-target="authMenu"] {
+/* Menu d'authentification */
+.nav-mobile[data-menu-burger-target="authMenu"] {
     display: block; /* Toujours présent dans le DOM */
     position: fixed;
     top: var(--header-height);
@@ -102,39 +107,10 @@
     transform: translateX(100%);
     opacity: 0;
     visibility: hidden;
-  }
+}
 
-  .nav-mobile[data-menu-burger-target="authMenu"].active {
+.nav-mobile[data-menu-burger-target="authMenu"].active {
     transform: translateX(0);
     opacity: 1;
     visibility: visible;
-  }
-
-  /* Media queries pour les menus burger */
-  @media (max-width: 991.98px) {
-    .burger-menu-btn {
-      display: block;
-    }
-    
-    /* Masquer le menu auth burger sur mobile */
-    .auth-burger-menu-btn {
-      display: none !important;
-    }
-  }
-  
-  @media (min-width: 992px) and (max-width: 1199.98px) {
-    /* Afficher le menu auth burger sur tablette/petit desktop */
-    .auth-burger-menu-btn {
-      display: block !important;
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1001;
-    }
-    
-    /* Masquer les liens d'authentification dans la navigation principale */
-    .header-right {
-      display: none !important;
-    }
-  }
+}

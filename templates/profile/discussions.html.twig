@@ -86,7 +86,7 @@
                                             {% endif %}
                                         </div>
                                         <div class="message-time">
-                                            <time datetime="{{ message.sentAt|date('Y-m-d\TH:i:s') }}">{{ message.sentAt|date('d/m/Y H:i') }}</time>
+                                            <time datetime="{{ message.sentAt|date('Y-m-dTH:i:s') }}">{{ message.sentAt|date('d/m/Y H:i') }}</time>
                                             {% if message.user.id == app.user.id and not message.isDeleted %}
                                                 <form action="{{ path('user_discussion_delete_message', {id: currentDiscussion.id, messageId: message.id}) }}" method="post" class="delete-message-form">
                                                     <button type="button" class="delete-message-btn" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce message ?')){this.closest('form').submit();}">

@@ -41,14 +41,14 @@
                     <article class="home-service-card">
                         <div class="home-service-content">
                             <h3 class="home-service-title">{{ service.title }}</h3>
-                            <p class="home-service-description">{{ service.smallDescription|raw }}</p>
-                            <p class="home-service-price">
+                            <div class="home-service-description">{{ service.smallDescription|raw }}</div>
+                            <div class="home-service-price">
                                 {% if service.price > 450.01 %}
                                     À partir de {{ service.price|format_price }} €
                                 {% else %}
                                     Tarif : {{ service.price|format_price }} €
                                 {% endif %}
-                            </p>
+                            </div>
                             {{ _self.button('En savoir plus', path('prestation_show', {'slug': service.slug}), 'home-service-link', 'En savoir plus sur ' ~ service.title) }}
                         </div>
                     </article>
@@ -62,10 +62,10 @@
             <div class="home-contact-overlay" aria-hidden="true"></div>
             <div class="home-contact-content">
                 <h2 id="contact-title" class="home-section-title">Contactez-nous</h2>
-                <p class="home-contact-text">
-                    Vous souhaitez discuter de votre projet ?
-                    Nous sommes là pour vous aider.
-                </p>
+                <div class="home-contact-text">
+                    <p>Vous souhaitez discuter de votre projet ?</p>
+                    <p>Nous sommes là pour vous aider.</p>
+                </div>
                 {{ _self.button('Contactez-nous', path('contact'), 'btn-primary', 'Accéder au formulaire de contact') }}
             </div>
         </div>

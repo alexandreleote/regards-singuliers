@@ -20,6 +20,7 @@ final class RealisationController extends AbstractController
             'page_title' => 'Nos réalisations - regards singuliers',
             'meta_description' => 'Découvrez l\'univers créatif de notrer studio d\'architecture d\'intérieur. Un porftolio exclusif de projets sur-mesure, alliant élégance, fonctionnalité et innovation pour transformer vos espaces de vie.',
             'realisations' => $realisationRepository->findWithImages(),
+            'active_page' => 'realisations',
         ]);
     }
 
@@ -33,6 +34,7 @@ final class RealisationController extends AbstractController
             'meta_description' => $realisation->getTitle() . ' - regards singuliers',
             'realisation' => $realisation,
             'other_realisations' => $realisationRepository->findLatest(3),
+            'active_page' => 'realisations',
         ]);
     }
 

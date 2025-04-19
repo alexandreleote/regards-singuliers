@@ -20,23 +20,21 @@
 {% endmacro %}
 
 {% macro mobile_nav(active_page = '') %}
-    <ul class="nav-list-mobile">
-        <li class="nav-item-mobile {% if active_page == 'studio' %}active{% endif %}">
-            <a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a>
-        </li>
-        <li class="nav-item-mobile {% if active_page == 'realisations' %}active{% endif %}">
-            <a href="{{ path('realisations') }}" class="nav-link-mobile">Réalisations</a>
-        </li>
-        <li class="nav-item-mobile {% if active_page == 'prestations' %}active{% endif %}">
-            <a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a>
-        </li>
-        <li class="nav-item-mobile {% if active_page == 'blog' %}active{% endif %}">
-            <a href="#" class="nav-link-mobile">Blog</a>
-        </li>
-        <li class="nav-item-mobile {% if active_page == 'contact' %}active{% endif %}">
-            <a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a>
-        </li>
-    </ul>
+    <li class="nav-item-mobile {% if active_page == 'studio' %}active{% endif %}">
+        <a href="{{ path('studio') }}" class="nav-link-mobile">Le Studio</a>
+    </li>
+    <li class="nav-item-mobile {% if active_page == 'realisations' %}active{% endif %}">
+        <a href="{{ path('realisations') }}" class="nav-link-mobile">Réalisations</a>
+    </li>
+    <li class="nav-item-mobile {% if active_page == 'prestations' %}active{% endif %}">
+        <a href="{{ path('prestations') }}" class="nav-link-mobile">Prestations</a>
+    </li>
+    <li class="nav-item-mobile {% if active_page == 'blog' %}active{% endif %}">
+        <a href="#" class="nav-link-mobile">Blog</a>
+    </li>
+    <li class="nav-item-mobile {% if active_page == 'contact' %}active{% endif %}">
+        <a href="{{ path('contact') }}" class="nav-link-mobile">Contact</a>
+    </li>
 {% endmacro %}
 
 {% macro auth_nav(is_mobile = false) %}
@@ -99,17 +97,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="cookie-policy" content="same-origin">
         <!-- Favicon principal (noir pour mode sombre) -->
-        <link rel="icon" type="image/x-icon" href="/assets/images/favicons/favicon-black.ico?v=20250417164300">
+        <link rel="icon" type="image/x-icon" href="{{ asset('build/images/favicons/favicon-black.ico') }}">
         <!-- Favicon alternatif pour mode clair -->
-        <link rel="icon" type="image/x-icon" href="/assets/images/favicons/favicon-white.ico?v=20250417164300" media="(prefers-color-scheme: light)">
+        <link rel="icon" type="image/x-icon" href="{{ asset('build/images/favicons/favicon-white.ico') }}" media="(prefers-color-scheme: light)">
         <!-- Compatibilité maximale -->
-        <link rel="shortcut icon" href="/assets/images/favicons/favicon-black.ico?v=20250417164300" type="image/x-icon">
+        <link rel="shortcut icon" href="{{ asset('build/images/favicons/favicon-black.ico') }}" type="image/x-icon">
         {% if app.user %}
             <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
         {% endif %}
         <meta name="description" content="{{ meta_description|default('Architecte d\'intérieur - Aménagement, rénovation et décoration d\'intérieur pour particuliers et professionnels.') }}">
         <title>{% block title %}{{ page_title|default('regards singuliers - Architecture d\'intérieur') }}{% endblock %}</title>
-        {# <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">         #}
+        {# Favicons déjà définis plus haut #}
+        
         {# Font Awesome #}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         
@@ -158,34 +157,46 @@
                 
                 {# Menu burger pour la navigation (- 992px) #}
                 <div data-controller="menu-burger">
-                    <button data-action="click->menu-burger#toggle" 
-                            class="burger-menu-btn" 
-                            aria-label="Ouvrir le menu de navigation" 
-                            aria-expanded="false" 
-                            aria-controls="menu-mobile">
+                    <nav class="burger-nav" 
+                         data-action="click->menu-burger#toggle" 
+                         aria-label="Menu de navigation mobile" 
+                         aria-expanded="false" 
+                         aria-controls="menu-mobile">
                         <div class="burger-menu">
                             <span class="burger-line"></span>
                             <span class="burger-line"></span>
                             <span class="burger-line"></span>
                         </div>
-                    </button>
+                    </nav>
 
                     {# Menu burger pour l'authentification (992px - 1200px) #}
-                    <button data-action="click->menu-burger#toggleAuth" 
-                            class="auth-burger-menu-btn" 
-                            aria-label="Ouvrir le menu d'authentification" 
-                            aria-expanded="false" 
-                            aria-controls="auth-menu-mobile">
+                    <nav class="auth-burger-nav" 
+                         data-action="click->menu-burger#toggleAuth" 
+                         aria-label="Menu d'authentification mobile" 
+                         aria-expanded="false" 
+                         aria-controls="auth-menu-mobile">
                         <i class="fas {% if app.user %}fa-user{% else %}fa-sign-in-alt{% endif %}"></i>
-                    </button>
+                    </nav>
                     
                     {# Menu de navigation mobile #} 
                     <div class="nav-mobile" data-menu-burger-target="mainMenu" id="menu-mobile">
                         <nav class="mobile-nav" aria-label="Menu de navigation mobile">
-                            {{ _self.mobile_nav(active_page|default('')) }}
-                            
-                            {# Ajouter les liens d'authentification au menu mobile #}
-                            {{ _self.auth_nav(true) }}
+                            <ul class="nav-list-mobile">
+                                {% for item in [
+                                    {path: 'studio', label: 'Le Studio'},
+                                    {path: 'realisations', label: 'Réalisations'},
+                                    {path: 'prestations', label: 'Prestations'},
+                                    {path: 'contact', label: 'Contact'}
+                                ] %}
+                                    <li class="nav-item-mobile {% if active_page == item.path %}active{% endif %}">
+                                        <a href="{{ path(item.path) }}" class="nav-link-mobile">{{ item.label }}</a>
+                                    </li>
+                                {% endfor %}
+                                <li class="nav-item-mobile {% if active_page == 'blog' %}active{% endif %}">
+                                    <a href="#" class="nav-link-mobile">Blog</a>
+                                </li>
+                                {{ _self.auth_nav(true) }}
+                            </ul>
                         </nav>
                     </div>
 
@@ -254,7 +265,7 @@
                 </nav>
 
                 <address class="footer-col">
-                    <h2 class="footer-title">Coordonnées</h2>
+                    <div class="footer-title">Coordonnées</div>
                     <div class="footer-contact-item">
                         <div class="footer-contact-text">regards singuliers</div>
                     </div>
