@@ -52,7 +52,11 @@
                                 {% set timeBeforeAppointment = appointmentTime - now %}
                                 {% set hoursBeforeAppointment = timeBeforeAppointment / 3600 %}
                                 
-                                {% if hoursBeforeAppointment > 72 %}
+                                {% if appointmentTime < now %}
+                                    <div class="alert alert-info">
+                                        <p>Cette réservation ne peut plus être annulée car la date du rendez-vous est passée.</p>
+                                    </div>
+                                {% elseif hoursBeforeAppointment > 72 %}
                                     <div class="alert alert-info">
                                         <p>Vous pouvez annuler cette réservation. L'acompte de {{ reservation.payments|length > 0 ? reservation.payments|first.depositAmount : 0 }} € vous sera intégralement remboursé.</p>
                                     </div>
@@ -67,10 +71,12 @@
                                 </div>
                             {% endif %}
 
-                            <form method="post" action="{{ path('reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
-                                <button type="submit" class="btn btn-danger">Annuler ma réservation</button>
-                            </form>
+                            {% if appointmentTime > now %}
+                                <form method="post" action="{{ path('reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel-reservation-' ~ reservation.id) }}">
+                                    <button type="submit" class="btn btn-danger">Annuler ma réservation</button>
+                                </form>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>

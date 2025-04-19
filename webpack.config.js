@@ -58,6 +58,14 @@ Encore
         includeSubdirectories: true
     })
 
+    // Copy sounds from assets
+    .copyFiles({
+        from: './assets/sounds',
+        to: 'sounds/[path][name].[ext]',
+        pattern: /\.(mp3|wav|ogg)$/,
+        includeSubdirectories: true
+    })
+
     // Copy images from assets (our scripts will handle optimization)
     .copyFiles({
         from: './assets/images',

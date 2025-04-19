@@ -102,22 +102,37 @@ final class DiscussionController extends AbstractController
             ]);
         }
 
-        // Récupérer ou créer la discussion
-        $discussion = $discussionRepository->findOneBy(['reservation' => $lastReservation]);
-        if (!$discussion) {
-            $discussion = new Discussion();
-            $discussion->setReservation($lastReservation);
-            $discussion->setCreatedAt(new \DateTimeImmutable());
-            $discussion->setIsLocked(false);
-            $discussion->setFilesEnabled(true);
-            $discussion->setIsArchived(false);
+        // Vérifier s'il existe déjà une discussion active pour cet utilisateur
+        $existingDiscussion = $discussionRepository->createQueryBuilder('d')
+            ->leftJoin('d.reservation', 'r')
+            ->where('d.isArchived = :archived')
+            ->andWhere('r.user = :user')
+            ->setParameter('archived', false)
+            ->setParameter('user', $user)
+            ->orderBy('d.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$existingDiscussion) {
+            // Si aucune discussion active n'existe, en créer une nouvelle
+            $existingDiscussion = new Discussion();
+            $existingDiscussion->setReservation($lastReservation);
+            $existingDiscussion->setCreatedAt(new \DateTimeImmutable());
+            $existingDiscussion->setIsLocked(false);
+            $existingDiscussion->setFilesEnabled(true);
+            $existingDiscussion->setIsArchived(false);
             
-            $em->persist($discussion);
+            $em->persist($existingDiscussion);
+            $em->flush();
+        } else {
+            // Si une discussion existe déjà, mettre à jour la réservation associée
+            $existingDiscussion->setReservation($lastReservation);
             $em->flush();
         }
 
         // Récupérer les messages et marquer les messages non lus comme lus
-        $messages = $messageRepository->findBy(['discussion' => $discussion], ['sentAt' => 'ASC']);
+        $messages = $messageRepository->findBy(['discussion' => $existingDiscussion], ['sentAt' => 'ASC']);
 
         foreach ($messages as $message) {
             if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
@@ -133,7 +148,7 @@ final class DiscussionController extends AbstractController
         return $this->render('profile/discussions.html.twig', [
             'messages' => $messages,
             'discussions' => [],
-            'currentDiscussion' => $discussion,
+            'currentDiscussion' => $existingDiscussion,
             'hasUnreadMessages' => $hasUnreadMessages,
             'page_title' => 'Messagerie - regards singuliers',
             'meta_description' => 'Échangez en direct avec votre architecte d\'intérieur.',
