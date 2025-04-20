@@ -20,7 +20,7 @@
 
         <picture class="realisation-main-image">
             <img src="{{ asset('uploads/realisations/' ~ realisation.mainImage) }}" 
-                 alt="{{ realisation.title }}" 
+                 alt="{{ realisation.mainImageAlt|default(realisation.title) }}" 
                  class="image-item">
         </picture>
 
@@ -35,7 +35,7 @@
                     {% for imagePath in realisation.additionalImages %}
                         <picture class="gallery-item">
                             <img src="{{ asset('uploads/realisations/' ~ imagePath) }}" 
-                                 alt="Image supplémentaire du projet {{ realisation.title }}" 
+                                 alt="{{ realisation.additionalImagesAlt[loop.index0]|default('Image supplémentaire du projet ' ~ realisation.title) }}" 
                                  class="image-item">
                         </picture>
                     {% endfor %}

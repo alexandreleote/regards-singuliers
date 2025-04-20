@@ -19,9 +19,9 @@ class PdfGeneratorService
     public function generateInvoicePdf(array $data): string
     {
         $html = $this->twig->render('pdf/invoices.html.twig', $data);
-        
+
         $output = $this->dompdf->getPdf($html);
-        
+
         return $output;
     }
 }

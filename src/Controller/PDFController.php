@@ -12,38 +12,42 @@ use Symfony\Component\HttpFoundation\Request;
 
 class PDFController extends AbstractController
 {
-    #[Route('/facture/{billing_number}', name: 'pdf_invoice')]
-    public function index(PdfGeneratorService $pdfGeneratorService, PaymentRepository $paymentRepository, string $billing_number, Request $request): Response
-    {
-        $payment = $paymentRepository->findOneBy(['billingNumber' => $billing_number]);
-        
+    #[Route('/facture/{billingNumber}', name: 'pdf_invoice')]
+    public function index(
+        PdfGeneratorService $pdfGeneratorService,
+        PaymentRepository $paymentRepository,
+        string $billingNumber,
+        Request $request
+    ): Response {
+        $payment = $paymentRepository->findOneBy(['billingNumber' => $billingNumber]);
         if (!$payment) {
-            throw new NotFoundHttpException('Facture non trouvée');
+            throw $this->createNotFoundException('Paiement non trouvé');
         }
 
         $reservation = $payment->getReservation();
+        $user = $reservation->getUser();
+        $service = $reservation->getService();
 
         $data = [
-            'title' => 'Facture' . ' ' . $payment->getBillingNumber(),
+            'title' => 'Facture',
             'invoice_number' => $payment->getBillingNumber(),
             'invoice_date' => $payment->getPaidAt(),
-            'due_date' => $reservation->getAppointmentDatetime(),
-            'client_name' => $payment->getFirstName() . ' ' . $payment->getName(),
-            'client_address' => $payment->getBillingAddress(),
+            'client_name' => $user->getFullName(),
+            'client_address' => $user->getAddress(),
+            'service_name' => $service->getTitle(),
             'appointment_date' => $reservation->getAppointmentDatetime(),
-            'service_name' => $reservation->getService()->getTitle(),
             'items' => [
                 [
-                    'description' => $reservation->getService()->getTitle(),
+                    'description' => $service->getTitle(),
                     'quantity' => 1,
-                    'unit_price' => $payment->getTotalAmount()
+                    'unit_price' => $service->getPrice(),
                 ]
             ],
-            'total_ht' => $payment->getTotalAmount(),
+            'total_ht' => $service->getPrice(),
             'deposit_amount' => $payment->getDepositAmount(),
             'payment_terms' => 'Solde à régler le jour du rendez-vous : ' . $reservation->getAppointmentDatetime()->format('d/m/Y'),
             'iban' => 'FR76 XXXX XXXX XXXX XXXX XXXX XXX',
-            'bic' => 'BICXXXXXXX'
+            'bic' => 'BICXXXXXXX',
         ];
 
         try {
@@ -54,15 +58,8 @@ class PDFController extends AbstractController
 
         $response = new Response($pdfContent);
         $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="facture-' . $payment->getBillingNumber() . '.pdf"');
         
-        $filename = 'facture-' . $payment->getBillingNumber() . '.pdf';
-        
-        if ($request->query->get('download')) {
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
-        } else {
-            $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
-        }
-
         return $response;
     }
 }

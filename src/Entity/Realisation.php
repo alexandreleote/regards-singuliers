@@ -27,8 +27,14 @@ class Realisation
     #[ORM\Column(length: 255)]
     private ?string $mainImage = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mainImageAlt = null;
+
     #[ORM\Column(type: Types::JSON)]
     private array $additionalImages = [];
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $additionalImagesAlt = [];
 
     private ?array $imageFiles = [];
 
@@ -36,6 +42,7 @@ class Realisation
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->additionalImages = [];
+        $this->additionalImagesAlt = [];
         $this->imageFiles = [];
     }
 
@@ -88,6 +95,17 @@ class Realisation
         return $this;
     }
 
+    public function getMainImageAlt(): ?string
+    {
+        return $this->mainImageAlt;
+    }
+
+    public function setMainImageAlt(?string $mainImageAlt): static
+    {
+        $this->mainImageAlt = $mainImageAlt;
+        return $this;
+    }
+
     public function getAdditionalImages(): array
     {
         return $this->additionalImages;
@@ -113,6 +131,35 @@ class Realisation
         if ($key !== false) {
             unset($this->additionalImages[$key]);
             $this->additionalImages = array_values($this->additionalImages);
+        }
+        return $this;
+    }
+
+    public function getAdditionalImagesAlt(): ?array
+    {
+        return $this->additionalImagesAlt;
+    }
+
+    public function setAdditionalImagesAlt(?array $additionalImagesAlt): static
+    {
+        $this->additionalImagesAlt = $additionalImagesAlt ?? [];
+        return $this;
+    }
+
+    public function addAdditionalImageAlt(string $imageAlt): static
+    {
+        if (!in_array($imageAlt, $this->additionalImagesAlt)) {
+            $this->additionalImagesAlt[] = $imageAlt;
+        }
+        return $this;
+    }
+
+    public function removeAdditionalImageAlt(string $imageAlt): static
+    {
+        $key = array_search($imageAlt, $this->additionalImagesAlt);
+        if ($key !== false) {
+            unset($this->additionalImagesAlt[$key]);
+            $this->additionalImagesAlt = array_values($this->additionalImagesAlt);
         }
         return $this;
     }

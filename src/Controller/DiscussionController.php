@@ -189,9 +189,13 @@ final class DiscussionController extends AbstractController
             return new JsonResponse(['error' => 'Discussion non trouvée'], Response::HTTP_NOT_FOUND);
         }
 
-        // Vérifier si la discussion est verrouillée
+        // Vérifier si la discussion est verrouillée ou archivée
         if ($discussion->isLocked()) {
             return new JsonResponse(['error' => 'Cette discussion est verrouillée'], Response::HTTP_FORBIDDEN);
+        }
+
+        if ($discussion->isArchived()) {
+            return new JsonResponse(['error' => 'Cette discussion est archivée'], Response::HTTP_FORBIDDEN);
         }
 
         try {

@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -50,6 +51,15 @@ class RealisationType extends AbstractType
                     ])
                 ],
             ])
+            ->add('mainImageAlt', TextType::class, [
+                'label' => 'Description de l\'image principale',
+                'attr' => [
+                    'class' => 'form-control',
+                    'aria-label' => 'Description de l\'image principale pour l\'accessibilité',
+                    'placeholder' => 'Décrivez l\'image principale'
+                ],
+                'required' => false,
+            ])
             ->add('imageFiles', FileType::class, [
                 'label' => 'Images additionnelles',
                 'attr' => [
@@ -73,6 +83,21 @@ class RealisationType extends AbstractType
                         ]
                     ])
                 ],
+            ])
+            ->add('additionalImagesAlt', CollectionType::class, [
+                'label' => 'Descriptions des images additionnelles',
+                'entry_type' => TextType::class,
+                'entry_options' => [
+                    'attr' => [
+                        'class' => 'form-control',
+                        'aria-label' => 'Description de l\'image pour l\'accessibilité',
+                        'placeholder' => 'Décrivez cette image'
+                    ],
+                ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'required' => false,
             ])
         ;
     }
