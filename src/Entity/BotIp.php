@@ -42,11 +42,9 @@ class BotIp
 
     public function setIp(string $ip): static
     {
-        // Hash l'IP avec Argon2i pour une meilleure sécurité
-        $this->ip = password_hash($ip, PASSWORD_ARGON2I, [
-            'memory_cost' => 1024,
-            'time_cost' => 2,
-            'threads' => 2
+        // Hash l'IP avec BCRYPT pour être cohérent avec le hachage des mots de passe
+        $this->ip = password_hash($ip, PASSWORD_BCRYPT, [
+            'cost' => 13 // Niveau de coût recommandé pour BCRYPT
         ]);
         return $this;
     }
