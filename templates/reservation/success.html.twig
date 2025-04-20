@@ -4,43 +4,172 @@
 
 {% block body %}
     <section class="content-container">
-        <div class="payment-status-section payment-success">
-            <div class="status-icon success-icon" aria-hidden="true">✓</div>
+        <div class="reservation-confirmation">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
             
-            <header>
-                <h1 class="status-title">Réservation confirmée</h1>
-                <p class="status-subtitle">Votre réservation a été confirmée avec succès.</p>
+            <header class="confirmation-header">
+                <h1 class="confirmation-title">Réservation confirmée</h1>
+                <p class="confirmation-subtitle">Votre rendez-vous a été enregistré avec succès</p>
             </header>
             
-            <article class="reservation-summary">
-                <h2 class="sr-only">Détails de la réservation</h2>
-                
-                <dl class="reservation-details">
-                    <div class="detail-row">
-                        <dt class="detail-label">Prestation :</dt>
-                        <dd class="detail-value">{{ reservation.service.title }}</dd>
+            <article class="reservation-details">
+                <div class="details-card">
+                    <h2 class="sr-only">Détails de la réservation</h2>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Prestation</span>
+                        <span class="detail-value">{{ reservation.service.title }}</span>
                     </div>
-                    <div class="detail-row">
-                        <dt class="detail-label">Date du rendez-vous :</dt>
-                        <dd class="detail-value">{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</dd>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Date du rendez-vous</span>
+                        <span class="detail-value">{{ reservation.appointmentDatetime|date('d/m/Y à H:i') }}</span>
                     </div>
+                    
                     {% if reservation.payments|length > 0 %}
                         {% set lastPayment = reservation.payments|last %}
-                        <div class="detail-row">
-                            <dt class="detail-label">Acompte payé :</dt>
-                            <dd class="detail-value">{{ lastPayment.depositAmount }}€</dd>
+                        <div class="detail-item">
+                            <span class="detail-label">Acompte payé</span>
+                            <span class="detail-value">{{ lastPayment.depositAmount }}€</span>
                         </div>
-                        <div class="detail-row">
-                            <dt class="detail-label">Reste à payer :</dt>
-                            <dd class="detail-value">{{ (reservation.service.price - lastPayment.depositAmount)|number_format(0, ',', ' ') }}€</dd>
+                        <div class="detail-item">
+                            <span class="detail-label">Reste à payer</span>
+                            <span class="detail-value">{{ (reservation.service.price - lastPayment.depositAmount)|number_format(0, ',', ' ') }}€</span>
                         </div>
                     {% endif %}
-                </dl>
+                </div>
             </article>
 
-            <div class="status-actions">
-                <a href="{{ path('profile_reservations') }}" class="btn btn-primary">Voir mes réservations</a>
+            <div class="confirmation-actions">
+                <a href="{{ path('profile_reservations') }}" class="btn btn-primary">
+                    <i class="fas fa-calendar-alt"></i>
+                    Voir mes réservations
+                </a>
+                <a href="{{ path('home') }}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i>
+                    Retour à l'accueil
+                </a>
             </div>
         </div>
     </section>
+
+    <style>
+        .reservation-confirmation {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .confirmation-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirmation-header {
+            margin-bottom: 2rem;
+        }
+
+        .confirmation-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirmation-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .reservation-details {
+            margin: 2rem 0;
+        }
+
+        .details-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            .reservation-confirmation {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .confirmation-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 {% endblock %} 

@@ -23,6 +23,7 @@ class ReservationService
     private $calendlyService;
     private $params;
     private $mailer;
+    private $stripeService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -30,7 +31,8 @@ class ReservationService
         PaymentRepository $paymentRepository,
         CalendlyService $calendlyService,
         ParameterBagInterface $params,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        StripeService $stripeService
     ) {
         $this->entityManager = $entityManager;
         $this->reservationRepository = $reservationRepository;
@@ -39,6 +41,7 @@ class ReservationService
         $this->params = $params;
         $this->mailer = $mailer;
         $this->stripeClient = new StripeClient($this->params->get('stripe.secret_key'));
+        $this->stripeService = $stripeService;
     }
 
     public function createReservation(Service $service, User $user): Reservation
@@ -195,17 +198,15 @@ class ReservationService
 
     public function refundPayment(Reservation $reservation): void
     {
-        $stripe = new \Stripe\StripeClient($this->params->get('stripe.secret_key'));
-
         // Récupérer le PaymentIntent associé à la réservation
-        $paymentIntent = $stripe->paymentIntents->retrieve($reservation->getStripePaymentIntentId());
+        $paymentIntent = $this->stripeService->retrievePaymentIntent($reservation->getStripePaymentIntentId());
 
-        // Créer le remboursement
-        $stripe->refunds->create([
-            'payment_intent' => $paymentIntent->id,
-            'amount' => $paymentIntent->amount, // Montant en centimes
-            'reason' => 'requested_by_customer'
-        ]);
+        // Créer le remboursement via StripeService
+        $this->stripeService->refundPayment(
+            $paymentIntent->id,
+            $paymentIntent->amount / 100, // Conversion des centimes en euros
+            'requested_by_customer'
+        );
 
         // Mettre à jour le statut du paiement
         $payment = $reservation->getPayments()->first();
