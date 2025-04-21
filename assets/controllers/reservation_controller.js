@@ -1,6 +1,11 @@
+/**
+ * Controller de réservation qui gère l'intégration avec Calendly et le traitement des rendez-vous
+ * Utilise Stimulus.js pour la gestion des événements et la manipulation du DOM
+ */
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
+    // Définition des cibles et valeurs utilisées dans le controller
     static targets = ['form', 'paymentElement', 'submitButton', 'loadingElement', 'messageElement', 'container']
     static values = {
         stripeKey: String,
@@ -11,6 +16,10 @@ export default class extends Controller {
         serviceId: String
     }
 
+    /**
+     * Méthode appelée lors de l'initialisation du controller
+     * Vérifie les paramètres nécessaires et initialise le bon type de réservation
+     */
     connect() {
         if (!this.hasTypeValue) {
             console.error('Type value is missing');
@@ -36,23 +45,32 @@ export default class extends Controller {
         }
     }
 
-    /*  Réservation / Calendrier */
+    /**
+     * Initialise l'intégration avec Calendly
+     * - Charge le script Calendly de manière asynchrone
+     * - Configure le widget d'intégration
+     * - Met en place les écouteurs d'événements
+     */
     initializeCalendly() {
+        // Vérification de la présence du conteneur Calendly
         if (!document.getElementById('calendly-container')) {
             console.error('Calendly container not found');
             this.showMessage('Erreur de chargement du calendrier', 'error');
             return;
         }
 
+        // Création et configuration du script Calendly
         const script = document.createElement('script');
         script.src = 'https://assets.calendly.com/assets/external/widget.js';
         script.async = true;
 
+        // Gestion des erreurs de chargement du script
         script.onerror = () => {
             console.error('Failed to load Calendly script');
             this.showMessage('Erreur de chargement de Calendly', 'error');
         };
 
+        // Callback exécuté une fois le script chargé
         script.onload = () => {
             const container = document.getElementById('calendly-container');
             if (!container) {
@@ -60,6 +78,7 @@ export default class extends Controller {
                 return;
             }
 
+            // Initialisation du widget Calendly avec les paramètres
             Calendly.initInlineWidget({
                 url: this.calendlyUrlValue,
                 parentElement: container,
@@ -67,6 +86,10 @@ export default class extends Controller {
                 utm: {}
             });
 
+            /**
+             * Écouteur d'événements pour la communication avec l'iframe Calendly
+             * Utilise l'API postMessage pour la communication cross-origin
+             */
             window.addEventListener('message', async (e) => {
                 if (e.data.event && e.data.event === 'calendly.event_scheduled') {
                     try {
@@ -79,16 +102,22 @@ export default class extends Controller {
             }, { once: false });
         };
 
+        // Ajout du script au DOM
         document.body.appendChild(script);
     }
 
+    /**
+     * Traite la réservation après qu'un rendez-vous ait été pris sur Calendly
+     * @param {Object} data - Données de l'événement Calendly
+     */
     async handleCalendlyEventScheduled(data) {
         try {
+            // Vérification des données requises
             if (!this.serviceIdValue || !this.serviceSlugValue) {
                 throw new Error('Données du service manquantes');
             }
 
-            // Extraction correcte des IDs depuis la payload Calendly
+            // Extraction des IDs depuis la payload Calendly
             const eventId = data.payload.event.uri;
             const inviteeId = data.payload.invitee.uri;
 
@@ -96,6 +125,7 @@ export default class extends Controller {
                 throw new Error('Données de l\'événement Calendly manquantes');
             }
 
+            // Préparation des données pour l'API
             const requestData = {
                 serviceId: this.serviceIdValue,
                 event: {
@@ -104,8 +134,12 @@ export default class extends Controller {
                 }
             };
 
-            console.log('Sending reservation data:', requestData);
+            console.log('Envoi des données de réservation:', requestData);
 
+            /**
+             * Appel API pour sauvegarder la réservation
+             * Utilisation de fetch pour la communication avec le serveur
+             */
             const response = await fetch('/reservation/process-date', {
                 method: 'POST',
                 headers: {
@@ -115,17 +149,21 @@ export default class extends Controller {
                 body: JSON.stringify(requestData)
             });
 
+            // Traitement de la réponse
             const responseData = await response.json();
-            console.log('Server response:', responseData);
+            console.log('Réponse du serveur:', responseData);
 
             if (!response.ok) {
                 throw new Error(responseData.error || `Erreur serveur: ${response.status}`);
             }
             
+            // Gestion de la réponse en fonction du succès
             if (responseData.success) {
+                // Redirection vers la page de paiement en cas de succès
                 window.location.href = `/reservation/paiement/${this.serviceSlugValue}`;
             } else {
                 if (responseData.redirect) {
+                    // Redirection personnalisée si spécifiée
                     window.location.href = responseData.redirect;
                 } else {
                     throw new Error(responseData.error || 'Une erreur est survenue');
@@ -137,15 +175,23 @@ export default class extends Controller {
         }
     }
 
-    /* Réservation / Paiement */
+    /**
+     * Initialise le système de paiement Stripe
+     * - Configure les éléments de paiement Stripe
+     * - Met en place les écouteurs d'événements pour le formulaire
+     */
     async initializePayment() {
+        // Vérification de la présence de l'élément de paiement
         if (!this.hasPaymentElementTarget) {
             console.error('Payment element target not found');
             return;
         }
 
         try {
+            // Initialisation de Stripe avec la clé publique
             const stripe = Stripe(this.stripeKeyValue);
+            
+            // Configuration des éléments de paiement avec le client secret
             const elements = stripe.elements({
                 clientSecret: this.clientSecretValue,
                 appearance: {
@@ -162,9 +208,11 @@ export default class extends Controller {
                 }
             });
 
+            // Création et montage de l'élément de paiement
             const paymentElement = elements.create('payment');
             await paymentElement.mount(this.paymentElementTarget);
 
+            // Configuration du formulaire de paiement
             if (this.hasFormTarget) {
                 this.formTarget.addEventListener('submit', async (event) => {
                     event.preventDefault();
@@ -177,16 +225,24 @@ export default class extends Controller {
         }
     }
 
+    /**
+     * Gère la soumission du formulaire de paiement
+     * @param {Object} stripe - Instance de Stripe
+     * @param {Object} elements - Éléments de paiement Stripe
+     */
     async handlePaymentSubmission(stripe, elements) {
+        // Désactivation du bouton de soumission pendant le traitement
         if (this.hasSubmitButtonTarget) {
             this.submitButtonTarget.disabled = true;
         }
         
+        // Affichage de l'indicateur de chargement
         if (this.hasLoadingElementTarget) {
             this.loadingElementTarget.classList.remove('hidden');
         }
 
         try {
+            // Confirmation du paiement avec Stripe
             const { error } = await stripe.confirmPayment({
                 elements,
                 confirmParams: {
@@ -201,6 +257,7 @@ export default class extends Controller {
             console.error('Erreur de paiement:', error);
             this.showMessage(error.message || 'Une erreur est survenue lors du paiement', 'error');
         } finally {
+            // Réactivation du bouton et masquage de l'indicateur de chargement
             if (this.hasSubmitButtonTarget) {
                 this.submitButtonTarget.disabled = false;
             }
@@ -210,17 +267,24 @@ export default class extends Controller {
         }
     }
 
-    /* Réservaiton / Résultat */
+    /**
+     * Affiche un message à l'utilisateur avec gestion automatique de la disparition
+     * @param {string} message - Le message à afficher
+     * @param {string} type - Le type de message (success, error, info)
+     */
     showMessage(message, type = 'info') {
+        // Vérification de la présence de l'élément de message
         if (!this.hasMessageElementTarget) {
             console.error('Message element target not found');
             return;
         }
 
+        // Configuration du message
         this.messageElementTarget.textContent = message;
         this.messageElementTarget.className = `message message-${type}`;
         this.messageElementTarget.classList.remove('hidden');
         
+        // Disparition automatique du message après 5 secondes
         setTimeout(() => {
             this.messageElementTarget.classList.add('hidden');
         }, 5000);

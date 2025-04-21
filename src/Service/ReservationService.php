@@ -122,7 +122,7 @@ class ReservationService
         // Générer le numéro de facturation
         $serviceRef = strtoupper(substr($reservation->getService()->getTitle(), 0, 3));
         $userInitials = strtoupper(substr($user->getFirstName(), 0, 1) . substr($user->getName(), 0, 1));
-        $randomId = strtoupper(substr(uniqid(), -8)); // Génère un identifiant unique de 4 caractères
+        $randomId = strtoupper(substr(uniqid(), -8)); // Génère un identifiant unique de 8 caractères
         $billingNumber = $serviceRef . $userInitials . '-' . $randomId;
         $payment->setBillingNumber($billingNumber);
 

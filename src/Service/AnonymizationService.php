@@ -66,11 +66,13 @@ class AnonymizationService
                 ->setZip("00000")
                 ->setRegion($anonymousData)
                 ->setIsVerified(false)
-                ->setRoles(['ROLE_DELETED'])
                 ->setResetToken(null)
                 ->setResetTokenExpiresAt(null)
                 ->setDeletedAt(new \DateTimeImmutable())
                 ->setPassword($this->passwordHasher->hashPassword($user, bin2hex(random_bytes(16))));
+
+            // Réinitialiser complètement les rôles
+            $user->setRoles(['ROLE_DELETED']);
 
             // Si l'utilisateur a été banni auparavant
             if ($user->getLastIpHashed() !== null ) {

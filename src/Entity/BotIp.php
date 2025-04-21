@@ -42,7 +42,7 @@ class BotIp
 
     public function setIp(string $ip): static
     {
-        // Hash l'IP avec BCRYPT pour être cohérent avec le hachage des mots de passe
+        // Hash l'IP avec BCRYPT 
         $this->ip = password_hash($ip, PASSWORD_BCRYPT, [
             'cost' => 13 // Niveau de coût recommandé pour BCRYPT
         ]);
