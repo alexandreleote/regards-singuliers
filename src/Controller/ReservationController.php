@@ -18,6 +18,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use App\Security\EmailVerifier;
+use \Psr\Log\LoggerInterface;
 
 #[Route('/reservation')]
 #[IsGranted('ROLE_USER')]
@@ -29,6 +30,7 @@ class ReservationController extends AbstractController
     private $entityManager;
     private $calendlyService;
     private $emailVerifier;
+    private $logger;
 
     public function __construct(
         ReservationService $reservationService,
@@ -36,7 +38,8 @@ class ReservationController extends AbstractController
         ServiceRepository $serviceRepository,
         EntityManagerInterface $entityManager,
         CalendlyService $calendlyService,
-        EmailVerifier $emailVerifier
+        EmailVerifier $emailVerifier,
+        LoggerInterface $logger
     ) {
         $this->reservationService = $reservationService;
         $this->reservationRepository = $reservationRepository;
@@ -44,6 +47,21 @@ class ReservationController extends AbstractController
         $this->entityManager = $entityManager;
         $this->calendlyService = $calendlyService;
         $this->emailVerifier = $emailVerifier;
+        $this->logger = $logger;
+    }
+
+    private function getLatestWaitingReservationForUserAndService(?Service $service = null): ?Reservation
+    {
+        $criteria = [
+            'user' => $this->getUser(),
+            'status' => 'waiting'
+        ];
+
+        if ($service) {
+            $criteria['service'] = $service;
+        }
+
+        return $this->reservationRepository->findOneBy($criteria, ['bookedAt' => 'DESC']);
     }
 
     #[Route('/date/{slug}', name: 'reservation_date')]

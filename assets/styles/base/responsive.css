@@ -16,7 +16,7 @@
    ========================================================================== */
 
 /* Extra large devices and below (1199.98px and down) */
-@media (max-width: 1199.98px) {
+@media (max-width: 1200px) {
   /* Header & Navigation */
   .header-auth {
     display: none;
@@ -43,7 +43,7 @@
 }
 
 /* Large devices only (desktops, 992px to 1199.98px) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
+@media (min-width: 992px) and (max-width: 1200px) {
   /* Burger Menu pour l'authentification */
   .auth-burger-nav {
     display: block !important;
@@ -76,7 +76,7 @@
 }
 
 /* Large devices and below (991.98px and down) */
-@media (max-width: 991.98px) {
+@media (max-width: 991px) {
   /* Layout */
   .row {
     flex-direction: column;
@@ -171,7 +171,7 @@
 }
 
 /* Small devices (mobile phones, 767.98px and down) */
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
   /* Alertes responsive */
   .alert {
     flex-direction: column;

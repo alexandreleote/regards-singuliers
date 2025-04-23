@@ -13,6 +13,7 @@ use Stripe\StripeClient;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
+use Psr\Log\LoggerInterface;
 
 class ReservationService
 {
@@ -24,6 +25,7 @@ class ReservationService
     private $params;
     private $mailer;
     private $stripeService;
+    private $logger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -32,7 +34,8 @@ class ReservationService
         CalendlyService $calendlyService,
         ParameterBagInterface $params,
         MailerInterface $mailer,
-        StripeService $stripeService
+        StripeService $stripeService,
+        LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
         $this->reservationRepository = $reservationRepository;
@@ -42,6 +45,7 @@ class ReservationService
         $this->mailer = $mailer;
         $this->stripeClient = new StripeClient($this->params->get('stripe.secret_key'));
         $this->stripeService = $stripeService;
+        $this->logger = $logger;
     }
 
     public function createReservation(Service $service, User $user): Reservation
@@ -216,58 +220,30 @@ class ReservationService
         }
     }
 
-    /**
-     * Annule une réservation et gère le remboursement et l'annulation Calendly
-     */
-    public function cancelReservation(Reservation $reservation): void
+    public function shouldRefund(Reservation $reservation): bool
     {
-        // Annuler d'abord l'événement Calendly si un ID existe
-        if ($reservation->getCalendlyEventId()) {
-            try {
-                $this->calendlyService->cancelEvent($reservation->getCalendlyEventId());
-            } catch (\Exception $e) {
-                // Log l'erreur mais continuer le processus d'annulation
-                error_log('Erreur lors de l\'annulation Calendly: ' . $e->getMessage());
-            }
-        }
-
-        // Vérifier si on est à plus de 72h du rendez-vous pour le remboursement
-        $appointmentDate = $reservation->getAppointmentDatetime();
         $now = new \DateTimeImmutable();
-        $interval = $now->diff($appointmentDate);
-        $hoursUntilAppointment = ($interval->days * 24) + $interval->h;
+        $appointmentDate = $reservation->getAppointmentDatetime();
+        $diff = $now->diff($appointmentDate);
+        
+        // Remboursement possible si l'annulation est faite plus de 48h avant le rendez-vous
+        return $diff->days >= 2;
+    }
 
-        $willBeRefunded = false;
-
-        // Si on est à plus de 72h, procéder au remboursement
-        if ($hoursUntilAppointment > 72) {
+    public function cancelReservation(Reservation $reservation): string
+    {
+        if ($this->shouldRefund($reservation)) {
             try {
                 $this->refundPayment($reservation);
                 $reservation->setStatus('refunded');
-                $willBeRefunded = true;
+                return 'refunded';
             } catch (\Exception $e) {
-                // Log l'erreur de remboursement
-                error_log('Erreur lors du remboursement: ' . $e->getMessage());
-                $reservation->setStatus('canceled');
-            }
-        } else {
-            $reservation->setStatus('canceled');
-            // Mettre à jour le statut du paiement en "not_refunded" si un paiement existe
-            $payment = $reservation->getPayments()->first();
-            if ($payment) {
-                $payment->setPaymentStatus('not_refunded');
+                $this->logger->error('Erreur lors du remboursement : ' . $e->getMessage());
+                throw new ReservationException(ReservationException::CANCELLATION_ERROR);
             }
         }
 
-        // Enregistrer la date d'annulation
-        $reservation->setCanceledAt($now);
-        if ($payment = $reservation->getPayments()->first()) {
-            $payment->setCanceledAt($now);
-        }
-
-        $this->entityManager->flush();
-
-        // Envoyer l'email d'annulation
-        $this->sendCancellationEmail($reservation, $willBeRefunded);
+        $reservation->setStatus('canceled');
+        return 'canceled';
     }
 } 

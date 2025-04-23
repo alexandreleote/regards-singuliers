@@ -12,7 +12,7 @@
 .legal-title {
   font-size: var(--font-size-xl);
   margin-bottom: var(--spacing-md);
-  color: #333;
+  color: var(--color-black);
   text-align: center;
 }
 
@@ -32,7 +32,7 @@
 }
 
 .legal-content h1 {
-  color: #333;
+  color: var(--color-black);
   font-size: 2rem;
   margin-bottom: 2rem;
   text-align: center;

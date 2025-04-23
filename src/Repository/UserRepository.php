@@ -42,6 +42,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
+    /**
+     * Trouve les prospects (utilisateurs sans compte et sans réservation) plus anciens qu'une date donnée
+     */
+    public function findProspectsOlderThan(\DateTimeImmutable $date): array
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.reservations', 'r')
+            ->andWhere('u.createdAt < :date')
+            ->andWhere('u.isVerified = :isVerified')
+            ->andWhere('r.id IS NULL') // Pas de réservation
+            ->setParameter('date', $date)
+            ->setParameter('isVerified', false)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

@@ -2,6 +2,7 @@ easy_admin:
     design:
         menu:
             - { label: 'Tableau de bord', route: 'admin', icon: 'home' }
+            - { label: 'Gestion de la rétention des données', route: 'admin_data_retention', icon: 'trash' }
             - { label: 'Utilisateurs', entity: 'User', icon: 'users' }
             - { label: 'Réservations', entity: 'Reservation', icon: 'calendar' }
             - { label: 'Prestations', entity: 'Service', icon: 'briefcase' }

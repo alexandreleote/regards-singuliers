@@ -1,0 +1,84 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Gestion de la rétention des données{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Données de prestation</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Suppression des données liées aux prestations de plus de 5 ans (Code civil).
+                            Cela inclut les réservations, discussions et messages associés.
+                        </p>
+                        <form action="{{ path('admin_delete_service_data') }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ces données ? Cette action est irréversible.');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer les données de plus de 5 ans
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Données de prospects</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Suppression des données personnelles des prospects (utilisateurs sans compte et sans réservation) de plus de 3 ans après le dernier contact.
+                            Les utilisateurs ayant effectué une réservation sont considérés comme clients et leurs données sont conservées selon les délais comptables.
+                        </p>
+                        <form action="{{ path('admin_delete_prospect_data') }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ces données ? Cette action est irréversible.');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer les données de plus de 3 ans
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Données comptables</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Suppression des données comptables (facturation, paiement) de plus de 10 ans (Code de commerce).
+                            Cela concerne uniquement les clients ayant effectué une réservation.
+                        </p>
+                        <form action="{{ path('admin_delete_accounting_data') }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ces données ? Cette action est irréversible.');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer les données de plus de 10 ans
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .card-title {
+            margin-bottom: 0;
+            color: #333;
+        }
+        .btn-danger {
+            margin-top: 10px;
+        }
+    </style>
+{% endblock %} 

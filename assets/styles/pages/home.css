@@ -162,7 +162,7 @@
 
 .home-contact-parallax {
     position: relative;
-    background-image: url('../../images/contact-bg.jpg');
+    background-image: url('../../images/contact-bg.webp');
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;

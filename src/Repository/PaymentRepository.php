@@ -16,6 +16,18 @@ class PaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, Payment::class);
     }
 
+    /**
+     * Trouve les paiements plus anciens qu'une date donnée
+     */
+    public function findOlderThan(\DateTimeImmutable $date): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.createdAt < :date')
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+    }
+    
     //    /**
     //     * @return Payment[] Returns an array of Payment objects
     //     */
