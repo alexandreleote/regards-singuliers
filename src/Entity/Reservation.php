@@ -41,7 +41,7 @@ class Reservation
     /**
      * @var Collection<int, Discussion>
      */
-    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'reservation')]
+    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'reservation', cascade: ['remove'])]
     private Collection $discussions;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]

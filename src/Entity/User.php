@@ -83,13 +83,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $reservations;
 
     /**
      * @var Collection<int, Message>
      */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $messages;
 
     public function __construct()

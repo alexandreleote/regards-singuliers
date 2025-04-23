@@ -30,7 +30,7 @@ class Discussion
     /**
      * @var Collection<int, Message>
      */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'discussion')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'discussion', cascade: ['remove'])]
     private Collection $messages;
 
     #[ORM\ManyToOne(inversedBy: 'discussions')]
