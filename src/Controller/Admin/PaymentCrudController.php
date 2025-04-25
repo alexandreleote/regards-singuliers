@@ -58,7 +58,7 @@ class PaymentCrudController extends AbstractCrudController
 
         // Définir les métadonnées du document
         $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor('Regards Singuliers');
+        $pdf->SetAuthor('regards singuliers');
         $pdf->SetTitle('Facture ' . $payment->getBillingNumber());
         $pdf->SetSubject('Facture');
 

@@ -26,6 +26,14 @@
     padding: 0 var(--container-padding);
 }
 
+.profile-reservations {
+    padding: var(--spacing-lg);
+}
+
+.filters {
+    margin-bottom: var(--spacing-md);
+}
+
 /* Cartes */
 .card {
     background: var(--color-white);
@@ -332,4 +340,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* Cancellation */
+.cancellation-section {
+    margin-top: var(--spacing-sm);
 }

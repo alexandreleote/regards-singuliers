@@ -15,6 +15,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     aspect-ratio: 1/1;
+    max-height: 500px;
 }
 
 .realisation-card:hover {
@@ -166,9 +167,7 @@
 }
 
 .page-navigation a:hover {
-    background-color: #e5e5e5;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Style spécifique pour les boutons de navigation de l'index */
