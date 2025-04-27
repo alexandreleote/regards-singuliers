@@ -30,7 +30,7 @@ class MediaOptimizer
             'webp' => null,
             'success' => false
         ];
-
+        
         try {
             // Vérifier que le fichier existe
             if (!file_exists($imagePath)) {
@@ -83,10 +83,13 @@ class MediaOptimizer
                 throw new ProcessFailedException($process);
             }
             
-            $result['webp'] = $webpPath;
-            $result['success'] = true;
-            
-            $this->logger->info("Image convertie en WebP: $webpPath");
+            // Supprimer le fichier original si la conversion a réussi
+            if (file_exists($webpPath)) {
+                unlink($imagePath);
+                $result['webp'] = $webpPath;
+                $result['success'] = true;
+                $this->logger->info("Image convertie en WebP: $webpPath");
+            }
             
         } catch (\Exception $e) {
             $this->logger->error("Erreur lors de l'optimisation de l'image: " . $e->getMessage());
@@ -103,7 +106,6 @@ class MediaOptimizer
     {
         $result = [
             'original' => $videoPath,
-            'optimized' => null,
             'webm' => null,
             'success' => false
         ];
@@ -117,9 +119,8 @@ class MediaOptimizer
             // Obtenir le chemin relatif par rapport au dossier du projet
             $relativeVideoPath = $this->getRelativePath($videoPath);
             
-            // Déterminer les chemins de sortie
+            // Déterminer le chemin de sortie WebM
             $pathInfo = pathinfo($videoPath);
-            $optimizedPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_optimized.' . $pathInfo['extension'];
             $webmPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.webm';
             
             // Obtenir le chemin de FFmpeg
@@ -127,29 +128,6 @@ class MediaOptimizer
             if (!$ffmpegPath) {
                 throw new \Exception("FFmpeg n'est pas disponible");
             }
-            
-            // Optimiser la vidéo originale
-            $isMP4 = strtolower($pathInfo['extension']) === 'mp4';
-            $optimizeProcess = new Process([
-                $ffmpegPath,
-                '-i', $videoPath,
-                '-c:v', $isMP4 ? 'libx264' : 'libvpx-vp9',
-                '-crf', $isMP4 ? '23' : '30',
-                '-preset', $isMP4 ? 'medium' : '',
-                '-b:v', $isMP4 ? '' : '0',
-                '-c:a', $isMP4 ? 'aac' : 'libopus',
-                '-b:a', $isMP4 ? '128k' : '96k',
-                $optimizedPath
-            ]);
-            
-            $optimizeProcess->setTimeout(600);
-            $optimizeProcess->run();
-            
-            if (!$optimizeProcess->isSuccessful()) {
-                throw new ProcessFailedException($optimizeProcess);
-            }
-            
-            $result['optimized'] = $optimizedPath;
             
             // Convertir en WebM
             $webmProcess = new Process([
@@ -172,10 +150,13 @@ class MediaOptimizer
                 throw new ProcessFailedException($webmProcess);
             }
             
-            $result['webm'] = $webmPath;
-            $result['success'] = true;
-            
-            $this->logger->info("Vidéo convertie en WebM: $webmPath");
+            // Supprimer le fichier original si la conversion a réussi
+            if (file_exists($webmPath)) {
+                unlink($videoPath);
+                $result['webm'] = $webmPath;
+                $result['success'] = true;
+                $this->logger->info("Vidéo convertie en WebM: $webmPath");
+            }
             
         } catch (\Exception $e) {
             $this->logger->error("Erreur lors de l'optimisation de la vidéo: " . $e->getMessage());

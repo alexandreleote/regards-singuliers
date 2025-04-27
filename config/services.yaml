@@ -42,9 +42,8 @@ services:
             $apiKey: '%app.calendly.api_key%'
             $organizationUrl: '%app.calendly.organization_url%'
 
-    App\EventListener\SecurityHeadersListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.response }
+    App\EventSubscriber\SecurityHeadersSubscriber:
+        tags: ['kernel.event_subscriber']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

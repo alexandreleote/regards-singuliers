@@ -59,7 +59,7 @@ class AnonymizationService
                 ->setName($anonymousData)
                 ->setFirstName($anonymousData)
                 ->setEmail("del_{$userId}_{$timestamp}@anon.com")
-                ->setPhoneNumber("00000000") // Numéro fixe court
+                ->setPhoneNumber("00000000")
                 ->setStreetNumber("0")
                 ->setStreetName($anonymousData)
                 ->setCity($anonymousData)

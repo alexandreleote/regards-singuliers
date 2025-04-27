@@ -85,12 +85,9 @@ class UserCrudController extends AbstractCrudController
             });
     }
 
-    public function viewProfile(AdminContext $adminContext): Response
+    public function profile(AdminContext $context): Response
     {
-        $id = $adminContext->getRequest()->query->get('entityId');
-        if (!$id) {
-            throw new \RuntimeException('Missing user ID');
-        }
+        $id = $context->getEntity()->getInstance()->getId();
 
         $user = $this->entityManager->getRepository(User::class)
             ->createQueryBuilder('u')

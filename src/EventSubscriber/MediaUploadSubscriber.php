@@ -94,14 +94,20 @@ class MediaUploadSubscriber implements EventSubscriberInterface
         
         // Traiter selon le type MIME
         if (strpos($mimeType, 'image/') === 0) {
-            // Exclure les images déjà en WebP
+            // Convertir toutes les images en WebP
             if ($mimeType !== 'image/webp') {
-                $this->mediaOptimizer->optimizeImage($filePath);
+                $result = $this->mediaOptimizer->optimizeImage($filePath);
+                if (!$result['success']) {
+                    $this->logger->error("Échec de la conversion en WebP: " . ($result['error'] ?? 'Erreur inconnue'));
+                }
             }
         } elseif (strpos($mimeType, 'video/') === 0) {
-            // Exclure les vidéos déjà en WebM
+            // Convertir toutes les vidéos en WebM
             if ($mimeType !== 'video/webm') {
-                $this->mediaOptimizer->optimizeVideo($filePath);
+                $result = $this->mediaOptimizer->optimizeVideo($filePath);
+                if (!$result['success']) {
+                    $this->logger->error("Échec de la conversion en WebM: " . ($result['error'] ?? 'Erreur inconnue'));
+                }
             }
         }
     }

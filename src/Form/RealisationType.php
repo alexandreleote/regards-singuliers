@@ -45,9 +45,11 @@ class RealisationType extends AbstractType
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/png',
-                            'image/webp'
+                            'image/webp',
+                            'video/mp4',
+                            'video/webm'
                         ],
-                        'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, WEBP)',
+                        'mimeTypesMessage' => 'Veuillez uploader une image (JPEG, PNG, WebP) ou une vidéo (MP4, WebM)',
                     ])
                 ],
             ])
@@ -76,9 +78,11 @@ class RealisationType extends AbstractType
                                 'mimeTypes' => [
                                     'image/jpeg',
                                     'image/png',
-                                    'image/webp'
+                                    'image/webp',
+                                    'video/mp4',
+                                    'video/webm'
                                 ],
-                                'mimeTypesMessage' => 'Veuillez uploader des images valides (JPEG, PNG, WEBP)',
+                                'mimeTypesMessage' => 'Veuillez uploader des images (JPEG, PNG, WebP) ou des vidéos (MP4, WebM)',
                             ])
                         ]
                     ])

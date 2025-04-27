@@ -83,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
     private Collection $reservations;
 
     /**
@@ -308,19 +308,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return !empty($this->streetNumber) && !empty($this->streetName) && 
                !empty($this->city) && !empty($this->zip);
-    }
-
-    public function isPersonalInformationComplete(): bool
-    {
-        // Vérifier si tous les champs obligatoires sont renseignés
-        return !empty($this->firstName) 
-        && !empty($this->name) 
-        && !empty($this->phoneNumber) 
-        && !empty($this->streetNumber) 
-        && !empty($this->streetName) 
-        && !empty($this->city)
-        && !empty($this->zip)
-        && !empty($this->region);
     } 
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -457,5 +444,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function isPersonalInformationComplete(): bool
+    {
+        return $this->name !== null 
+            && $this->firstName !== null 
+            && $this->phoneNumber !== null 
+            && $this->hasCompleteAddress();
     }
 }

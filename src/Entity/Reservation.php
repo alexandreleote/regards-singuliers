@@ -35,7 +35,7 @@ class Reservation
     private ?string $calendlyInviteeId = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
     /**
