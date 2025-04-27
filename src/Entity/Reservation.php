@@ -23,7 +23,7 @@ class Reservation
     private ?string $status = "en attente";
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
-    private ?float $price = null;
+    private ?string $price = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stripePaymentIntentId = null;
@@ -102,12 +102,12 @@ class Reservation
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getPrice(): ?string
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): static
+    public function setPrice(string $price): static
     {
         $this->price = $price;
 

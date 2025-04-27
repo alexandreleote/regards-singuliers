@@ -2,6 +2,7 @@
 import './bootstrap.js';
 import './controllers/menu-burger_controller.js';
 import './controllers/phone-toggle_controller.js';
+import './controllers/reservation_controller.js';
 
 // Import des styles
 import './styles/app.css';

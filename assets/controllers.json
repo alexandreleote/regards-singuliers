@@ -18,6 +18,13 @@
                 "enabled": false,
                 "fetch": "eager"
             }
+        },
+        "reservation": {
+            "enabled": true,
+            "fetch": "eager",
+            "autoimport": {
+                "./controllers/reservation_controller.js": true
+            }
         }
     }
 }

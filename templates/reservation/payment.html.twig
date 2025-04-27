@@ -51,5 +51,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://js.stripe.com/v3/" async defer></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="{{ asset('js/reservation_controller.js') }}"></script>
 {% endblock %} 

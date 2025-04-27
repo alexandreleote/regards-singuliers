@@ -2,11 +2,6 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="preload" href="https://assets.calendly.com/assets/external/widget.js" as="script">
-{% endblock %}
-
 {% block body %}
     {% if isProfileIncomplete %}
         <section class="alert-section" role="alert" aria-labelledby="profile-alert-title">
@@ -48,12 +43,22 @@
                 </article>
 
                 <div class="calendar-section">
-                    <div id="calendly-container" class="calendly-container" aria-label="Sélecteur de date de rendez-vous"></div>
+                    <div id="calendly-container" 
+                         class="calendly-container" 
+                         aria-label="Sélecteur de date de rendez-vous"
+                         allow="scripts"
+                         sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation">
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Chargement du calendrier...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div data-controller="reservation" 
                     data-reservation-type-value="date" 
-                    data-reservation-calendly-url-value="{{ calendly_url }}"
+                    data-reservation-calendly-url-value="https://calendly.com/alexandreleoteweb/rendez-vous"
                     data-reservation-service-slug-value="{{ service.slug }}"
                     data-reservation-service-id-value="{{ service.id }}">
                     <div data-reservation-target="messageElement" class="message hidden" role="alert"></div>

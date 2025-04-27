@@ -60,16 +60,24 @@ export default class extends Controller {
             return;
         }
 
+        // Vérifier si le script Calendly est déjà chargé
+        if (window.Calendly) {
+            this.initCalendlyWidget(container);
+            return;
+        }
+
         // Création et configuration du script Calendly
         const script = document.createElement('script');
         script.src = 'https://assets.calendly.com/assets/external/widget.js';
         script.async = true;
+        script.defer = true;
 
         // Gestion des erreurs de chargement du script
         script.onerror = () => {
             console.error('Failed to load Calendly script');
             this.showMessage('Erreur de chargement de Calendly', 'error');
             container.classList.remove('loaded');
+            this.hideLoadingSpinner(container);
         };
 
         // Callback exécuté une fois le script chargé
@@ -79,35 +87,72 @@ export default class extends Controller {
                 return;
             }
 
-            // Initialisation du widget Calendly avec les paramètres
+            this.initCalendlyWidget(container);
+        };
+
+        // Ajouter le script au document
+        document.head.appendChild(script);
+    }
+
+    /**
+     * Initialise le widget Calendly dans le conteneur spécifié
+     * @param {HTMLElement} container - Le conteneur où initialiser le widget
+     */
+    initCalendlyWidget(container) {
+        try {
+            // Récupérer le nom du service depuis le titre
+            const serviceTitle = document.querySelector('.service-title')?.textContent?.trim() || '';
+            
             Calendly.initInlineWidget({
                 url: this.calendlyUrlValue,
                 parentElement: container,
-                prefill: {},
-                utm: {}
+                prefill: {
+                    customAnswers: {
+                        a1: serviceTitle // Pré-remplir avec le nom du service
+                    }
+                },
+                utm: {},
+                iframeAttributes: {
+                    'allow-scripts': 'true',
+                    'allow-same-origin': 'true',
+                    'allow-popups': 'true',
+                    'allow-forms': 'true',
+                    'allow-top-navigation': 'true',
+                    'sandbox': 'allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation'
+                }
             });
 
-            // Ajouter la classe loaded une fois le widget initialisé
             container.classList.add('loaded');
+            this.hideLoadingSpinner(container);
 
-            /**
-             * Écouteur d'événements pour la communication avec l'iframe Calendly
-             * Utilise l'API postMessage pour la communication cross-origin
-             */
-            window.addEventListener('message', async (e) => {
-                if (e.data.event && e.data.event === 'calendly.event_scheduled') {
-                    try {
-                        await this.handleCalendlyEventScheduled(e.data);
-                    } catch (error) {
-                        console.error('Erreur lors du traitement de l\'événement Calendly:', error);
-                        this.showMessage('Une erreur est survenue lors de la réservation', 'error');
-                    }
-                }
-            }, { once: false });
-        };
+            // Ajouter l'écouteur d'événements pour la communication avec l'iframe Calendly
+            window.addEventListener('message', this.handleCalendlyMessage.bind(this));
+        } catch (error) {
+            console.error('Error initializing Calendly widget:', error);
+            this.showMessage('Erreur d\'initialisation du calendrier', 'error');
+            this.hideLoadingSpinner(container);
+        }
+    }
 
-        // Ajout du script au DOM
-        document.body.appendChild(script);
+    /**
+     * Gère les messages reçus de l'iframe Calendly
+     * @param {MessageEvent} event - L'événement de message
+     */
+    handleCalendlyMessage(event) {
+        if (event.data.event && event.data.event === 'calendly.event_scheduled') {
+            this.handleCalendlyEventScheduled(event.data);
+        }
+    }
+
+    /**
+     * Cache le spinner de chargement
+     * @param {HTMLElement} container - Le conteneur Calendly
+     */
+    hideLoadingSpinner(container) {
+        const spinner = container.querySelector('.loading-spinner');
+        if (spinner) {
+            spinner.style.display = 'none';
+        }
     }
 
     /**

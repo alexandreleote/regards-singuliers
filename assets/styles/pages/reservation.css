@@ -170,15 +170,12 @@
     border-radius: 6px;
     font-weight: 500;
     transition: all 0.2s ease;
+    text-decoration: none;
 }
 
-.confirmation-actions .btn-primary {
-    background: var(--color-primary);
-    color: var(--color-white);
-}
+
 
 .confirmation-actions .btn-primary:hover {
-    background: var(--color-primary-dark);
     transform: translateY(-2px);
 }
 

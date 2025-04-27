@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Psr\Log\LoggerInterface;
+use App\Exception\ReservationException;
 
 class ReservationService
 {
@@ -58,7 +59,7 @@ class ReservationService
         $reservation = new Reservation();
         $reservation->setService($service);
         $reservation->setUser($user);
-        $reservation->setPrice($service->getPrice());
+        $reservation->setPrice((string)$service->getPrice());
         $reservation->setStatus('en attente');
         $reservation->setName($user->getName());
         $reservation->setFirstName($user->getFirstName());
@@ -224,18 +225,33 @@ class ReservationService
     {
         $now = new \DateTimeImmutable();
         $appointmentDate = $reservation->getAppointmentDatetime();
-        $diff = $now->diff($appointmentDate);
         
-        // Remboursement possible si l'annulation est faite plus de 48h avant le rendez-vous
-        return $diff->days >= 2;
+        // Calculer la différence en heures
+        $diff = $now->diff($appointmentDate);
+        $hours = ($diff->days * 24) + $diff->h;
+        
+        // Remboursement possible si l'annulation est faite plus de 72h avant le rendez-vous
+        return $hours > 72;
     }
 
     public function cancelReservation(Reservation $reservation): string
     {
+        // Libérer le créneau Calendly
+        if ($reservation->getCalendlyEventId()) {
+            try {
+                $this->calendlyService->cancelEvent($reservation->getCalendlyEventId());
+            } catch (\Exception $e) {
+                $this->logger->error('Erreur lors de l\'annulation du créneau Calendly : ' . $e->getMessage());
+                // On continue même si l'annulation Calendly échoue
+            }
+        }
+
         if ($this->shouldRefund($reservation)) {
             try {
                 $this->refundPayment($reservation);
-                $reservation->setStatus('refunded');
+                $reservation->setStatus('canceled');
+                $reservation->setCanceledAt(new \DateTimeImmutable());
+                $this->entityManager->flush();
                 return 'refunded';
             } catch (\Exception $e) {
                 $this->logger->error('Erreur lors du remboursement : ' . $e->getMessage());
@@ -244,6 +260,13 @@ class ReservationService
         }
 
         $reservation->setStatus('canceled');
+        $reservation->setCanceledAt(new \DateTimeImmutable());
+        $this->entityManager->flush();
         return 'canceled';
+    }
+
+    public function getReservationByPaymentIntent(string $paymentIntentId): ?Reservation
+    {
+        return $this->reservationRepository->findOneBy(['stripePaymentIntentId' => $paymentIntentId]);
     }
 } 

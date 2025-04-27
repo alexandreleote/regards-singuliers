@@ -62,4 +62,46 @@ class PDFController extends AbstractController
         
         return $response;
     }
+
+    #[Route('/facture/{billingNumber}/download', name: 'pdf_invoice_download')]
+    public function download(
+        PdfGeneratorService $pdfGeneratorService,
+        PaymentRepository $paymentRepository,
+        string $billingNumber
+    ): Response {
+        $payment = $paymentRepository->findOneBy(['billingNumber' => $billingNumber]);
+        if (!$payment) {
+            throw $this->createNotFoundException('Paiement non trouvé');
+        }
+        $reservation = $payment->getReservation();
+        $user = $reservation->getUser();
+        $service = $reservation->getService();
+        $data = [
+            'title' => 'Facture',
+            'invoice_number' => $payment->getBillingNumber(),
+            'invoice_date' => $payment->getPaidAt(),
+            'client_name' => $user->getFullName(),
+            'client_address' => $user->getAddress(),
+            'service_name' => $service->getTitle(),
+            'appointment_date' => $reservation->getAppointmentDatetime(),
+            'items' => [
+                [
+                    'description' => $service->getTitle(),
+                    'quantity' => 1,
+                    'unit_price' => $service->getPrice(),
+                ]
+            ],
+            'total_ht' => $service->getPrice(),
+            'deposit_amount' => $payment->getDepositAmount(),
+            'payment_terms' => 'Solde à régler le jour du rendez-vous : ' . $reservation->getAppointmentDatetime()->format('d/m/Y'),
+            'iban' => 'FR76 XXXX XXXX XXXX XXXX XXXX XXX',
+            'bic' => 'BICXXXXXXX',
+        ];
+        $pdfContent = $pdfGeneratorService->generateInvoicePdf($data);
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment; filename="facture-' . $payment->getBillingNumber() . '.pdf"');
+        return $response;
+    }
 }

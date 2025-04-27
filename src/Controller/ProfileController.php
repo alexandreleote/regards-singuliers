@@ -155,10 +155,11 @@ class ProfileController extends AbstractController
 
         try {
             $reservationService->cancelReservation($reservation);
-            
+            $payment = $reservation->getPayments()->first();
+            $isRefunded = $payment && $payment->getPaymentStatus() === 'refunded';
             return $this->render('profile/reservation_cancel.html.twig', [
-                'refunded' => $reservation->getStatus() === 'refunded',
-                'amount' => $reservation->getPrice() * 0.5, // 50% d'acompte
+                'is_refunded' => $isRefunded,
+                'amount' => $payment ? $payment->getDepositAmount() : 0,
                 'page_title' => 'Annulation confirmée - regards singuliers'
             ]);
         } catch (\Exception $e) {

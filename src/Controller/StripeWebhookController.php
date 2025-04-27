@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\ReservationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class StripeWebhookController extends AbstractController
 {
     public function __construct(
-        private ReservationService $reservationService
+        private ReservationService $reservationService,
+        private EntityManagerInterface $entityManager
     ) {
     }
 
@@ -56,11 +58,15 @@ class StripeWebhookController extends AbstractController
             case 'charge.refunded':
                 $charge = $event->data->object;
                 try {
-                    // Mettre à jour le statut de la réservation en 'refunded'
-                    $reservation = $this->reservationService->handleRefund($charge->payment_intent);
+                    // Récupérer la réservation associée au paiement
+                    $reservation = $this->reservationService->getReservationByPaymentIntent($charge->payment_intent);
                     if ($reservation) {
-                        $reservation->setStatus('refunded');
-                        $this->entityManager->flush();
+                        // Mettre à jour le statut du paiement
+                        $payment = $reservation->getPayments()->first();
+                        if ($payment) {
+                            $payment->setPaymentStatus('refunded');
+                            $this->entityManager->flush();
+                        }
                     }
                 } catch (\Exception $e) {
                     error_log('Erreur lors du traitement du remboursement : ' . $e->getMessage());

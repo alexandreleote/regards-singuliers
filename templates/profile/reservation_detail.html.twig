@@ -18,7 +18,21 @@
                 
                 <div class="reservation-details">
                     <div class="reservation-info">
-                        <p><strong>Statut :</strong> {{ reservation.status }}</p>
+                        <p><strong>Statut :</strong>
+                            {% if reservation.status == 'canceled' %}
+                                {% if reservation.payments is not empty and reservation.payments|first.paymentStatus == 'refunded' %}
+                                    Remboursée
+                                {% else %}
+                                    Annulée (non remboursée)
+                                {% endif %}
+                            {% elseif reservation.status == 'confirmed' %}
+                                Confirmée
+                            {% elseif reservation.status == 'waiting' %}
+                                En attente
+                            {% else %}
+                                {{ reservation.status|capitalize }}
+                            {% endif %}
+                        </p>
                         <p><strong>Service :</strong> {{ reservation.service.title }}</p>
                         <p><strong>Date :</strong> {{ reservation.appointmentDatetime|date('d/m/Y') }}</p>
                         <p><strong>Heure :</strong> {{ reservation.appointmentDatetime|date('H:i') }}</p>
@@ -34,11 +48,22 @@
                                    target="_blank">
                                     <i class="fas fa-file-pdf me-2"></i>Voir la facture
                                 </a>
-                                <a href="{{ path('pdf_invoice', {'billingNumber': reservation.payments|first.billingNumber, 'download': true}) }}" 
+                                <a href="{{ path('pdf_invoice_download', {'billingNumber': reservation.payments|first.billingNumber}) }}" 
                                    class="btn btn-outline-primary ms-2">
                                     <i class="fas fa-download me-2"></i>Télécharger
                                 </a>
                             </div>
+                        {% endif %}
+                        {% if reservation.status == 'canceled' %}
+                            {% if reservation.payments is not empty and reservation.payments|first.paymentStatus == 'refunded' %}
+                                <div class="alert alert-success mt-2">
+                                    <p>Cette réservation a été annulée et remboursée. Le montant de {{ reservation.payments|first.depositAmount }} € vous a été remboursé.</p>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning mt-2">
+                                    <p>Cette réservation a été annulée sans remboursement car l'annulation est intervenue moins de 72 heures avant le rendez-vous.</p>
+                                </div>
+                            {% endif %}
                         {% endif %}
                     </div>
                     

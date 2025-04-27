@@ -31,6 +31,7 @@ class ServiceRepository extends ServiceEntityRepository
     public function findActive(): array
     {
         return $this->createQueryBuilder('s')
+            ->select('s.id, s.title, s.isActive, s.reference, s.description, s.smallDescription, s.price, s.slug')
             ->andWhere('s.isActive = :active')
             ->setParameter('active', true)
             ->orderBy('s.price', 'ASC')
@@ -84,6 +85,7 @@ class ServiceRepository extends ServiceEntityRepository
     public function findMostBooked(int $limit = 3): array
     {
         return $this->createQueryBuilder('s')
+            ->select('s.id, s.title, s.isActive, s.reference, s.description, s.smallDescription, s.price, s.slug')
             ->leftJoin('s.reservations', 'r')
             ->andWhere('s.isActive = :active')
             ->setParameter('active', true)

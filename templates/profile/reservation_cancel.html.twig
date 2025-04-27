@@ -17,9 +17,9 @@
                 
                 <div class="reservation-details">
                     <div class="reservation-info">
-                        {% if refunded %}
+                        {% if is_refunded %}
                             <div class="alert alert-success">
-                                <p>Votre réservation a été annulée avec succès. L'acompte de {{ amount }} € vous sera remboursé dans les prochains jours.</p>
+                                <p>Votre réservation a été annulée et remboursée. Le montant de {{ amount }} € vous a été remboursé.</p>
                             </div>
                         {% else %}
                             <div class="alert alert-info">
