@@ -2,6 +2,11 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="preload" href="https://assets.calendly.com/assets/external/widget.js" as="script">
+{% endblock %}
+
 {% block body %}
     {% if isProfileIncomplete %}
         <section class="alert-section" role="alert" aria-labelledby="profile-alert-title">

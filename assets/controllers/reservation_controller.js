@@ -53,7 +53,8 @@ export default class extends Controller {
      */
     initializeCalendly() {
         // Vérification de la présence du conteneur Calendly
-        if (!document.getElementById('calendly-container')) {
+        const container = document.getElementById('calendly-container');
+        if (!container) {
             console.error('Calendly container not found');
             this.showMessage('Erreur de chargement du calendrier', 'error');
             return;
@@ -68,11 +69,11 @@ export default class extends Controller {
         script.onerror = () => {
             console.error('Failed to load Calendly script');
             this.showMessage('Erreur de chargement de Calendly', 'error');
+            container.classList.remove('loaded');
         };
 
         // Callback exécuté une fois le script chargé
         script.onload = () => {
-            const container = document.getElementById('calendly-container');
             if (!container) {
                 console.error('Calendly container not found after script load');
                 return;
@@ -85,6 +86,9 @@ export default class extends Controller {
                 prefill: {},
                 utm: {}
             });
+
+            // Ajouter la classe loaded une fois le widget initialisé
+            container.classList.add('loaded');
 
             /**
              * Écouteur d'événements pour la communication avec l'iframe Calendly
