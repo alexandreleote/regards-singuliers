@@ -1,0 +1,20 @@
+Prénom: First Name
+Nom: Name
+Nom de famille: Last Name
+Email: Email
+'Votre adresse@email.fr': Your email address
+Téléphone: Phone
+'Ex : 06 12 34 56 78': 'Ex: 06 12 34 56 78'
+Numéro: Number
+'Ex : 1 Bis': 'Ex: 1 Bis'
+Adresse: Address
+'Ex : Rue de la Victoire': 'Ex: Victory Street'
+Ville: City
+'Ex : Quimper': 'Ex: Quimper'
+'Code Postal': Postal Code
+'Ex : 29000': 'Ex: 29000'
+Région: Region
+'Ex : Bretagne': 'Ex: Brittany'
+'Mot de passe actuel': Current password
+'Nouveau mot de passe': New password
+'Confirmer le nouveau mot de passe': Confirm new password 
