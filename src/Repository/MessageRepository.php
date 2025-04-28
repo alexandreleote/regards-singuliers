@@ -28,7 +28,7 @@ class MessageRepository extends ServiceEntityRepository
             ->addSelect('u')
             ->andWhere('m.discussion = :discussion')
             ->setParameter('discussion', $discussion)
-            ->orderBy('m.createdAt', 'ASC')
+            ->orderBy('m.sentAt', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -41,7 +41,7 @@ class MessageRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->andWhere('m.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('m.createdAt', 'DESC')
+            ->orderBy('m.sentAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -56,7 +56,7 @@ class MessageRepository extends ServiceEntityRepository
             ->andWhere('m.isRead = :isRead')
             ->setParameter('discussion', $discussion)
             ->setParameter('isRead', false)
-            ->orderBy('m.createdAt', 'ASC')
+            ->orderBy('m.sentAt', 'ASC')
             ->getQuery()
             ->getResult();
     }
