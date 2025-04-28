@@ -28,7 +28,7 @@ class MessageRepository extends ServiceEntityRepository
             ->addSelect('u')
             ->andWhere('m.discussion = :discussion')
             ->setParameter('discussion', $discussion)
-            ->orderBy('m.sentAt', 'ASC')
+            ->orderBy('m.sentAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -56,7 +56,7 @@ class MessageRepository extends ServiceEntityRepository
             ->andWhere('m.isRead = :isRead')
             ->setParameter('discussion', $discussion)
             ->setParameter('isRead', false)
-            ->orderBy('m.sentAt', 'ASC')
+            ->orderBy('m.sentAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -77,7 +77,7 @@ class MessageRepository extends ServiceEntityRepository
                 ->setParameter('discussion', $discussion)
                 ->setParameter('isRead', false)
                 ->setParameter('user', $user)
-                ->orderBy('m.sentAt', 'ASC');
+                ->orderBy('m.sentAt', 'DESC');
             
             // Ajouter une condition spécifique pour l'administrateur
             if (in_array('ROLE_ADMIN', $user->getRoles())) {

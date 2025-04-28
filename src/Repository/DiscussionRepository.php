@@ -107,7 +107,7 @@ class DiscussionRepository extends ServiceEntityRepository
             ->addSelect('r', 'm')
             ->andWhere('d.isArchived = :archived')
             ->setParameter('archived', false)
-            ->orderBy('COALESCE(m.sentAt, d.createdAt)', 'DESC')
+            ->orderBy('m.sentAt', 'DESC')
             ->addOrderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
