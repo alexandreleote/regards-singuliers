@@ -71,7 +71,7 @@ final class DiscussionController extends AbstractController
                 }
 
                 // Récupérer les messages et marquer les messages non lus comme lus
-                $messages = $messageRepository->findBy(['discussion' => $currentDiscussion], ['sentAt' => 'ASC']);
+                $messages = $messageRepository->findBy(['discussion' => $currentDiscussion], ['sentAt' => 'DESC']);
 
                 foreach ($messages as $message) {
                     if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {
@@ -138,7 +138,7 @@ final class DiscussionController extends AbstractController
         }
 
         // Récupérer les messages et marquer les messages non lus comme lus
-        $messages = $messageRepository->findBy(['discussion' => $existingDiscussion], ['sentAt' => 'ASC']);
+        $messages = $messageRepository->findBy(['discussion' => $existingDiscussion], ['sentAt' => 'DESC']);
 
         foreach ($messages as $message) {
             if (!$message->isRead() && $message->getUser()->getId() !== $user->getId()) {

@@ -104,7 +104,7 @@ export default class extends Controller {
                 </div>
             `;
             
-            this.messageListTarget.insertAdjacentHTML('beforeend', messageHtml);
+            this.messageListTarget.insertAdjacentHTML('afterbegin', messageHtml);
             this.messageListTarget.scrollTop = this.messageListTarget.scrollHeight;
         }
     }

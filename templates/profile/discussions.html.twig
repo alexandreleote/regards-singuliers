@@ -39,7 +39,7 @@
                                         </span>
                                         <span class="discussion-date">
                                             {% if discussion.messages|length > 0 %}
-                                                {{ discussion.messages|last.sentAt|date('d/m/Y H:i') }}
+                                                {{ discussion.messages|first.sentAt|date('d/m/Y H:i') }}
                                             {% else %}
                                                 {{ discussion.createdAt|date('d/m/Y') }}
                                             {% endif %}
@@ -87,7 +87,7 @@
 
                         <div class="messages-container" id="messagesContainer" data-discussions-target="messageList" aria-label="Messages">
                             {% if messages|length > 0 %}
-                                {% for message in messages %}
+                                {% for message in messages|reverse %}
                                     <div class="message {% if message.user.id == app.user.id %}message-user{% else %}message-admin{% endif %}" role="listitem">
                                         <div class="message-content">
                                             {% if message.isDeleted %}
