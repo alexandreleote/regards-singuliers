@@ -96,6 +96,23 @@ class DiscussionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Trouve les discussions triées par date du dernier message
+     */
+    public function findByLastMessageDate(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.messages', 'm')
+            ->leftJoin('d.reservation', 'r')
+            ->addSelect('r', 'm')
+            ->andWhere('d.isArchived = :archived')
+            ->setParameter('archived', false)
+            ->orderBy('m.sentAt', 'DESC')
+            ->addOrderBy('d.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Discussion[] Returns an array of Discussion objects
     //     */

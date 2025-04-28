@@ -42,10 +42,16 @@ final class DiscussionController extends AbstractController
 
         // Si l'utilisateur est un admin, on récupère toutes les discussions où il est destinataire
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            // Récupérer toutes les discussions non archivées où l'admin est destinataire
-            $discussions = $discussionRepository->findBy(['isArchived' => false], ['createdAt' => 'DESC']);
+            // Récupérer toutes les discussions non archivées triées par date du dernier message
+            $discussions = $discussionRepository->findByLastMessageDate();
             
             if (!empty($discussions)) {
+                // Pour chaque discussion, vérifier s'il y a des messages non lus
+                foreach ($discussions as $discussion) {
+                    $unreadMessages = $messageRepository->findUnreadByDiscussionForUser($discussion, $user);
+                    $discussion->hasUnreadMessages = count($unreadMessages) > 0;
+                }
+                
                 // Récupérer la discussion sélectionnée ou la première par défaut
                 $discussionId = $request->get('id');
                 if ($discussionId !== null) {

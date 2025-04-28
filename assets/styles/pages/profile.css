@@ -306,9 +306,15 @@
 }
 
 .alert-success {
-    background-color: rgba(46, 204, 113, 0.1);
-    color: #2ecc71;
-    border: 1px solid rgba(46, 204, 113, 0.2);
+    color: #218838; /* Vert foncé */
+    background-color: #e6ffed; /* Vert très clair */
+    border: 1px solid #b3ffcc; /* Bordure vert clair */
+}
+
+.alert-warning {
+    color: #b8860b; /* Jaune foncé/orangé */
+    background-color: #fff8e6; /* Jaune très clair */
+    border: 1px solid #ffe4b3; /* Bordure jaune clair */
 }
 
 .alert i {
@@ -463,24 +469,43 @@
 .danger-zone {
     margin-top: 2rem;
     padding: 2rem;
-    background-color: var(--color-error-light);
-    border: 1px solid var(--color-error-border);
+    background-color: #ffe6e6; /* Rose très clair */
+    border: 1px solid #ffb3b3; /* Bordure rose clair */
     border-radius: 8px;
     text-align: center;
+    animation: fadeIn 0.3s ease-in;
 }
 
 .danger-zone h2 {
-    color: var(--color-error);
+    color: #e74c3c; /* Rouge vif */
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
 
 .danger-zone p {
-    color: var(--color-text-light);
+    color: #c0392b; /* Rouge foncé */
     margin-bottom: 1.5rem;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.danger-zone .btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background 0.2s;
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.danger-zone .btn-danger:hover {
+    background-color: #c0392b;
 }
 
 /* Animations */
@@ -519,9 +544,15 @@
 }
 
 .alert-success {
-    color: var(--color-success-text);
-    background-color: var(--color-success-light);
-    border: 1px solid var(--color-success-border);
+    color: #218838; /* Vert foncé */
+    background-color: #e6ffed; /* Vert très clair */
+    border: 1px solid #b3ffcc; /* Bordure vert clair */
+}
+
+.alert-warning {
+    color: #b8860b; /* Jaune foncé/orangé */
+    background-color: #fff8e6; /* Jaune très clair */
+    border: 1px solid #ffe4b3; /* Bordure jaune clair */
 }
 
 .alert i {

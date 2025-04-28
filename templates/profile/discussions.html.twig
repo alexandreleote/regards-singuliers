@@ -31,8 +31,19 @@
                                             {% else %}
                                                 {{ discussion.reservation.user.firstName }} {{ discussion.reservation.user.name }}
                                             {% endif %}
+                                            {% if discussion.hasUnreadMessages %}
+                                                <span class="unread-badge" aria-label="Nouveaux messages">
+                                                    <i class="fas fa-circle" aria-hidden="true"></i>
+                                                </span>
+                                            {% endif %}
                                         </span>
-                                        <span class="discussion-date">{{ discussion.createdAt|date('d/m/Y') }}</span>
+                                        <span class="discussion-date">
+                                            {% if discussion.messages|length > 0 %}
+                                                {{ discussion.messages|last.sentAt|date('d/m/Y H:i') }}
+                                            {% else %}
+                                                {{ discussion.createdAt|date('d/m/Y') }}
+                                            {% endif %}
+                                        </span>
                                     </a>
                                 </li>
                             {% endfor %}

@@ -110,3 +110,14 @@
     border: 1px solid #c3e6cb;
     color: #155724;
 }
+
+.unread-badge {
+    display: inline-block;
+    margin-left: 8px;
+    color: #007bff;
+    font-size: 0.8em;
+}
+
+.unread-badge i {
+    color: #007bff;
+}
